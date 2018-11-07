@@ -1,0 +1,24 @@
+hana:
+
+  # System id
+  sid: prd
+  instance: '00'
+  version: 2.00.010
+
+  # Primary node
+  primary:
+    host: hana01
+    name: NUREMBERG
+    password: Qwerty1234
+    backup:
+      user: backupkey5
+      database: SYSTEMDB
+      file: backup
+
+  # Secondary node
+  secondary:
+    host: hana02
+    name: PRAGUE
+    password: Qwerty1234
+    replication_mode: sync
+    operation_mode: logreplay

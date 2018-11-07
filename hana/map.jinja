@@ -1,0 +1,5 @@
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+
+{% import_yaml "hana/defaults.yaml" as defaults %}
+{% set hana = salt['pillar.get']('hana', default=defaults.hana, merge=True) %}
