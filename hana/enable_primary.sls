@@ -1,34 +1,31 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
-{%- from "hana/utils.sls" import path, user with context -%}
+{% for node in hana.nodes %}
+{% if node.host == host and node.primary is defined %}
 
-start-hana-instance:
-  cmd.run:
-    - name: {{ path }}/HDB start
-    - runas: {{ user }}
-
-{% if hana.primary.backup is defined and hana.primary.host == host %}
-include:
-  - .backup
-#{% endif %}
-
-
-enable-primary:
-  cmd.run:
-    - name: su -lc '{{ path }}/exe/hdbnsutil -sr_enable --name={{ hana.primary.name }}' {{ user }}
-    - runas: root
-    - require:
-      - start-hana-instance
-      {% if hana.primary.backup is defined and hana.primary.host == host %}
-      - create-backup
-      - copy-ssfs-data
-      - copy-ssfs-key
+{{  node.primary.name }}:
+    hana.sr_primary_enabled:
+      - sid: {{  node.sid }}
+      - inst: {{  node.instance }}
+      - password: {{  node.password }}
+      {% if node.primary.backup is defined  %}
+      - backup:
+        - user: {{  node.primary.backup.user }}
+        - password: {{  node.primary.backup.password }}
+        - database: {{  node.primary.backup.database }}
+        - file: {{  node.primary.backup.file }}
       #{% endif %}
+      {% if node.primary.userkey is defined %}
+      - userkey:
+        - key: {{  node.primary.userkey.key }}
+        - environment: {{  node.primary.userkey.environment }}
+        - user: {{  node.primary.userkey.user }}
+        - password: {{  node.primary.userkey.password }}
+        - database: {{  node.primary.userkey.database }}
+      #{% endif %}
+      - require:
+        - hana_install_{{ node.host+node.sid }}
 
-primary-enabled:
-  cmd.run:
-    - name: su -lc '{{ path }}/exe/hdbnsutil -sr_state | grep primary' {{ user }}
-    - runas: root
-    - require:
-      - enable-primary
+{% endif %}
+{% endfor %}

@@ -1,24 +1,42 @@
 hana:
+  nodes:
+    - host: 'hana01'
+      sid: 'prd'
+      instance: '"00"'
+      password: 'Qwerty1234'
+      install:
+        software_path: '/root/sap_inst/51052481'
+        root_user: 'root'
+        root_password: 's'
+        system_user_password: 'Qwerty1234'
+      primary:
+        name: NUREMBERG
+        backup:
+          user: 'backupkey'
+          password: 'Qwerty1234'
+          database: 'SYSTEMDB'
+          file: 'backup'
+        userkey:
+          key: 'backupkey'
+          environment: 'hana01:30013'
+          user: 'SYSTEM'
+          password: 'Qwerty1234'
+          database: 'SYSTEMDB'
 
-  # System id
-  sid: prd
-  instance: '00'
-  version: 2.00.010
-
-  # Primary node
-  primary:
-    host: hana01
-    name: NUREMBERG
-    password: Qwerty1234
-    backup:
-      user: backupkey5
-      database: SYSTEMDB
-      file: backup
-
-  # Secondary node
-  secondary:
-    host: hana02
-    name: PRAGUE
-    password: Qwerty1234
-    replication_mode: sync
-    operation_mode: logreplay
+    - host: 'hana02'
+      sid: 'prd'
+      instance: '"00"'
+      password: 'Qwerty1234'
+      install:
+        software_path: '/root/sap_inst/51052481'
+        root_user: 'root'
+        root_password: 's'
+        system_user_password: 'Qwerty1234'
+        extra_parameters:
+          hostname: 'hana02'
+      secondary:
+        name: PRAGUE
+        remote_host: 'hana01'
+        remote_instance: '00'
+        replication_mode: 'sync'
+        operation_mode: 'logreplay'

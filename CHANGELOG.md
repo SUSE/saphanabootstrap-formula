@@ -1,4 +1,6 @@
-# CHANGELOG
+sap hana formula
+===========
 
-## version 0.0.1
-- First MVP version
+0.1.0 (2018-11-30)
+
+- Create first working version

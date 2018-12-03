@@ -1,41 +1,28 @@
 {%- from "hana/map.jinja" import hana with context -%}
+{% set host = grains['host'] %}
 
-{%- from "hana/utils.sls" import path, user with context -%}
+include:
+  - .copy_ssfs
 
-primary-available:
+{% for node in hana.nodes %}
+{% if node.host == host and node.secondary is defined %}
+
+primary_available:
   cmd.run:
-    - name: until nc -z {{ hana.primary.host }} 40002; do sleep 1; done
-    - timeout: 60
+    - name: until nc -z {{  node.secondary.remote_host }} 40002; do sleep 1; done
+    - timeout: 100
 
-stop-hana-instance:
-  cmd.run:
-    - name: {{ path }}/HDB stop
-    - runas: {{ user }}
-    - require:
-      - primary-available
+{{  node.secondary.name }}:
+    hana.sr_secondary_registered:
+      - sid: {{  node.sid }}
+      - inst: {{  node.instance }}
+      - password: {{  node.password }}
+      - remote_host: {{  node.secondary.remote_host }}
+      - remote_instance: {{  node.secondary.remote_instance }}
+      - replication_mode: {{  node.secondary.replication_mode }}
+      - operation_mode: {{  node.secondary.operation_mode }}
+      - require:
+        - primary_available
 
-enable-secondary:
-  cmd.run:
-    - name: su -lc '{{ path }}/exe/hdbnsutil -sr_register
-            --name={{ hana.secondary.name }}
-            --remoteHost={{ hana.primary.host }}
-            --remoteInstance={{ hana.instance }}
-            --replicationMode={{ hana.secondary.replication_mode }}
-            --operationMode={{ hana.secondary.operation_mode }}' {{ user }}
-    - runas: root
-    - require:
-      - stop-hana-instance
-
-start-hana-instance:
-  cmd.run:
-    - name: {{ path }}/HDB start
-    - runas: {{ user }}
-    - require:
-      - enable-secondary
-
-secondary-enabled:
-  cmd.run:
-    - name: su -lc '{{ path }}/exe/hdbnsutil -sr_state | grep {{ hana.secondary.replication_mode }}' {{ user }}
-    - runas: root
-    - require:
-      - start-hana-instance
+{% endif %}
+{% endfor %}
