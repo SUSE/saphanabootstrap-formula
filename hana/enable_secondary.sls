@@ -23,6 +23,7 @@ primary_available:
       - operation_mode: {{  node.secondary.operation_mode }}
       - require:
         - primary_available
+        - hana_install_{{ node.host+node.sid }}
 
 {% endif %}
 {% endfor %}

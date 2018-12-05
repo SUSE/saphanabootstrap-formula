@@ -1,4 +1,5 @@
 include:
-  - .install
-  - .enable_primary
-  - .enable_secondary
+  - hana.common
+  - hana.install
+  - hana.enable_primary
+  - hana.enable_secondary

@@ -6,16 +6,15 @@
 {% if node.host == host and node.secondary is defined %}
 
 add-network-repo:
-  pkgrepo:
-    - managed
+  pkgrepo.managed:
     - name: network
     - baseurl: https://download.opensuse.org/repositories/network/SLE_12_SP3
-    - gpgcheck: 0
-    - enabled: 1
+    - gpgautoimport: True
 
 install-sshpass:
   pkg.installed:
     - name: sshpass
+    - refresh: False
     - fromrepo: network
     - require:
       - add-network-repo
