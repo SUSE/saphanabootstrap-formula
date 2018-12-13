@@ -5,7 +5,7 @@ include:
   - .copy_ssfs
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.secondary is defined %}
+{% if node.host == host and node.secondary is defined and node.system_replication.system_replication_options == "Secondary" %}
 
 primary_available:
   cmd.run:
@@ -23,7 +23,6 @@ primary_available:
       - operation_mode: {{  node.secondary.operation_mode }}
       - require:
         - primary_available
-        - hana_install_{{ node.host+node.sid }}
 
 {% endif %}
 {% endfor %}

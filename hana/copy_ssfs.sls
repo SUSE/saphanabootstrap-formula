@@ -3,7 +3,7 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.secondary is defined %}
+{% if node.host == host and node.secondary is defined and node.system_replication.system_replication_options == "Secondary" %}
 
 add-network-repo:
   pkgrepo.managed:
@@ -20,7 +20,7 @@ install-sshpass:
       - add-network-repo
 
 {% for prim_node in hana.nodes %}
-{% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
+{% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined and prim_node.system_replication.system_replication_options == "Primary"%}
 {% set primary_pass = prim_node.password %}
 
 copy-ssfs-data:
