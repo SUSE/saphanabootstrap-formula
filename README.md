@@ -71,3 +71,9 @@ To test the package:
 cd /usr/src/packages/RPMS/x86_64
 sudo rpm -iv saphanabootstrap-formula-${version}-1.x86_64.rpm
 ```
+
+Or better:
+```bash
+cd /usr/src/packages/RPMS/x86_64
+sudo zypper in saphanabootstrap-formula-${version}-1.x86_64.rpm
+```
