@@ -9,6 +9,7 @@ hana:
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
+        sapadm_password: 'Qwerty1234'
       primary:
         name: NUREMBERG
         backup:
@@ -32,6 +33,7 @@ hana:
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
+        sapadm_password: 'Qwerty1234'
         extra_parameters:
           hostname: 'hana02'
       secondary:
@@ -50,5 +52,6 @@ hana:
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
+        sapadm_password: 'Qwerty1234'
         extra_parameters:
           hostname: 'hana02'
