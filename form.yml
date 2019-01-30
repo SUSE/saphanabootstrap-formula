@@ -52,6 +52,10 @@ hana:
           $name: Configuration file
           $visibleIf: .use_config_file == true
           $type: text
+        sapadm_password:
+          $name: Sap admin password
+          $visibleIf: .use_config_file == false
+          $type: password
         system_user_password:
           $name: Sap user password
           $visibleIf: .use_config_file == false

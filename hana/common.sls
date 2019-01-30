@@ -1,15 +1,20 @@
-git-core:
+#required packages to install SAP HANA, maybe they are already installed in the
+#used SLES4SAP distros
+numactl:
+  pkg.installed
+
+libltdl7:
+  pkg.installed
+
+# Temporary solution to import the needed packages
+add-saphana-repo:
+  pkgrepo.managed:
+    - name: saphana
+    - baseurl: https://download.opensuse.org/repositories/home:xarbulu:sap-deployment/SLE_12_SP4/
+    - gpgautoimport: True
+
+python-shaptools:
   pkg.installed:
-    - refresh: False
-
-python-pip:
-  cmd.run:
-    - name: easy_install pip
-    - unless: which pip
-
-shaptools:
-  pip.installed:
-    - editable: git+https://github.com/arbulu89/shaptools#egg=shaptools
+    - fromrepo: saphana
     - require:
-      - python-pip
-      - git-core
+      - add-saphana-repo

@@ -2,7 +2,7 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.install is defined and node.install_checkbox == true %}
+{% if node.host == host and node.install is defined %}
 
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
@@ -12,10 +12,11 @@ hana_install_{{ node.host+node.sid }}:
     - software_path: {{ node.install.software_path }}
     - root_user: {{ node.install.root_user }}
     - root_password: {{ node.install.root_password }}
-    {% if node.install.config_file is defined and node.install.use_config_file == true %}
+    {% if node.install.config_file is defined %}
     - config_file: {{ node.install.config_file }}
     {% else %}
     - system_user_password: {{ node.install.system_user_password }}
+    - sapadm_password: {{ node.install.sapadm_password }}
     {% endif %}
     {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 %}
     - extra_parameters:
