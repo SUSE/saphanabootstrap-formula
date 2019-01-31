@@ -16,15 +16,15 @@ In order to use this formula some steps must be executed previously:
 1. Install shaptools python library.
 
 ```bash
-git clone https://github.com/arbulu89/shaptools.git
+git clone https://github.com/SUSE/shaptools.git
 cd shaptools
 sudo python setup.py install
 ```
 
-2. Copy the [salt-saphana](https://github.com/arbulu89/salt-saphana) modules and states in our salt master.
+2. Copy the [salt-saphana](https://github.com/SUSE/salt-saphana) modules and states in our salt master.
 
 ```bash
-git clone https://github.com/arbulu89/salt-saphana.git
+git clone https://github.com/SUSE/salt-saphana.git
 # Create /srv/salt/_modules and /srv/salt/_states if they don't exist
 sudo cp salt-saphana/salt/modules/* /srv/salt/_modules
 sudo cp salt-saphana/salt/states/* /srv/salt/_states
@@ -40,7 +40,7 @@ for example). The current [pillar.example](pillar.example), deploys one PRD
 instance in hana01 machine as a primary node, and two (PRD, QAS) instances in
 the second, one of the as secondary.
 
-The needed parameters for the states are described in [salt-saphana](https://github.com/arbulu89/salt-saphana).
+The needed parameters for the states are described in [salt-saphana](https://github.com/SUSE/salt-saphana).
 
 The example folders shows how a salt environment could be created to use the formula.
 Run the **deploy.sh** script to copy this structure to the salt environament (**INFO**:
