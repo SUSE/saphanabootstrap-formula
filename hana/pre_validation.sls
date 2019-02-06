@@ -10,7 +10,7 @@
 
     {% do node.pop('install') %}
 
-  {% else %}
+  {% elif node.install_checkbox is defined and node.install_checkbox == true %}
     {% if node.install.use_config_file == false %}
       {% do node.install.pop('config_file') %}
     {% endif %}

@@ -124,7 +124,7 @@ hana:
             $type: text
             $optional: false
           environment:
-            $name:
+            $name: Environment
             $type: text
             $optional: false
           user:
