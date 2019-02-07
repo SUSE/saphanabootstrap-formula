@@ -1,7 +1,7 @@
 #
-# spec file for package webserver-formula
+# spec file for package saphanabootstrap-formula
 #
-# Copyright (c) 2016 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2018 SUSE LLC, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -23,10 +23,12 @@ Version:        0.1.0
 Release:        1
 Summary:        SAP HANA platform deployment formula
 
-License:        GPLv3+
-Url:            https://github.com/arbulu89/%{name}
+License:        Apache-2.0
+Url:            https://github.com/SUSE/%{name}
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildArch:      noarch
+Requires:       salt-saphana
 
 %define fname hana
 
@@ -40,20 +42,15 @@ SAP HANA deployment salt formula
 
 %install
 pwd
-mkdir -p %{buildroot}/usr/share/susemanager/formulas/states/%{fname}
-mkdir -p %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
-cp -R %{fname} %{buildroot}/usr/share/susemanager/formulas/states
-cp -R form.yml %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
-if [ -f metadata.yml ]
-then
-  cp -R metadata.yml %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
-fi
+mkdir -p %{buildroot}/srv/salt/
+cp -R %{fname} %{buildroot}/srv/salt/%{fname}
 
 %files
 %defattr(-,root,root,-)
 %license LICENSE
 %doc README.md
-/usr/share/susemanager/formulas/states/%{fname}
-/usr/share/susemanager/formulas/metadata/%{fname}
+/srv/salt/%{fname}
+
+%dir %attr(0755, root, salt) /srv/salt
 
 %changelog CHANGELOG.md

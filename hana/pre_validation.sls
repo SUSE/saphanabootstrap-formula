@@ -26,20 +26,22 @@
   {# Check HANA insatll checkbox finish #}
 
   {# Check HANA Systen replication mode #}
-  {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Secondary" %}
-    {% do node.pop('secondary') %}
-  {% endif %}
-
-  {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Primary" %}
-    {% do node.pop('primary') %}
-  {% else %}
-    {% if node.primary.create_backup == false %}
-      {% do node.primary.pop('backup') %}
-    {% endif %}
-    {% if node.primary.create_userkey == false %}
-      {% do node.primary.pop('userkey') %}
+  {% if node.system_replication is defined %}
+    {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Secondary" %}
+      {% do node.pop('secondary') %}
     {% endif %}
 
+    {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Primary" %}
+      {% do node.pop('primary') %}
+    {% else %}
+      {% if node.primary.create_backup == false %}
+        {% do node.primary.pop('backup') %}
+      {% endif %}
+      {% if node.primary.create_userkey == false %}
+        {% do node.primary.pop('userkey') %}
+      {% endif %}
+
+    {% endif %}
   {% endif %}
   {# Check HANA Systen replication mode finish #}
 
