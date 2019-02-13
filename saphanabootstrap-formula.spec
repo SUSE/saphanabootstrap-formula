@@ -53,4 +53,4 @@ cp -R %{fname} %{buildroot}/srv/salt/%{fname}
 
 %dir %attr(0755, root, salt) /srv/salt
 
-%changelog saphanabootstrap-formula.changes
+%changelog
