@@ -50,3 +50,30 @@ The script will overwrite any file with the same names).
 cd saphanabootstap-formula/example
 sudo ./deploy.sh
 ```
+
+## Build
+To build a new deliverable (rpm package) follow the next steps (Suse distros only):
+
+```bash
+cp -R saphanabootstrap-formula saphanabootstrap-formula-${version}
+tar -zcvf saphanabootstrap-formula-${version}.tar.gz saphanabootstrap-formula-${version}
+sudo cp saphanabootstrap-formula-${version}.tar.gz /usr/src/packages/SOURCES
+sudo cp saphanabootstrap-formula-${version}/saphanabootstrap-formula.spec /usr/src/packages/SPECS/saphanabootstrap-formula-${version}.spec
+cd /usr/src/packages/SPECS
+sudo rpmbuild -ba saphanabootstrap-formula-${version}.spec
+```
+After that the package saphanabootstrap-formula-${version}-1.x86_64.rpm should
+be placed in /usr/src/packages/RPMS/x86_64
+
+
+To test the package:
+```bash
+cd /usr/src/packages/RPMS/x86_64
+sudo rpm -iv saphanabootstrap-formula-${version}-1.x86_64.rpm
+```
+
+Or better:
+```bash
+cd /usr/src/packages/RPMS/x86_64
+sudo zypper in saphanabootstrap-formula-${version}-1.x86_64.rpm
+```

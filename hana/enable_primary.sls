@@ -9,13 +9,13 @@
       - sid: {{  node.sid }}
       - inst: {{  node.instance }}
       - password: {{  node.password }}
-      {% if node.primary.backup is defined  %}
+      {% if node.primary.backup is defined %}
       - backup:
         - user: {{  node.primary.backup.user }}
         - password: {{  node.primary.backup.password }}
         - database: {{  node.primary.backup.database }}
         - file: {{  node.primary.backup.file }}
-      #{% endif %}
+      {% endif %}
       {% if node.primary.userkey is defined %}
       - userkey:
         - key: {{  node.primary.userkey.key }}
@@ -23,9 +23,7 @@
         - user: {{  node.primary.userkey.user }}
         - password: {{  node.primary.userkey.password }}
         - database: {{  node.primary.userkey.database }}
-      #{% endif %}
-      - require:
-        - hana_install_{{ node.host+node.sid }}
+      {% endif %}
 
 {% endif %}
 {% endfor %}

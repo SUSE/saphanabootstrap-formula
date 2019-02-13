@@ -18,7 +18,7 @@ hana_install_{{ node.host+node.sid }}:
     - system_user_password: {{ node.install.system_user_password }}
     - sapadm_password: {{ node.install.sapadm_password }}
     {% endif %}
-    {% if node.install.extra_parameters is defined %}
+    {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 %}
     - extra_parameters:
       {% for key,value in node.install.extra_parameters.items() %}
       - {{ key }}: {{ value }}

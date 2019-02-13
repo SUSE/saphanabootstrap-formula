@@ -6,24 +6,27 @@ include:
 
 {% for node in hana.nodes %}
 {% if node.host == host and node.secondary is defined %}
+netcat-openbsd:
+  pkg.installed
 
 primary_available:
   cmd.run:
     - name: until nc -z {{  node.secondary.remote_host }} 40002; do sleep 1; done
     - timeout: 100
+    - require:
+      - netcat-openbsd
 
 {{  node.secondary.name }}:
-    hana.sr_secondary_registered:
-      - sid: {{  node.sid }}
-      - inst: {{  node.instance }}
-      - password: {{  node.password }}
-      - remote_host: {{  node.secondary.remote_host }}
-      - remote_instance: {{  node.secondary.remote_instance }}
-      - replication_mode: {{  node.secondary.replication_mode }}
-      - operation_mode: {{  node.secondary.operation_mode }}
-      - require:
-        - primary_available
-        - hana_install_{{ node.host+node.sid }}
+  hana.sr_secondary_registered:
+    - sid: {{  node.sid }}
+    - inst: {{  node.instance }}
+    - password: {{  node.password }}
+    - remote_host: {{  node.secondary.remote_host }}
+    - remote_instance: {{  node.secondary.remote_instance }}
+    - replication_mode: {{  node.secondary.replication_mode }}
+    - operation_mode: {{  node.secondary.operation_mode }}
+    - require:
+      - primary_available
 
 {% endif %}
 {% endfor %}

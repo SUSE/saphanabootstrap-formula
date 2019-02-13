@@ -1,0 +1,166 @@
+hana:
+  $name: HANA
+  $type: group
+  nodes:
+    $name: Nodes
+    $type: edit-group
+    $minItems: 1
+    $itemName: ""
+    $prototype:
+      host:
+        $name: Hostname to install HANA
+        $type: text
+        $optional: false
+      sid:
+        $name: HANA system identifier
+        $type: text
+        $optional: false
+      instance:
+        $name: HANA instance number
+        $type: text
+        $optional: false
+      password:
+        $name: Sap user password
+        $type: password
+        $optional: false
+      install_checkbox:
+        $name: Install HANA
+        $type: boolean
+        $default: true
+      install:
+        $name: Install new HANA instance
+        $visibleIf: .install_checkbox == true
+        $optional: true
+        $type: group
+        software_path:
+          $name: Downloaded HANA software path
+          $type: text
+          $optional: false
+        root_user:
+          $name: Machine root user
+          $type: text
+          $optional: false
+        root_password:
+          $name: Machine root password
+          $type: password
+          $optional: false
+        use_config_file:
+          $name: Use configuration file
+          $type: boolean
+          $default: true
+        config_file:
+          $name: Configuration file
+          $visibleIf: .use_config_file == true
+          $type: text
+        sapadm_password:
+          $name: Sap admin password
+          $visibleIf: .use_config_file == false
+          $type: password
+        system_user_password:
+          $name: Sap user password
+          $visibleIf: .use_config_file == false
+          $type: password
+        extra_parameters:
+          $name: Installation extra options
+          $optional: true
+          $type: edit-group
+          $itemName: ""
+          $prototype:
+            $name: Extra parameter
+            key:
+              $name: Value to update
+            value:
+              $name: New value
+      system_replication:
+        $type: group
+        system_replication_options:
+          $name: System replication options
+          $type: select
+          $values: [None, Primary, Secondary]
+      primary:
+        $visibleIf: .system_replication#system_replication_options == Primary
+        $optional: true
+        $type: group
+        name:
+          $name: Primary node
+          $type: text
+          $optional: false
+        create_backup:
+          $name: Create new database backup
+          $type: boolean
+          $default: false
+        backup:
+          $name: Backup
+          $optional: true
+          $visibleIf: .create_backup == true
+          $type: group
+          user:
+            $name: User key
+            $type: text
+            $optional: false
+          password:
+            $name: Sap user password
+            $type: password
+            $optional: false
+          database:
+            $name: Database name to backup
+            $type: text
+            $optional: false
+          file:
+            $name: Backup file name
+            $type: text
+            $optional: false
+        create_userkey:
+          $name: Create new User key
+          $type: boolean
+          $default: false
+        userkey:
+          $name: User key
+          $optional: true
+          $visibleIf: .create_userkey == true
+          $type: group
+          key:
+            $name: New key name
+            $type: text
+            $optional: false
+          environment:
+            $name: Environment
+            $type: text
+            $optional: false
+          user:
+            $type: text
+            $default: SYSTEM
+            $optional: false
+          password:
+            $name: Sap user password
+            $type: password
+          database:
+            $name: Database name
+            $type: text
+            $default: SYSTEMDB
+            $optional: false
+      secondary:
+        $visibleIf: .system_replication#system_replication_options == Secondary
+        $optional: true
+        $name: Secondary node
+        $type: group
+        name:
+          $name: Secondary node name
+          $type: text
+          $optional: false
+        remote_host:
+          $name: Primary node hostname
+          $type: text
+          $optional: false
+        remote_instance:
+          $name: Primary node instance number
+          $type: text
+          $optional: false
+        replication_mode:
+          $name: Replication mode
+          $type: select
+          $values: [sync, syncmem, async]
+        operation_mode:
+          $name: Operation mode
+          $type: select
+          $values: [logreplay, delta_datashipping]
