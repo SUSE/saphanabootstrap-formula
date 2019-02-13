@@ -43,11 +43,11 @@ the second, one of the as secondary.
 The needed parameters for the states are described in [salt-saphana](https://github.com/SUSE/salt-saphana).
 
 The example folders shows how a salt environment could be created to use the formula.
-Run the **deploy.sh** script to copy this structure to the salt environament (**INFO**:
+Run the **deploy.sh** script to copy this structure to the salt environment (**INFO**:
 The script will overwrite any file with the same names).
 
 ```bash
-cd saphanabootstap-formula/examples
+cd saphanabootstap-formula/example
 sudo ./deploy.sh
 ```
 
