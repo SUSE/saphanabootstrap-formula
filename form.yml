@@ -56,10 +56,12 @@ hana:
           $name: Sap admin password
           $visibleIf: .use_config_file == false
           $type: password
+          $optional: true
         system_user_password:
           $name: Sap user password
           $visibleIf: .use_config_file == false
           $type: password
+          $optional: true
         extra_parameters:
           $name: Installation extra options
           $optional: true
