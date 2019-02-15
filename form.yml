@@ -43,7 +43,7 @@ hana:
         root_password:
           $name: Machine root password
           $type: password
-          $optional: false
+          $optional: true
         use_config_file:
           $name: Use configuration file
           $type: boolean
