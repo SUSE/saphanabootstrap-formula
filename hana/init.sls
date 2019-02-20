@@ -1,7 +1,9 @@
-{% from "hana/map.jinja" import cluster with context %}
+{% from "hana/map.jinja" import hana with context %}
 
 include:
+{% if hana.install_packages is sameas true %}
   - hana.packages
+{% endif %}
   - hana.pre_validation
   - hana.install
   - hana.enable_primary
