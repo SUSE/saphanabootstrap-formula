@@ -1,5 +1,7 @@
+{% from "hana/map.jinja" import cluster with context %}
+
 include:
-  - hana.common
+  - hana.packages
   - hana.pre_validation
   - hana.install
   - hana.enable_primary
