@@ -32,6 +32,7 @@ Requires:       salt-saphana
 Requires:       habootstrap-formula
 
 %define fname hana
+%define fdir  %{_datadir}/susemanager/formulas
 %define ftemplates templates
 
 %description
@@ -58,14 +59,14 @@ cp -R %{fname} %{buildroot}/srv/salt/%{fname}
 cp -R %{ftemplates} %{buildroot}/srv/salt/%{fname}/%{ftemplates}
 
 # SUMA Specific
-mkdir -p %{buildroot}/usr/share/susemanager/formulas/states/%{fname}
-mkdir -p %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
-cp -R %{fname} %{buildroot}/usr/share/susemanager/formulas/states/%{fname}
-cp -R %{ftemplates} %{buildroot}/usr/share/susemanager/formulas/states/%{fname}/%{ftemplates}
-cp -R form.yml %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
+mkdir -p %{buildroot}%{fdir}/states/%{fname}
+mkdir -p %{buildroot}%{fdir}/metadata/%{fname}
+cp -R %{fname} %{buildroot}%{fdir}/states/%{fname}
+cp -R %{ftemplates} %{buildroot}%{fdir}/states/%{fname}/%{ftemplates}
+cp -R form.yml %{buildroot}%{fdir}/metadata/%{fname}
 if [ -f metadata.yml ]
 then
-  cp -R metadata.yml %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
+  cp -R metadata.yml %{buildroot}%{fdir}/metadata/%{fname}
 fi
 
 
@@ -82,13 +83,17 @@ fi
 %defattr(-,root,root,-)
 %license LICENSE
 %doc README.md
-/usr/share/susemanager/formulas/states/%{fname}
-/usr/share/susemanager/formulas/states/%{fname}/%{ftemplates}
-/usr/share/susemanager/formulas/metadata/%{fname}
+%dir %{_datadir}/susemanager
+%dir %{fdir}
+%dir %{fdir}/states
+%dir %{fdir}/metadata
+%{fdir}/states/%{fname}
+%{fdir}/states/%{fname}/%{ftemplates}
+%{fdir}/metadata/%{fname}
 
-%dir %attr(0755, root, salt) /usr/share/susemanager/
-%dir %attr(0755, root, salt) /usr/share/susemanager/formulas/
-%dir %attr(0755, root, salt) /usr/share/susemanager/formulas/states/
-%dir %attr(0755, root, salt) /usr/share/susemanager/formulas/metadata/
+%dir %attr(0755, root, salt) %{_datadir}/susemanager
+%dir %attr(0755, root, salt) %{fdir}
+%dir %attr(0755, root, salt) %{fdir}/states
+%dir %attr(0755, root, salt) %{fdir}/metadata
 
 %changelog
