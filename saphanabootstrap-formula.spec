@@ -29,11 +29,22 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 Requires:       salt-saphana
+Requires:       habootstrap-formula
 
 %define fname hana
+%define ftemplates templates
 
 %description
 SAP HANA deployment salt formula
+
+# package to deploy on SUMA specific path.
+%package suma
+Summary:        SAP HANA platform deployment formula (SUMA specific)
+Requires:       salt-saphana
+Requires:       habootstrap-formula-suma
+
+%description suma
+SAP HANA deployment salt formula (SUMA specific)
 
 %prep
 %setup -q
@@ -44,13 +55,40 @@ SAP HANA deployment salt formula
 pwd
 mkdir -p %{buildroot}/srv/salt/
 cp -R %{fname} %{buildroot}/srv/salt/%{fname}
+cp -R %{ftemplates} %{buildroot}/srv/salt/%{fname}/%{ftemplates}
+
+# SUMA Specific
+mkdir -p %{buildroot}/usr/share/susemanager/formulas/states/%{fname}
+mkdir -p %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
+cp -R %{fname} %{buildroot}/usr/share/susemanager/formulas/states/%{fname}
+cp -R %{ftemplates} %{buildroot}/usr/share/susemanager/formulas/states/%{fname}/%{ftemplates}
+cp -R form.yml %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
+if [ -f metadata.yml ]
+then
+  cp -R metadata.yml %{buildroot}/usr/share/susemanager/formulas/metadata/%{fname}
+fi
+
 
 %files
 %defattr(-,root,root,-)
 %license LICENSE
 %doc README.md
 /srv/salt/%{fname}
+/srv/salt/%{fname}/%{ftemplates}
 
 %dir %attr(0755, root, salt) /srv/salt
 
-%changelog CHANGELOG.md
+%files suma
+%defattr(-,root,root,-)
+%license LICENSE
+%doc README.md
+/usr/share/susemanager/formulas/states/%{fname}
+/usr/share/susemanager/formulas/states/%{fname}/%{ftemplates}
+/usr/share/susemanager/formulas/metadata/%{fname}
+
+%dir %attr(0755, root, salt) /usr/share/susemanager/
+%dir %attr(0755, root, salt) /usr/share/susemanager/formulas/
+%dir %attr(0755, root, salt) /usr/share/susemanager/formulas/states/
+%dir %attr(0755, root, salt) /usr/share/susemanager/formulas/metadata/
+
+%changelog

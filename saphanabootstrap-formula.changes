@@ -1,0 +1,9 @@
+-------------------------------------------------------------------
+Wed Feb 20 08:18:35 UTC 2019 - xarbulu@suse.com
+
+- Add templates folder with RA configuration templates 
+
+-------------------------------------------------------------------
+Thu Dec 20 08:33:10 UTC 2018 - xarbulu@suse.com
+
+- First version of the SAP HANA deployment formula 
