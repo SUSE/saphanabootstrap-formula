@@ -15,13 +15,10 @@ patterns-sap-hana:
 install_required_packages:
   pkg.installed:
     - pkgs:
-      - numactl
+      - libnuma1
       - libltdl7
 
 {% endif %}
 
 python-shaptools:
-  pkg.installed:
-    - fromrepo: saphana
-    - require:
-      - add-saphana-repo
+  pkg.installed
