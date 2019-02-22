@@ -9,7 +9,7 @@ system replication.
 
 # How to use
 
-## Prerequisities
+## Manual installation
 
 In order to use this formula some steps must be executed previously:
 
@@ -29,6 +29,25 @@ git clone https://github.com/SUSE/salt-saphana.git
 sudo cp salt-saphana/salt/modules/* /srv/salt/_modules
 sudo cp salt-saphana/salt/states/* /srv/salt/_states
 ```
+
+## Install (Suse distros)
+
+The easiest way to install the formula in SUSE distributions is using a rpm package.
+For that follow the next sequence to install all the dependencies (opensuse leap 15
+is used in the example):
+
+```bash
+sudo zypper addrepo zypper addrepo https://download.opensuse.org/repositories/network:ha-clustering:Factory/openSUSE_Leap_15.0/network:ha-clustering:Factory.repo
+sudo zypper ref
+sudo zypper in saphanabootstrap-formula
+```
+
+To use the formula in Suse Manager:
+```bash
+sudo zypper in saphanabootstrap-formula-suma
+```
+
+Find the package in: [saphanabootstrap-formula](https://software.opensuse.org//download.html?project=network%3Aha-clustering%3AFactory&package=saphanabootstrap-formula)
 
 ## Usage
 In order to use this formula, the pillar file usage is almost mandatory (there

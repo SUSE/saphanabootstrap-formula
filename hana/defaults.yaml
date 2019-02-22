@@ -1,4 +1,5 @@
 hana:
+  install_packages: true
   nodes:
     - host: 'hana01'
       sid: 'prd'
