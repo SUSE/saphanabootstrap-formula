@@ -18,7 +18,8 @@ jobs:
         - docker pull xarbulu/continuous_delivery:latest
 
       script:
-        - docker run -t -v "$(pwd):/package" \
+        - |
+          docker run -t -v "$(pwd):/package" \
           -e OBS_USER=$OBS_USER \
           -e OBS_PASS=$OBS_PASS \
           -e FOLDER=$FOLDER \
