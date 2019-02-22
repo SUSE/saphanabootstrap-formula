@@ -12,17 +12,19 @@ hana:
         $type: text
         $optional: false
       sid:
-        $name: HANA system identifier
+        $name: HANA system identifier (SID)
         $type: text
         $optional: false
+        $help: System ID of the HANA installation
       instance:
         $name: HANA instance number
         $type: text
         $optional: false
       password:
-        $name: Sap user password
+        $name: SAP user password
         $type: password
         $optional: false
+        $help: This is the OS <sid>adm user password. Will be used to check if there is an already installed HANA.
       install_checkbox:
         $name: Install HANA
         $type: boolean
@@ -36,6 +38,7 @@ hana:
           $name: Downloaded HANA software path
           $type: text
           $optional: false
+          $help: This is a local or already monted shared location (NFS, SMB, etc). The SAP HANA binaries must be already uncompressed
         root_user:
           $name: Machine root user
           $type: text
@@ -47,21 +50,26 @@ hana:
         use_config_file:
           $name: Use configuration file
           $type: boolean
-          $default: true
+          $default: false
+          $help: Mark this option if you want to use a custom config file for the HANA installation options
         config_file:
           $name: Configuration file
           $visibleIf: .use_config_file == true
           $type: text
+          $help: Path to the config file location. The template can be generated with the hdblcm --dump_configfile_template option
         sapadm_password:
-          $name: Sap admin password
+          $name: SAP admin password (<sid>adm)
           $visibleIf: .use_config_file == false
           $type: password
+          $help: The password of the SAP administrator user
         system_user_password:
-          $name: Sap user password
+          $name: SAP SYSTEM user password
           $visibleIf: .use_config_file == false
           $type: password
+          $help: The password of the database SYSTEM (superuser) user
         extra_parameters:
           $name: Installation extra options
+          $help: Optional configuration parameters (exact name as in the config file)
           $optional: true
           $type: edit-group
           $itemName: ""
@@ -82,40 +90,44 @@ hana:
         $optional: true
         $type: group
         name:
-          $name: Primary node
+          $name: Primary Site Name
           $type: text
           $optional: false
         create_backup:
           $name: Create new database backup
           $type: boolean
           $default: false
+          $help: Mark if you want the execute the database backup. Mandatory before enabling the System Replication
         backup:
           $name: Backup
           $optional: true
           $visibleIf: .create_backup == true
           $type: group
           user:
-            $name: User key
+            $name: Key Name (hdbuserstore)
             $type: text
             $optional: false
           password:
-            $name: Sap user password
+            $name: SAP user password
             $type: password
             $optional: false
           database:
             $name: Database name to backup
             $type: text
             $optional: false
+            $placeholder: SYSTEMDB
           file:
             $name: Backup file name
             $type: text
             $optional: false
+            $help: File name for the backup that will be created
         create_userkey:
-          $name: Create new User key
+          $name: Create new key (hdbuserstore)
           $type: boolean
           $default: false
+          $help: Mark this option to create a new key into the hdbuserstore
         userkey:
-          $name: User key
+          $name: User key (hdbuserstore)
           $optional: true
           $visibleIf: .create_userkey == true
           $type: group
@@ -127,12 +139,13 @@ hana:
             $name: Environment
             $type: text
             $optional: false
+            $help: Use the format <host>:<port number>
           user:
             $type: text
             $default: SYSTEM
             $optional: false
           password:
-            $name: Sap user password
+            $name: User password
             $type: password
           database:
             $name: Database name
@@ -145,17 +158,19 @@ hana:
         $name: Secondary node
         $type: group
         name:
-          $name: Secondary node name
+          $name: Secondary site name
           $type: text
           $optional: false
         remote_host:
           $name: Primary node hostname
           $type: text
           $optional: false
+          $help: Hostname of the primary HANA instance to connect the system replication
         remote_instance:
           $name: Primary node instance number
           $type: text
           $optional: false
+          $help: Instance number of the primary HANA instance to connect the system replication
         replication_mode:
           $name: Replication mode
           $type: select
