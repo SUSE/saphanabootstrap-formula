@@ -29,11 +29,23 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 Requires:       salt-saphana
+Requires:       habootstrap-formula
 
 %define fname hana
+%define fdir  %{_datadir}/susemanager/formulas
+%define ftemplates templates
 
 %description
 SAP HANA deployment salt formula
+
+# package to deploy on SUMA specific path.
+%package suma
+Summary:        SAP HANA platform deployment formula (SUMA specific)
+Requires:       salt-saphana
+Requires:       habootstrap-formula-suma
+
+%description suma
+SAP HANA deployment salt formula (SUMA specific)
 
 %prep
 %setup -q
@@ -44,13 +56,44 @@ SAP HANA deployment salt formula
 pwd
 mkdir -p %{buildroot}/srv/salt/
 cp -R %{fname} %{buildroot}/srv/salt/%{fname}
+cp -R %{ftemplates} %{buildroot}/srv/salt/%{fname}/%{ftemplates}
+
+# SUMA Specific
+mkdir -p %{buildroot}%{fdir}/states/%{fname}
+mkdir -p %{buildroot}%{fdir}/metadata/%{fname}
+cp -R %{fname} %{buildroot}%{fdir}/states/%{fname}
+cp -R %{ftemplates} %{buildroot}%{fdir}/states/%{fname}/%{ftemplates}
+cp -R form.yml %{buildroot}%{fdir}/metadata/%{fname}
+if [ -f metadata.yml ]
+then
+  cp -R metadata.yml %{buildroot}%{fdir}/metadata/%{fname}
+fi
+
 
 %files
 %defattr(-,root,root,-)
 %license LICENSE
 %doc README.md
 /srv/salt/%{fname}
+/srv/salt/%{fname}/%{ftemplates}
 
 %dir %attr(0755, root, salt) /srv/salt
+
+%files suma
+%defattr(-,root,root,-)
+%license LICENSE
+%doc README.md
+%dir %{_datadir}/susemanager
+%dir %{fdir}
+%dir %{fdir}/states
+%dir %{fdir}/metadata
+%{fdir}/states/%{fname}
+%{fdir}/states/%{fname}/%{ftemplates}
+%{fdir}/metadata/%{fname}
+
+%dir %attr(0755, root, salt) %{_datadir}/susemanager
+%dir %attr(0755, root, salt) %{fdir}
+%dir %attr(0755, root, salt) %{fdir}/states
+%dir %attr(0755, root, salt) %{fdir}/metadata
 
 %changelog

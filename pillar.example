@@ -1,4 +1,8 @@
 hana:
+  # optional: Install required packages to install SAP HANA (true by default)
+  # If set to false, this packages must be installed before the formula 
+  # execution manually
+  # install_packages: true
   nodes:
     - host: 'hana01'
       sid: 'prd'
