@@ -125,7 +125,7 @@ hana:
           $name: Create new key (hdbuserstore)
           $type: boolean
           $default: false
-          $help: Mark this option to create a new key into the hdbuserstore.
+          $help: Mark this option to create a new key into the hdbuserstore
         userkey:
           $name: User key (hdbuserstore)
           $optional: true
@@ -170,7 +170,7 @@ hana:
           $name: Primary node instance number
           $type: text
           $optional: false
-          $help: Intance Number of the primary HANA instance to connect the system replication
+          $help: Instance number of the primary HANA instance to connect the system replication
         replication_mode:
           $name: Replication mode
           $type: select
