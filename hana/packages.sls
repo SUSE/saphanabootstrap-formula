@@ -20,5 +20,11 @@ install_required_packages:
 
 {% endif %}
 
+{% if (grains['os_family'] == 'Suse') and (grains['osmajorrelease'] == '12') %}
 python-shaptools:
   pkg.installed
+
+{% else %}
+python3-shaptools:
+  pkg.installed
+{% endif %}  
