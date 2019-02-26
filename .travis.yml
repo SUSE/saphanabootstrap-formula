@@ -17,11 +17,13 @@ jobs:
         - docker pull xarbulu/continuous_delivery:latest
 
       script:
-        - docker run -t -v "$(pwd):/package" \
+        - |
+          docker run -t -v "$(pwd):/package" \
           -e OBS_USER=$OBS_USER \
           -e OBS_PASS=$OBS_PASS \
           -e FOLDER=$FOLDER \
           -e OBS_PROJECT=$OBS_PROJECT \
           -e PACKAGE_NAME=$PACKAGE_NAME \
+          -e TARGET_PROJECT=$TARGET_PROJECT \
           xarbulu/continuous_delivery \
           /bin/bash -c "cd /package;/upload.sh"
