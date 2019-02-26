@@ -55,14 +55,14 @@ SAP HANA deployment salt formula (SUMA specific)
 %install
 pwd
 mkdir -p %{buildroot}/srv/salt/
-cp -R %{fname} %{buildroot}/srv/salt/%{fname}
-cp -R %{ftemplates} %{buildroot}/srv/salt/%{fname}/%{ftemplates}
+cp -R %{fname} %{buildroot}/srv/salt/
+cp -R %{ftemplates} %{buildroot}/srv/salt/%{fname}/
 
 # SUMA Specific
 mkdir -p %{buildroot}%{fdir}/states/%{fname}
 mkdir -p %{buildroot}%{fdir}/metadata/%{fname}
-cp -R %{fname} %{buildroot}%{fdir}/states/%{fname}
-cp -R %{ftemplates} %{buildroot}%{fdir}/states/%{fname}/%{ftemplates}
+cp -R %{fname} %{buildroot}%{fdir}/states
+cp -R %{ftemplates} %{buildroot}%{fdir}/states/%{fname}
 cp -R form.yml %{buildroot}%{fdir}/metadata/%{fname}
 if [ -f metadata.yml ]
 then
