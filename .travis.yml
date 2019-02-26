@@ -14,7 +14,7 @@ jobs:
           - PACKAGE_NAME=saphanabootstrap-formula
 
       before_install:
-        - docker pull xarbulu/continuous_delivery:latest
+        - docker pull shap/continuous_deliver:latest
 
       script:
         - |
@@ -25,5 +25,5 @@ jobs:
           -e OBS_PROJECT=$OBS_PROJECT \
           -e PACKAGE_NAME=$PACKAGE_NAME \
           -e TARGET_PROJECT=$TARGET_PROJECT \
-          xarbulu/continuous_delivery \
+          shap/continuous_deliver \
           /bin/bash -c "cd /package;/upload.sh"
