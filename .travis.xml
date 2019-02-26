@@ -11,7 +11,7 @@ jobs:
       env:
         global:
           - FOLDER=/package
-          - OBS_PROJECT=home:xarbulu:branches:network:ha-clustering:Factory
+          - OBS_PROJECT=
           - PACKAGE_NAME=saphanabootstrap-formula
 
       before_install:
