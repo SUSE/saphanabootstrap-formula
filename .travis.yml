@@ -9,6 +9,7 @@ stages:
 jobs:
   include:
     - stage: delivery
+      if: type != pull_request
       env:
         global:
           - FOLDER=/package
@@ -29,7 +30,7 @@ jobs:
           /bin/bash -c "cd /package;/scripts/upload.sh"
 
     - stage: submit
-      if: branch = master
+      if: type != pull_request AND branch = master
       env:
         global:
           - PACKAGE_NAME=saphanabootstrap-formula
