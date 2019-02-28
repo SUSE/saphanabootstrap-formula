@@ -6,7 +6,7 @@
 
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
-    - sid: {{ node.sid }}
+    - name: {{ node.sid }}
     - inst: {{ node.instance }}
     - password: {{ node.password }}
     - software_path: {{ node.install.software_path }}
