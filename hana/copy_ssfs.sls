@@ -26,9 +26,9 @@ install-sshpass:
 copy-ssfs-data:
   cmd.run:
     - name: sshpass -p '{{ primary_pass }}' scp  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-            {{ node.sid }}adm@{{ node.secondary.remote_host }}:/usr/sap/{{ node.sid.upper() }}/SYS/global/security/rsecssfs/data/SSFS_{{ node.sid.upper() }}.DAT
+            {{ node.sid.lower() }}adm@{{ node.secondary.remote_host }}:/usr/sap/{{ node.sid.upper() }}/SYS/global/security/rsecssfs/data/SSFS_{{ node.sid.upper() }}.DAT
             /usr/sap/{{ node.sid.upper() }}/SYS/global/security/rsecssfs/data/SSFS_{{ node.sid.upper() }}.DAT
-    - runas: {{ node.sid }}adm
+    - runas: {{ node.sid.lower() }}adm
     - password: {{ node.password }}
     - require:
       - install-sshpass
@@ -36,9 +36,9 @@ copy-ssfs-data:
 copy-ssfs-key:
   cmd.run:
     - name: sshpass -p '{{ primary_pass }}' scp  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-            {{ node.sid }}adm@{{ node.secondary.remote_host }}:/usr/sap/{{ node.sid.upper() }}/SYS/global/security/rsecssfs/key/SSFS_{{ node.sid.upper() }}.KEY
+            {{ node.sid.lower() }}adm@{{ node.secondary.remote_host }}:/usr/sap/{{ node.sid.upper() }}/SYS/global/security/rsecssfs/key/SSFS_{{ node.sid.upper() }}.KEY
             /usr/sap/{{ node.sid.upper() }}/SYS/global/security/rsecssfs/key/SSFS_{{ node.sid.upper() }}.KEY
-    - runas: {{ node.sid }}adm
+    - runas: {{ node.sid.lower() }}adm
     - password: {{ node.password }}
     - require:
       - install-sshpass
