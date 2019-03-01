@@ -16,20 +16,20 @@ hana:
         sapadm_password: 'Qwerty1234'
       primary:
         name: NUREMBERG
+        userkey:
+          key_name: 'backupkey'
+          environment: 'hana01:30013'
+          user_name: 'SYSTEM'
+          user_password: 'Qwerty1234'
+          database: 'SYSTEMDB'
         backup:
-          # Set key or key_user/key_password combination
-          key: 'backupkey'
+          # Set key_name or user_name/user_password combination
+          key_name: 'backupkey'
           # Or
-          key_user: 'SYSTEM'
-          key_password: 'Qwerty1234'
+          user_name: 'SYSTEM'
+          user_password: 'Qwerty1234'
           database: 'SYSTEMDB'
           file: 'backup'
-        userkey:
-          key: 'backupkey'
-          environment: 'hana01:30013'
-          key_user: 'SYSTEM'
-          key_password: 'Qwerty1234'
-          database: 'SYSTEMDB'
 
     - host: 'hana02'
       sid: 'prd'
