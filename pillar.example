@@ -17,15 +17,18 @@ hana:
       primary:
         name: NUREMBERG
         backup:
-          user: 'backupkey'
-          password: 'Qwerty1234'
+          # Set key or key_user/key_password combination
+          key: 'backupkey'
+          # Or
+          key_user: 'SYSTEM'
+          key_password: 'Qwerty1234'
           database: 'SYSTEMDB'
           file: 'backup'
         userkey:
           key: 'backupkey'
           environment: 'hana01:30013'
-          user: 'SYSTEM'
-          password: 'Qwerty1234'
+          key_user: 'SYSTEM'
+          key_password: 'Qwerty1234'
           database: 'SYSTEMDB'
 
     - host: 'hana02'
