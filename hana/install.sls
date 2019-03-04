@@ -6,7 +6,7 @@
 
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
-    - sid: {{ node.sid }}
+    - name: {{ node.sid }}
     - inst: {{ node.instance }}
     - password: {{ node.password }}
     - software_path: {{ node.install.software_path }}
@@ -18,8 +18,9 @@ hana_install_{{ node.host+node.sid }}:
     - system_user_password: {{ node.install.system_user_password }}
     - sapadm_password: {{ node.install.sapadm_password }}
     {% endif %}
-    {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 %}
     - extra_parameters:
+      - hostname: {{ node.host }}
+    {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 %}
       {% for key,value in node.install.extra_parameters.items() %}
       - {{ key }}: {{ value }}
       {% endfor %}
