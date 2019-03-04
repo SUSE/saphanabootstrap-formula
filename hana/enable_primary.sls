@@ -9,20 +9,24 @@
       - sid: {{  node.sid }}
       - inst: {{  node.instance }}
       - password: {{  node.password }}
-      {% if node.primary.backup is defined %}
-      - backup:
-        - user: {{  node.primary.backup.user }}
-        - password: {{  node.primary.backup.password }}
-        - database: {{  node.primary.backup.database }}
-        - file: {{  node.primary.backup.file }}
-      {% endif %}
       {% if node.primary.userkey is defined %}
       - userkey:
-        - key: {{  node.primary.userkey.key }}
+        - key_name: {{  node.primary.userkey.key_name }}
         - environment: {{  node.primary.userkey.environment }}
-        - user: {{  node.primary.userkey.user }}
-        - password: {{  node.primary.userkey.password }}
+        - user_name: {{  node.primary.userkey.user_name }}
+        - user_password: {{  node.primary.userkey.user_password }}
         - database: {{  node.primary.userkey.database }}
+      {% endif %}
+      {% if node.primary.backup is defined %}
+      - backup:
+        {% if node.primary.backup.key_name is defined %}
+        - key_name: {{  node.primary.backup.key_name }}
+        {% else %}
+        - user_name: {{  node.primary.backup.user_name }}
+        - user_password: {{  node.primary.backup.user_password }}
+        {% endif %}
+        - database: {{  node.primary.backup.database }}
+        - file: {{  node.primary.backup.file }}
       {% endif %}
 
 {% endif %}
