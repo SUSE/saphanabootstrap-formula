@@ -20,11 +20,16 @@ install_required_packages:
 
 {% endif %}
 
+# Install shaptools depending on the os and python version
 {% if (grains['os_family'] == 'Suse') and (grains['osmajorrelease'] == '12') %}
-python-shaptools:
-  pkg.installed
+{% set python2_prefix = 'python' %}
+{% else %}
+{% set python2_prefix = 'python2' %}
+{% endif %}
 
+{% if grains['pythonversion'][0] == 2 %}
+{{ python2_prefix }}-shaptools:
 {% else %}
 python3-shaptools:
+{% endif %}
   pkg.installed
-{% endif %}  
