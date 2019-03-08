@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Fri Mar  8 13:47:41 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
+
+- Improve shaptools installation python version management 
+
+-------------------------------------------------------------------
+Mon Mar  4 15:30:24 UTC 2019 - xarbulu@suse.com
+
+- Improved the use of keystore access. When the key_name is informed,
+  the user_name/user_password is not needed.
+    
+-------------------------------------------------------------------
 Wed Feb 25 10:15:35 UTC 2019 - dakechi@suse.com
 
 - Forces lower case SID when composing the OS username
