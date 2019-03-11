@@ -1,6 +1,6 @@
 {% set data = pillar.cluster.configure.template.parameters %}
 {% set sid = data.sid.upper() %}
-{% set instance = data.instance | replace('"', '') %}
+{% set instance = '{:0>2}'.format(data.instance) %}
 
 #
 # defaults
