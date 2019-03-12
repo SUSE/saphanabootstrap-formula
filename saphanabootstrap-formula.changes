@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 12 07:52:37 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
+
+- Fix OS release comparison to use integer type in order to choose
+  installable python version 
+
+-------------------------------------------------------------------
 Fri Mar  8 13:47:41 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Improve shaptools installation python version management 
