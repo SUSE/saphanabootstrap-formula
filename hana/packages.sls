@@ -21,7 +21,7 @@ install_required_packages:
 {% endif %}
 
 # Install shaptools depending on the os and python version
-{% if (grains['os_family'] == 'Suse') and (grains['osmajorrelease'] == '12') %}
+{% if (grains['os_family'] == 'Suse') and (grains['osmajorrelease'] == 12) %}
 {% set python2_prefix = 'python' %}
 {% else %}
 {% set python2_prefix = 'python2' %}
