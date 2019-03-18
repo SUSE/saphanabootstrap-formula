@@ -3,6 +3,7 @@ Mon Mar 18 08:50:43 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Update primary available checking to execute this action before
   trying to copy the SSFS files from primary node 
+- Add configurable timeout to wait to the primary node
 
 -------------------------------------------------------------------
 Tue Mar 12 07:52:37 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>

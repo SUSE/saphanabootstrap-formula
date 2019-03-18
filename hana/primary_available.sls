@@ -9,7 +9,7 @@ netcat-openbsd:
 primary-available:
   cmd.run:
     - name: until nc -z {{  node.secondary.remote_host }} 40002; do sleep 1; done
-    - timeout: 100
+    - timeout: {{  node.secondary.primary_timeout|default(100) }}
     - require:
       - netcat-openbsd
 
