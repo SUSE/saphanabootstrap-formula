@@ -12,3 +12,6 @@ primary-available:
     - timeout: 100
     - require:
       - netcat-openbsd
+
+{% endif %}
+{% endfor %}
