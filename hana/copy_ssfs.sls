@@ -31,6 +31,7 @@ copy-ssfs-data:
     - runas: {{ node.sid.lower() }}adm
     - password: {{ node.password }}
     - require:
+      - primary-available
       - install-sshpass
 
 copy-ssfs-key:
@@ -41,6 +42,7 @@ copy-ssfs-key:
     - runas: {{ node.sid.lower() }}adm
     - password: {{ node.password }}
     - require:
+      - primary-available
       - install-sshpass
 
 {% endif %}
