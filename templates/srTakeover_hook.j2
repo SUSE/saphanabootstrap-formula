@@ -1,0 +1,96 @@
+{% set data = pillar.hana.nodes[0] %}
+{% set dbsid = data.sid.upper() %}
+{% set dbinst = '{:0>2}'.format(data.instance) %}
+{% set dbuser = data.primary.userkey.user_name %}
+{% set dbpwd = data.password %}
+{% set dbversion = salt[hana.get_version](sid=dbsid, inst=dbinst, password=dbpwd) %}
+{% if dbversion < '2.0' %}
+    {% set dbport = '30'+ dbinst +'15' %}
+{% else %}
+    {% set dbport = '30'+ dbinst +'13' %}
+{% endif -%}
+
+#
+
+"""
+Auto-generated HA/DR hook script
+
+"""
+
+stmnt1 = "ALTER SYSTEM ALTER CONFIGURATION ('global.ini','SYSTEM') UNSET ('memorymanager','global_allocation_limit') WITH RECONFIGURE"
+stmnt2 = "ALTER SYSTEM ALTER CONFIGURATION ('global.ini','SYSTEM') UNSET ('system_replication','preload_column_tables') WITH RECONFIGURE"
+
+import os, time, dbapi
+
+from hdb_ha_dr.client import HADRBase, Helper
+
+class srTakeover(HADRBase):
+    def __init__(self, *args, **kwargs):
+        # delegate construction to base class
+        super(srTakeover, self).__init__(*args, **kwargs)
+
+    def about(self):
+        return {"provider_company" : "SUSE",
+                "provider_name" : "srTakeover", # provider name = class name
+                "provider_description" : "Replication takeover script to set parameters to default.",
+                "provider_version" : "1.0"}
+
+    def startup(self, hostname, storage_partition, system_replication_mode, **kwargs):
+        self.tracer.debug("enter startup hook; %s" % locals())
+        self.tracer.debug(self.config.toString())
+        self.tracer.info("leave startup hook")
+        return 0
+
+    def shutdown(self, hostname, storage_partition, system_replication_mode, **kwargs):
+        self.tracer.debug("enter shutdown hook; %s" % locals())
+        self.tracer.debug(self.config.toString())
+        self.tracer.info("leave shutdown hook")
+        return 0
+
+    def failover(self, hostname, storage_partition, system_replication_mode, **kwargs):
+        self.tracer.debug("enter failover hook; %s" % locals())
+        self.tracer.debug(self.config.toString())
+        self.tracer.info("leave failover hook")
+        return 0
+
+    def stonith(self, failingHost, **kwargs):
+        self.tracer.debug("enter stonith hook; %s" % locals())
+        self.tracer.debug(self.config.toString())
+        # e.g. stonith of params["failed_host"]
+        # e-g- set vIP active
+        self.tracer.info("leave stonith hook")
+        return 0
+
+    def preTakeover(self, isForce, **kwargs):
+        """Pre takeover hook."""
+        self.tracer.info("%s.preTakeover method called with isForce=%s" %
+        (self.__class__.__name__, isForce))
+        if not isForce:
+            # run pre takeover code
+            # run pre-check, return != 0 in case of error => will abort takeover
+            return 0
+        else:
+            # possible force-takeover only code
+            # usually nothing to do here
+            return 0
+
+    def postTakeover(self, rc, **kwargs):
+        """Post takeover hook."""
+        self.tracer.info("%s.postTakeover method called with rc=%s" % (self.__class__.__name__, rc))
+        if rc == 0:
+            # normal takeover succeeded
+            conn = dbapi.connect('localhost',dbport,dbuser,dbpwd)
+            cursor = conn.cursor()
+            cursor.execute(stmnt1)
+            cursor.execute(stmnt2)
+            return 0
+        elif rc == 1:
+            # waiting for force takeover
+            conn = dbapi.connect('localhost',dbport,dbuser,dbpwd)
+            cursor = conn.cursor()
+            cursor.execute(stmnt1)
+            cursor.execute(stmnt2)
+            return 0
+        elif rc == 2:
+            # error, something went wrong
+            return 0
