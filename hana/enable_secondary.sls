@@ -1,20 +1,11 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
-include:
-  - .copy_ssfs
-
 {% for node in hana.nodes %}
 {% if node.host == host and node.secondary is defined %}
-netcat-openbsd:
-  pkg.installed
-
-primary_available:
-  cmd.run:
-    - name: until nc -z {{  node.secondary.remote_host }} 40002; do sleep 1; done
-    - timeout: 100
-    - require:
-      - netcat-openbsd
+include:
+  - .primary_available
+  - .copy_ssfs
 
 {{  node.secondary.name }}:
   hana.sr_secondary_registered:
@@ -26,7 +17,7 @@ primary_available:
     - replication_mode: {{  node.secondary.replication_mode }}
     - operation_mode: {{  node.secondary.operation_mode }}
     - require:
-      - primary_available
+      - primary-available
 
 {% endif %}
 {% endfor %}

@@ -47,6 +47,9 @@ hana:
         remote_instance: '00'
         replication_mode: 'sync'
         operation_mode: 'logreplay'
+        # Optional timeout value in seconds to wait until the primary node
+        # 100 seconds by default
+        primary_timeout: 100
 
     - host: hana02
       sid: 'qas'
