@@ -1,13 +1,16 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.primary is defined %}
+{% if node.host == host and node.secondary is defined and node.scenario_type.lower() == 'cost-optimized' %}
 
-{% set data = node %}
-{% set dbsid = data.sid.upper() %}
-{% set dbinst = '{:0>2}'.format(data.instance) %}
-{% set dbuser = data.primary.userkey.user_name %}
-{% set dbpwd = data.password %}
+{% set dbsid = node.sid.upper() %}
+{% set dbinst = '{:0>2}'.format(node.instance) %}
+
+{% for prim_node in hana.nodes %}
+{% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
+
+{% set dbuser = prim_node.primary.userkey.user_name %}
+{% set dbpwd = prim_node.password %}
 {% set dbversion = salt[hana.get_version](sid=dbsid, inst=dbinst, password=dbpwd) %}
 {% if salt['pkg.version_cmp'](dbversion,'2.0') < 0 %}
     {% set dbport = ('30'+ dbinst +'15')|int %}
@@ -15,8 +18,12 @@
     {% set dbport = ('30'+ dbinst +'13')|int %}
 {% endif -%}
 
-#!/usr/bin/env python2
+dbuser="{{ dbuser }}"
+dbpwd="{{ dbpwd }}"
+dbinst="{{ dbinst }}"
+dbport="{{ dbport }}"
 
+#!/usr/bin/env python2
 """
 Auto-generated HA/DR hook script
 
@@ -84,14 +91,14 @@ class srTakeover(HADRBase):
         self.tracer.info("%s.postTakeover method called with rc=%s" % (self.__class__.__name__, rc))
         if rc == 0:
             # normal takeover succeeded
-            conn = dbapi.connect('localhost',{{ dbport }},{{ dbuser }},{{ dbpwd }})
+            conn = dbapi.connect('localhost',dbport,dbuser,dbpwd)
             cursor = conn.cursor()
             cursor.execute(stmnt1)
             cursor.execute(stmnt2)
             return 0
         elif rc == 1:
             # waiting for force takeover
-            conn = dbapi.connect('localhost',{{ dbport }},{{ dbuser }},{{ dbpwd }})
+            conn = dbapi.connect('localhost',dbport,dbuser,dbpwd)
             cursor = conn.cursor()
             cursor.execute(stmnt1)
             cursor.execute(stmnt2)
@@ -99,5 +106,7 @@ class srTakeover(HADRBase):
         elif rc == 2:
             # error, something went wrong
             return 0
+{% endif %}
+{% endfor %}
 {% endif %}
 {% endfor %}
