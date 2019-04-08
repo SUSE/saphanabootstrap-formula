@@ -17,19 +17,11 @@ op_defaults \
 # production HANA
 #
 
-{% if data.platform == "gcp" %}
 primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
     params \
-    ip="{{ data.virtual_ip }}" cidr_netmask="32" nic="eth0" \
+    ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if data.platform == "gcp" else data.virtual_ip_mask }}" {{ "nic=" ~ pillar.cluster.interface|default('eth0') }} \
     op start timeout="20" op stop timeout="20" \
     op monitor interval="10" timeout="20"
-{% else %}
-primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
-    params \
-    ip="{{ data.virtual_ip }}" cidr_netmask="{{ data.virtual_ip_mask }}" \
-    op start timeout="20" op stop timeout="20" \
-    op monitor interval="10" timeout="20"
-{% endif %}
 
 primitive rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHanaTopology \
     params \
