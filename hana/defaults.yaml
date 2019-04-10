@@ -41,3 +41,8 @@ hana:
         remote_instance: '00'
         replication_mode: 'sync'
         operation_mode: 'logreplay'
+        scenario_type: 'cost-optimized'
+        cost_optimized_parameters:
+          use_optimal_memory_limits: 'False'
+          global_allocation_limit: '25600'
+          preload_column_tables: False
