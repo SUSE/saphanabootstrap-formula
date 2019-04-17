@@ -45,6 +45,7 @@ install_srTakeover_hook:
 install_hana_python_packages:
     archive.extracted:
       - name: /hana/shared/srHook
+      - enforce_toplevel: False
       - source: {{ grains['hana_inst_folder']+'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
       - require:
         - setup_srHook_directory
