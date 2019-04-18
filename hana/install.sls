@@ -2,9 +2,10 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.scenario_type.lower() == 'cost-optimized' %}
-include:
- - .enable_cost_optimized
+{% if node.host == host and node.scenario_type is defined and node.scenario_type.lower() == 'cost-optimized' %}
+include_cost_optimized:
+  include:
+  - .enable_cost_optimized
 {% endif %}
 {% if node.host == host and node.install is defined %}
 
