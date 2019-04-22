@@ -30,6 +30,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 Requires:       salt-saphana
 Requires:       habootstrap-formula
+Requires:       salt-minion >= 2018.3.0
 
 %define fname hana
 %define fdir  %{_datadir}/susemanager/formulas

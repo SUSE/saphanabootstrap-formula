@@ -7,6 +7,12 @@ The main purpose of the formula is to deploy easily the SAP HANA environment and
 its nodes, giving the option to set them as primary or secondary nodes using
 system replication.
 
+# Requirements
+
+The saphanabootstrap-formula package requires **salt-call 2018.3.0 (Oxygen)** or
+newer versions. This package is included in the **.spec** file, so it must
+be available in currently added package repositories.
+
 # How to use
 
 ## Manual installation
