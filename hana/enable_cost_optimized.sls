@@ -21,9 +21,6 @@ reduce_memory_resources_{{  node.host+node.sid }}:
         - database: {{  node.cost_optimized_parameters.userkey.database }}
       {% endif %}
       {% endif %}
-
-{% endif %}
-{% endfor %}
       - require:
         - hana_install_{{ node.host+node.sid }}
 
