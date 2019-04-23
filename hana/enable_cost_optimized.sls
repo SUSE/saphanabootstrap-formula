@@ -21,10 +21,10 @@ reduce_memory_resources_{{  node.host+node.sid }}:
         - user_name: {{  node.primary.userkey.user_name }}
         - user_password: {{  node.primary.userkey.user_password }}
         - database: {{  node.primary.userkey.database }}
-      - require:
-        - hana_install_{{ node.host+node.sid }}
 {% endif %}
 {% endfor %}
+      - require:
+        - hana_install_{{ node.host+node.sid }}
 
 {% if node.host == host and node.secondary is defined %}
 
