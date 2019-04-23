@@ -9,18 +9,19 @@ reduce_memory_resources_{{  node.host+node.sid }}:
       {% if node.cost_optimized_parameters is defined %}
       - global_allocation_limit: {{ node.cost_optimized_parameters.global_allocation_limit }}
       - preload_column_tables: {{ node.cost_optimized_parameters.preload_column_tables }}
-      {% endif %}
       - sid: {{  node.sid }}
       - inst: {{  node.instance }}
       - password: {{  node.password }}
-{% for prim_node in hana.nodes %}
-{% if prim_node.primary.userkey is defined %}
+      {% if node.cost_optimized_parameters.userkey is defined %}
       - userkey:
-        - key_name: {{  node.primary.userkey.key_name }}
-        - environment: {{  node.primary.userkey.environment }}
-        - user_name: {{  node.primary.userkey.user_name }}
-        - user_password: {{  node.primary.userkey.user_password }}
-        - database: {{  node.primary.userkey.database }}
+        - key_name: {{  node.cost_optimized_parameters.userkey.key_name }}
+        - environment: {{  node.cost_optimized_parameters.userkey.environment }}
+        - user_name: {{  node.cost_optimized_parameters.userkey.user_name }}
+        - user_password: {{  node.cost_optimized_parameters.userkey.user_password }}
+        - database: {{  node.cost_optimized_parameters.userkey.database }}
+      {% endif %}
+      {% endif %}
+
 {% endif %}
 {% endfor %}
       - require:
