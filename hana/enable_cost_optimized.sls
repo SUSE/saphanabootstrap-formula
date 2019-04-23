@@ -26,6 +26,8 @@ reduce_memory_resources_{{  node.host+node.sid }}:
 {% endif %}
 {% endfor %}
 
+{% if node.host == host and node.secondary is defined %}
+
 setup_srHook_directory:
     file.directory:
       - name: /hana/shared/srHook
@@ -42,7 +44,7 @@ install_srTakeover_hook:
       - mode: 644
       - template: jinja
       - require:
-        - hana_install_{{ node.host+node.sid }}
+        - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
 
 install_hana_python_packages:
@@ -51,8 +53,9 @@ install_hana_python_packages:
       - enforce_toplevel: False
       - source: {{ grains['hana_inst_folder']~'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
       - require:
-        - hana_install_{{ node.host+node.sid }}
+        - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
 
+{% endif %}
 {% endif %}
 {% endfor %}
