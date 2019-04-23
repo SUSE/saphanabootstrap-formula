@@ -2,6 +2,7 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
+{% if node.host == host and node.scenario_type is defined and node.scenario_type.lower() == 'cost-optimized' %}
 
 reduce_memory_resources_{{  node.host+node.sid }}:
     hana.memory_resources_updated:
@@ -53,4 +54,5 @@ install_hana_python_packages:
         - hana_install_{{ node.host+node.sid }}
         - setup_srHook_directory
 
+{% endif %}
 {% endfor %}
