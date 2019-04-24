@@ -6,6 +6,7 @@
 
 reduce_memory_resources_{{  node.host+node.sid }}:
     hana.memory_resources_updated:
+      - name: {{  node.host }}
       {% if node.cost_optimized_parameters is defined %}
       - global_allocation_limit: {{ node.cost_optimized_parameters.global_allocation_limit }}
       - preload_column_tables: {{ node.cost_optimized_parameters.preload_column_tables }}
