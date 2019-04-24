@@ -8,4 +8,3 @@ include:
   - hana.install
   - hana.enable_primary
   - hana.enable_secondary
-  - hana.enable_cost_optimized
