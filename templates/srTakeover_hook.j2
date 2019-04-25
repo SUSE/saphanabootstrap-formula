@@ -12,7 +12,7 @@
 
 {% set dbuser = prim_node.primary.userkey.user_name %}
 {% set dbpwd = prim_node.password %}
-{% set dbversion = salt[hana.get_version](sid=dbsid, inst=dbinst, password=dbpwd) %}
+{% set dbversion = salt['hana.get_version'](sid=dbsid, inst=dbinst, password=dbpwd) %}
 {% if salt['pkg.version_cmp'](dbversion,'2.0') < 0 %}
     {% set dbport = ('30'+ dbinst +'15')|int %}
 {% else %}
