@@ -72,7 +72,12 @@ fi
 
 %files
 %defattr(-,root,root,-)
+# %license macro is not available on older releases
+%if 0%{?sle_version} <= 120300
+%doc LICENSE
+%else
 %license LICENSE
+%endif
 %doc README.md
 /srv/salt/%{fname}
 /srv/salt/%{fname}/%{ftemplates}
@@ -81,7 +86,12 @@ fi
 
 %files suma
 %defattr(-,root,root,-)
+# %license macro is not available on older releases
+%if 0%{?sle_version} <= 120300
+%doc LICENSE
+%else
 %license LICENSE
+%endif
 %doc README.md
 %dir %{_datadir}/susemanager
 %dir %{fdir}
