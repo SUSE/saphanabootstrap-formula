@@ -4,7 +4,7 @@
 {% for node in hana.nodes %}
 {% if node.host == host and node.secondary is defined and node.scenario_type.lower() == 'cost-optimized' %}
 
-{% set dbsid = node.sid.upper() %}
+{% set dbsid = node.sid.lower() %}
 {% set dbinst = '{:0>2}'.format(node.instance) %}
 
 {% for prim_node in hana.nodes %}
