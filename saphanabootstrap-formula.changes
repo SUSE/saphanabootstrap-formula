@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 25 12:06:43 UTC 2019 - Diego Vinicius Akechi <dakechi@suse.com>
+
+- Changed requires from salt-saphana to salt-shaptools.
+
+-------------------------------------------------------------------
 Mon Mar 18 08:50:43 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Update primary available checking to execute this action before

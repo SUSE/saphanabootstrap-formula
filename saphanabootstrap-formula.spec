@@ -28,7 +28,7 @@ Url:            https://github.com/SUSE/%{name}
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
-Requires:       salt-saphana
+Requires:       salt-shaptools
 Requires:       habootstrap-formula
 
 %define fname hana
@@ -41,7 +41,7 @@ SAP HANA deployment salt formula
 # package to deploy on SUMA specific path.
 %package suma
 Summary:        SAP HANA platform deployment formula (SUMA specific)
-Requires:       salt-saphana
+Requires:       salt-shaptools
 Requires:       habootstrap-formula-suma
 
 %description suma
