@@ -2,27 +2,22 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.secondary is defined and node.secondary.scenario_type.lower() == 'cost-optimized' %}
+{% if node.host == host and node.scenario_type is defined and node.scenario_type.lower() == 'cost-optimized' %}
 
-reduce_memory_resources_{{  node.secondary.name+node.sid }}:
+reduce_memory_resources_{{  node.host+node.sid }}:
     hana.memory_resources_updated:
-      - global_allocation_limit: {{ node.secondary.cost_optimized_parameters.global_allocation_limit }}
-      - preload_column_tables: {{ node.secondary.cost_optimized_parameters.preload_column_tables }}
+      - name: {{  node.host }}
+      {% if node.cost_optimized_parameters is defined %}
+      - global_allocation_limit: {{ node.cost_optimized_parameters.global_allocation_limit }}
+      - preload_column_tables: {{ node.cost_optimized_parameters.preload_column_tables }}
+      {% endif %}
       - sid: {{  node.sid }}
       - inst: {{  node.instance }}
       - password: {{  node.password }}
-{% for prim_node in hana.nodes %}
-{% if node.secondary.remote_host == prim_node.host and prim_node.primary.userkey is defined %}
-      - userkey:
-        - key_name: {{  node.primary.userkey.key_name }}
-        - environment: {{  node.primary.userkey.environment }}
-        - user_name: {{  node.primary.userkey.user_name }}
-        - user_password: {{  node.primary.userkey.user_password }}
-        - database: {{  node.primary.userkey.database }}
       - require:
-        - primary-available
-{% endif %}
-{% endfor %}
+        - hana_install_{{ node.host+node.sid }}
+
+{% if node.host == host and node.secondary is defined %}
 
 setup_srHook_directory:
     file.directory:
@@ -40,14 +35,18 @@ install_srTakeover_hook:
       - mode: 644
       - template: jinja
       - require:
+        - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
 
 install_hana_python_packages:
     archive.extracted:
       - name: /hana/shared/srHook
-      - source: {{ grains['hana_inst_folder']+'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
+      - enforce_toplevel: False
+      - source: {{ grains['hana_inst_folder']~'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
       - require:
+        - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
 
+{% endif %}
 {% endif %}
 {% endfor %}

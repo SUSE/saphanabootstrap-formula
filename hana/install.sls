@@ -1,7 +1,11 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
+include:
+    - .enable_cost_optimized
+
 {% for node in hana.nodes %}
+
 {% if node.host == host and node.install is defined %}
 
 hana_install_{{ node.host+node.sid }}:
