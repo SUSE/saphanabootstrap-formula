@@ -1,3 +1,24 @@
+{%- from "hana/map.jinja" import hana with context -%}
+{% set host = grains['host'] %}
+
+{% for node in hana.nodes %}
+{% if node.host == host and node.secondary is defined and node.scenario_type.lower() == 'cost-optimized' %}
+
+{% set dbsid = node.sid.lower() %}
+{% set dbinst = '{:0>2}'.format(node.instance) %}
+
+{% for prim_node in hana.nodes %}
+{% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
+
+{% set dbuser = prim_node.primary.userkey.user_name %}
+{% set dbpwd = prim_node.password %}
+{% set dbversion = salt['hana.get_version'](sid=dbsid, inst=dbinst, password=dbpwd) %}
+{% if salt['pkg.version_cmp'](dbversion,'2.0') < 0 %}
+    {% set dbport = ('30'+ dbinst +'15')|int %}
+{% else %}
+    {% set dbport = ('30'+ dbinst +'13')|int %}
+{% endif -%}
+
 dbuser="{{ dbuser }}"
 dbpwd="{{ dbpwd }}"
 dbinst="{{ dbinst }}"
@@ -86,3 +107,7 @@ class srTakeover(HADRBase):
         elif rc == 2:
             # error, something went wrong
             return 0
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
