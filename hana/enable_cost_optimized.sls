@@ -11,6 +11,10 @@ reduce_memory_resources_{{  node.host+node.sid }}:
       - global_allocation_limit: {{ node.cost_optimized_parameters.global_allocation_limit }}
       - preload_column_tables: {{ node.cost_optimized_parameters.preload_column_tables }}
       {% endif %}
+      - user_name: SYSTEM
+      {% if node.install.system_user_password is defined %}
+      - user_password: {{ node.install.system_user_password }}
+      {% endif %}
       - sid: {{  node.sid }}
       - inst: {{  node.instance }}
       - password: {{  node.password }}
