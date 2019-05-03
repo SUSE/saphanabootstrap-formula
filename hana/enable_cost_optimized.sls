@@ -23,7 +23,8 @@ reduce_memory_resources_{{  node.host+node.sid }}:
 setup_srHook_directory:
     file.directory:
       - name: /hana/shared/srHook
-      - user: root
+      - user: {{ node.sid.lower() }}adm
+      - group: sapsys
       - mode: 755
       - makedirs: True
 
@@ -31,9 +32,8 @@ install_srTakeover_hook:
     file.managed:
       - source: salt://hana/templates/srTakeover_hook.j2
       - name: /hana/shared/srHook/sr-Takeover.py
-      - user: root
-      - group: root
-      - mode: 644
+      - user: {{ node.sid.lower() }}adm
+      - group: sapsys
       - template: jinja
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
@@ -42,6 +42,8 @@ install_srTakeover_hook:
 install_hana_python_packages:
     archive.extracted:
       - name: /hana/shared/srHook
+      - user: {{ node.sid.lower() }}adm
+      - group: sapsys
       - enforce_toplevel: False
       - source: {{ grains['hana_inst_folder']~'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
       - require:
