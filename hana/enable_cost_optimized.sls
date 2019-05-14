@@ -2,15 +2,13 @@
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
-{% if node.host == host and node.scenario_type is defined and node.scenario_type.lower() == 'cost-optimized' %}
+{% if node.host == host and node.scenario_type is defined and node.scenario_type.lower() == 'cost-optimized' and node.cost_optimized_parameters is defined%}
 
 reduce_memory_resources_{{  node.host+node.sid }}:
     hana.memory_resources_updated:
       - name: {{  node.host }}
-      {% if node.cost_optimized_parameters is defined %}
       - global_allocation_limit: {{ node.cost_optimized_parameters.global_allocation_limit }}
       - preload_column_tables: {{ node.cost_optimized_parameters.preload_column_tables }}
-      {% endif %}
       - user_name: SYSTEM
       {% if node.install.system_user_password is defined %}
       - user_password: {{ node.install.system_user_password }}
@@ -20,7 +18,6 @@ reduce_memory_resources_{{  node.host+node.sid }}:
       - password: {{  node.password }}
       - require:
         - hana_install_{{ node.host+node.sid }}
-{% endif %}
 
 {% if node.host == host and node.secondary is defined %}
 
@@ -53,6 +50,6 @@ install_hana_python_packages:
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
-
+{% endif %}
 {% endif %}
 {% endfor %}
