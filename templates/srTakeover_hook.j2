@@ -24,6 +24,11 @@ dbpwd="{{ dbpwd }}"
 dbinst="{{ dbinst }}"
 dbport="{{ dbport }}"
 
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
 #!/usr/bin/env python2
 """
 Auto-generated HA/DR hook script
@@ -107,7 +112,3 @@ class srTakeover(HADRBase):
         elif rc == 2:
             # error, something went wrong
             return 0
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
