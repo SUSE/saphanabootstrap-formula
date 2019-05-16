@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May 16 08:52:06 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
+
+- Update formula to work with the latest shaptools code. In this version
+  the secondary node registration is managed completely in shaptools 
+
+-------------------------------------------------------------------
 Thu Apr 25 12:06:43 UTC 2019 - Diego Vinicius Akechi <dakechi@suse.com>
 
 - Changed requires from salt-saphana to salt-shaptools.

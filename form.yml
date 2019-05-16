@@ -179,3 +179,7 @@ hana:
           $name: Operation mode
           $type: select
           $values: [logreplay, delta_datashipping]
+        timeout:
+          $name: Timeout to wait until the primary node is enabled
+          $type: text
+          $optional: true

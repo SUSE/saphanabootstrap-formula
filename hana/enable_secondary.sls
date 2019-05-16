@@ -3,9 +3,12 @@
 
 {% for node in hana.nodes %}
 {% if node.host == host and node.secondary is defined %}
-include:
-  - .primary_available
-  - .copy_ssfs
+sshpass:
+  pkg.installed
+
+{% for prim_node in hana.nodes %}
+{% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
+{% set primary_pass = prim_node.password %}
 
 {{  node.secondary.name }}:
   hana.sr_secondary_registered:
@@ -16,8 +19,13 @@ include:
     - remote_instance: {{  node.secondary.remote_instance }}
     - replication_mode: {{  node.secondary.replication_mode }}
     - operation_mode: {{  node.secondary.operation_mode }}
+    - timeout: {{ node.secondary.primary_timeout|default(100) }}
+    - interval: {{ node.secondary.interval|default(10) }}
+    - primary_pass: {{ primary_pass }}
     - require:
-      - primary-available
+        - sshpass
 
+{% endif %}
+{% endfor %}
 {% endif %}
 {% endfor %}
