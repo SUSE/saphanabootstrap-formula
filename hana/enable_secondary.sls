@@ -3,8 +3,9 @@
 
 {% for node in hana.nodes %}
 {% if node.host == host and node.secondary is defined %}
-sshpass:
-  pkg.installed
+saphana_sshpass:
+  pkg.installed:
+    - name: sshpass
 
 {% for prim_node in hana.nodes %}
 {% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
@@ -23,7 +24,7 @@ sshpass:
     - interval: {{ node.secondary.interval|default(10) }}
     - primary_pass: {{ primary_pass }}
     - require:
-        - sshpass
+        - saphana_sshpass
 
 {% endif %}
 {% endfor %}
