@@ -37,7 +37,7 @@ For that follow the next sequence to install all the dependencies (opensuse leap
 is used in the example):
 
 ```bash
-sudo zypper addrepo zypper addrepo https://download.opensuse.org/repositories/network:ha-clustering:Factory/openSUSE_Leap_15.0/network:ha-clustering:Factory.repo
+sudo zypper addrepo https://download.opensuse.org/repositories/network:ha-clustering:Factory/openSUSE_Leap_15.0/network:ha-clustering:Factory.repo
 sudo zypper ref
 sudo zypper in saphanabootstrap-formula
 ```
