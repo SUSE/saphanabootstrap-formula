@@ -3,9 +3,6 @@
 
 {% for node in hana.nodes %}
 {% if node.host == host and node.secondary is defined %}
-saphana_sshpass:
-  pkg.installed:
-    - name: sshpass
 
 {% for prim_node in hana.nodes %}
 {% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
@@ -23,8 +20,6 @@ saphana_sshpass:
     - timeout: {{ node.secondary.primary_timeout|default(100) }}
     - interval: {{ node.secondary.interval|default(10) }}
     - primary_pass: {{ primary_pass }}
-    - require:
-        - saphana_sshpass
 
 {% endif %}
 {% endfor %}
