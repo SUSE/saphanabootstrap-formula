@@ -10,6 +10,9 @@
 patterns-sap-hana:
   pkg.installed:
     - fromrepo: {{ repo }}
+    - retry:
+        attempts: 3
+        interval: 15
 
 {% else %}
 install_required_packages:
