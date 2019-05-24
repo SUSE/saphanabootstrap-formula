@@ -41,4 +41,4 @@ hana:
         remote_instance: '00'
         replication_mode: 'sync'
         operation_mode: 'logreplay'
-        timeout: 100
+        timeout: 600
