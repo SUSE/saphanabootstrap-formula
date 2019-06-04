@@ -1,8 +1,19 @@
 -------------------------------------------------------------------
+Fri May 21 12:37:43 UTC 2019 - Diego Vinicius Akechi <dakechi@suse.com>
+
+- Version bump 0.2.0
+  * Include the salt-formulas-configuration dependency on
+    SLE/Leap 15-SP1 and higher. This package configures the shared salt
+    formulas location (/usr/share/salt-formulas) to be used by SUMA 4.0
+    or salt in standalone mode.
+  * Drops the saphanabootstrap-formula-suma package, as the forms metadata
+    will be available only on SUMA 4.0 using the shared location.
+
+-------------------------------------------------------------------
 Thu May 16 08:52:06 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Update formula to work with the latest shaptools code. In this version
-  the secondary node registration is managed completely in shaptools 
+  the secondary node registration is managed completely in shaptools
 
 -------------------------------------------------------------------
 Thu Apr 25 12:06:43 UTC 2019 - Diego Vinicius Akechi <dakechi@suse.com>
@@ -13,26 +24,26 @@ Thu Apr 25 12:06:43 UTC 2019 - Diego Vinicius Akechi <dakechi@suse.com>
 Mon Mar 18 08:50:43 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Update primary available checking to execute this action before
-  trying to copy the SSFS files from primary node 
+  trying to copy the SSFS files from primary node
 - Add configurable timeout to wait to the primary node
 
 -------------------------------------------------------------------
 Tue Mar 12 07:52:37 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Fix OS release comparison to use integer type in order to choose
-  installable python version 
+  installable python version
 
 -------------------------------------------------------------------
 Fri Mar  8 13:47:41 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
-- Improve shaptools installation python version management 
+- Improve shaptools installation python version management
 
 -------------------------------------------------------------------
 Mon Mar  4 15:30:24 UTC 2019 - xarbulu@suse.com
 
 - Improved the use of keystore access. When the key_name is informed,
   the user_name/user_password is not needed.
-    
+
 -------------------------------------------------------------------
 Wed Feb 25 10:15:35 UTC 2019 - dakechi@suse.com
 
@@ -43,9 +54,9 @@ Wed Feb 25 10:15:35 UTC 2019 - dakechi@suse.com
 -------------------------------------------------------------------
 Wed Feb 20 08:18:35 UTC 2019 - xarbulu@suse.com
 
-- Add templates folder with RA configuration templates 
+- Add templates folder with RA configuration templates
 
 -------------------------------------------------------------------
 Thu Dec 20 08:33:10 UTC 2018 - xarbulu@suse.com
 
-- First version of the SAP HANA deployment formula 
+- First version of the SAP HANA deployment formula

@@ -1,7 +1,7 @@
 #
 # spec file for package saphanabootstrap-formula
 #
-# Copyright (c) 2018 SUSE LLC, Nuernberg, Germany.
+# Copyright (c) 2019 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,40 +12,39 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
 
 # See also http://en.opensuse.org/openSUSE:Specfile_guidelines
 
 Name:           saphanabootstrap-formula
-Version:        0.1.0
-Release:        1
+Version:        0.2.0
+Release:        0
 Summary:        SAP HANA platform deployment formula
-
 License:        Apache-2.0
+
 Url:            https://github.com/SUSE/%{name}
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
-Requires:       salt-shaptools
 Requires:       habootstrap-formula
+Requires:       salt-shaptools
+
+# On SLE/Leap 15-SP1 and TW requires the new salt-formula configuration location.
+%if ! (0%{?sle_version:1} && 0%{?sle_version} < 150100)
+Requires:       salt-formulas-configuration
+%endif
 
 %define fname hana
-%define fdir  %{_datadir}/susemanager/formulas
+%define fdir  %{_datadir}/salt-formulas
 %define ftemplates templates
 
 %description
-SAP HANA deployment salt formula
-
-# package to deploy on SUMA specific path.
-%package suma
-Summary:        SAP HANA platform deployment formula (SUMA specific)
-Requires:       salt-shaptools
-Requires:       habootstrap-formula-suma
-
-%description suma
-SAP HANA deployment salt formula (SUMA specific)
+SAP HANA deployment salt formula. This formula is capable to install
+SAP HANA nodes, enable system replication and configure SLE-HA cluster
+with the SAPHanaSR resource agent, using standalone salt or via SUSE Manager
+formulas with forms, available on SUSE Manager 4.0.
 
 %prep
 %setup -q
@@ -53,12 +52,17 @@ SAP HANA deployment salt formula (SUMA specific)
 %build
 
 %install
-pwd
+
+# before SUMA 4.0/15-SP1, install on the standard Salt Location.
+%if 0%{?sle_version:1} && 0%{?sle_version} < 150100
+
 mkdir -p %{buildroot}/srv/salt/
 cp -R %{fname} %{buildroot}/srv/salt/
 cp -R %{ftemplates} %{buildroot}/srv/salt/%{fname}/
 
-# SUMA Specific
+%else
+
+# On SUMA 4.0/15-SP1, a single shared directory will be used.
 mkdir -p %{buildroot}%{fdir}/states/%{fname}
 mkdir -p %{buildroot}%{fdir}/metadata/%{fname}
 cp -R %{fname} %{buildroot}%{fdir}/states
@@ -69,31 +73,24 @@ then
   cp -R metadata.yml %{buildroot}%{fdir}/metadata/%{fname}
 fi
 
+%endif
 
+%if 0%{?sle_version:1} && 0%{?sle_version} < 150100
 %files
 %defattr(-,root,root,-)
-# %license macro is not available on older releases
-%if 0%{?sle_version} <= 120300
-%doc LICENSE
-%else
 %license LICENSE
-%endif
 %doc README.md
 /srv/salt/%{fname}
 /srv/salt/%{fname}/%{ftemplates}
 
 %dir %attr(0755, root, salt) /srv/salt
 
-%files suma
-%defattr(-,root,root,-)
-# %license macro is not available on older releases
-%if 0%{?sle_version} <= 120300
-%doc LICENSE
 %else
+
+%files
+%defattr(-,root,root,-)
 %license LICENSE
-%endif
 %doc README.md
-%dir %{_datadir}/susemanager
 %dir %{fdir}
 %dir %{fdir}/states
 %dir %{fdir}/metadata
@@ -101,9 +98,10 @@ fi
 %{fdir}/states/%{fname}/%{ftemplates}
 %{fdir}/metadata/%{fname}
 
-%dir %attr(0755, root, salt) %{_datadir}/susemanager
 %dir %attr(0755, root, salt) %{fdir}
 %dir %attr(0755, root, salt) %{fdir}/states
 %dir %attr(0755, root, salt) %{fdir}/metadata
+
+%endif
 
 %changelog
