@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Fri May 21 12:37:43 UTC 2019 - Diego Vinicius Akechi <dakechi@suse.com>
 
-- Version bump 0.1.1
+- Version bump 0.2.0
   * Include the salt-formulas-configuration dependency on
     SLE/Leap 15-SP1 and higher. This package configures the shared salt
     formulas location (/usr/share/salt-formulas) to be used by SUMA 4.0
