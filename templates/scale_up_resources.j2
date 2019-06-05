@@ -68,3 +68,30 @@ colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB
 {% endif %}
 
 order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} msl_SAPHana_{{ sid }}_HDB{{ instance }}
+
+{% if data.cost_optimized_parameters is defined %}
+{% set qas_sid = data.cost_optimized_parameters.sid.upper() %}
+{% set qas_instance = data.cost_optimized_parameters.instance %}
+{% set qas_remote_host = data.cost_optimized_parameters.remote_host %}
+
+#
+# non-production HANA
+# 
+
+primitive rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} ocf:heartbeat:SAPDatabase \
+    params DBTYPE="HDB" SID="{{ qas_sid }}" InstanceNumber="{{ qas_instance }}" \
+    MONITOR_SERVICES="hdbindexserver|hdbnameserver" \
+    op start interval="0" timeout="600" \
+    op monitor interval="120" timeout="700" \
+    op stop interval="0" timeout="300" \
+    meta priority="100"
+
+location loc_{{ qas_sid }}_never_on_{{ qas_remote_host }} rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} -inf: {{ qas_remote_host }}
+
+colocation col_{{ qas_sid }}_never_with_{{ sid }}-ip -inf: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:Started \
+ rsc_ip_{{ sid }}_HDB{{ instance }}
+
+order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote inf: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
+ msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
+
+{% endif %}
