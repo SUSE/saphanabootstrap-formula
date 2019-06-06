@@ -79,7 +79,7 @@ order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ s
 #
 
 primitive rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} ocf:heartbeat:SAPDatabase \
-    params DBTYPE="HDB" SID="{{ qas_sid }}" InstanceNumber="{{ qas_instance }}" \
+    params DBTYPE="HDB" SID="{{ qas_sid }}" \
     MONITOR_SERVICES="hdbindexserver|hdbnameserver" \
     op start interval="0" timeout="600" \
     op monitor interval="120" timeout="700" \
