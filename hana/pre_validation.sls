@@ -5,7 +5,7 @@
 {% for node in hana.nodes %}
   {% if node.host == host %}
 
-  {# Check HANA insatll checkbox #}
+  {# Check HANA install checkbox #}
   {% if node.install_checkbox is defined and node.install_checkbox == false %}
 
     {% do node.pop('install') %}
@@ -23,9 +23,18 @@
       {% do node.install.update({'extra_parameters': new_extra_parameters}) %}
     {% endif %}
   {% endif %}
-  {# Check HANA insatll checkbox finish #}
+  {# Check HANA install checkbox finish #}
 
-  {# Check HANA Systen replication mode #}
+  {# Check HANA Scenario type #}
+  {% if node.scenario_type is defined %}
+    {% if node.scenario_type != "cost_optimized" %}
+      {% do node.pop('cost_optimized_parameters') %}
+    {% endif %}
+
+  {% endif %}  
+  {# Check HANA Scenario type finish #}
+
+  {# Check HANA System replication mode #}
   {% if node.system_replication is defined %}
     {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Secondary" %}
       {% do node.pop('secondary') %}
@@ -43,7 +52,7 @@
 
     {% endif %}
   {% endif %}
-  {# Check HANA Systen replication mode finish #}
+  {# Check HANA System replication mode finish #}
 
   {% endif %}
 {% endfor %}

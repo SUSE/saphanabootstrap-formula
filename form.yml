@@ -25,6 +25,26 @@ hana:
         $type: password
         $optional: false
         $help: This is the OS <sid>adm user password. Will be used to check if there is an already installed HANA.
+      scenario_type:
+        $name: HANA scenario type
+        $type: select
+        $values: [performance_optimized, cost_optimized]
+      cost_optimized_parameters:
+        $name: HANA parameters for cost_optimized
+        $visibleIf: .scenario_type == cost_optimized
+        $optional: true
+        $type: group
+        global_allocation_limit:
+          $name: HANA memory allocation limit
+          $type: text
+          $optional: false
+          $help: This is the memory size limit to be set for HANA in Mb
+        preload_column_tables:
+          $name: HANA preload column tables
+          $type: boolean
+          $default: false
+          $optional: false
+          $help: Choose this option to set the HANA behavior of preloading column tables on startup        
       install_checkbox:
         $name: Install HANA
         $type: boolean
