@@ -71,15 +71,15 @@ order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ s
 
 {% if data.cost_optimized_parameters is defined %}
 {% set qas_sid = data.cost_optimized_parameters.sid.upper() %}
-{% set qas_instance = data.cost_optimized_parameters.instance %}
+{% set qas_instance = '{:0>2}'.format(data.cost_optimized_parameters.instance) %}
 {% set qas_remote_host = data.cost_optimized_parameters.remote_host %}
 
 #
 # non-production HANA
-# 
+#
 
 primitive rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} ocf:heartbeat:SAPDatabase \
-    params DBTYPE="HDB" SID="{{ qas_sid }}" InstanceNumber="{{ qas_instance }}" \
+    params DBTYPE="HDB" SID="{{ qas_sid }}" \
     MONITOR_SERVICES="hdbindexserver|hdbnameserver" \
     op start interval="0" timeout="600" \
     op monitor interval="120" timeout="700" \
