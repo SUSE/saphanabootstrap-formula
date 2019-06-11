@@ -78,8 +78,12 @@ fi
 %if 0%{?sle_version:1} && 0%{?sle_version} < 150100
 %files
 %defattr(-,root,root,-)
-%license LICENSE
+%if 0%{?sle_version} < 120300
+%doc README.md LICENSE
+%else
 %doc README.md
+%license LICENSE
+%endif
 /srv/salt/%{fname}
 /srv/salt/%{fname}/%{ftemplates}
 
@@ -89,8 +93,8 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%license LICENSE
 %doc README.md
+%license LICENSE
 %dir %{fdir}
 %dir %{fdir}/states
 %dir %{fdir}/metadata
