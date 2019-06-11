@@ -28,10 +28,10 @@ hana:
       scenario_type:
         $name: HANA scenario type
         $type: select
-        $values: [performance_optimized, cost_optimized]
+        $values: [performance-optimized, cost-optimized]
       cost_optimized_parameters:
-        $name: HANA parameters for cost_optimized
-        $visibleIf: .scenario_type == cost_optimized
+        $name: HANA parameters for cost-optimized
+        $visibleIf: .scenario_type == cost-optimized
         $optional: true
         $type: group
         global_allocation_limit:

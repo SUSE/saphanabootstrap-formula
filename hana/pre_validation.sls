@@ -27,7 +27,7 @@
 
   {# Check HANA Scenario type #}
   {% if node.scenario_type is defined %}
-    {% if node.scenario_type != "cost_optimized" %}
+    {% if node.scenario_type != "cost-optimized" %}
       {% do node.pop('cost_optimized_parameters') %}
     {% endif %}
 
