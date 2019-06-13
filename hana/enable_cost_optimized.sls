@@ -54,7 +54,7 @@ install_hana_python_packages:
 
 configure_ha_dr_provider_srTakeover:
     file.append:
-      - name:  /hana/shared/{{ node.sid }}/global/hdb/custom/config/global.ini
+      - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
       - text: |
           [ha_dr_provider_srTakeover]
           provider = srTakeover
