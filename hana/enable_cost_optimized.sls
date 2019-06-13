@@ -32,7 +32,7 @@ setup_srHook_directory:
 install_srTakeover_hook:
     file.managed:
       - source: salt://hana/templates/srTakeover_hook.j2
-      - name: /hana/shared/srHook/sr-Takeover.py
+      - name: /hana/shared/srHook/srTakeover.py
       - user: {{ node.sid.lower() }}adm
       - group: sapsys
       - template: jinja
@@ -51,6 +51,20 @@ install_hana_python_packages:
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
+
+configure_ha_dr_provider_srTakeover:
+    file.append:
+      - name:  /hana/shared/{{ node.sid }}/global/hdb/custom/config/global.ini
+      - text: |
+          [ha_dr_provider_srTakeover]
+          provider = srTakeover
+          path = /hana/shared/srHook
+          execution_order = 1
+      - require:
+        - reduce_memory_resources_{{ node.host+node.sid }}
+        - setup_srHook_directory
+        - install_srTakeover_hook
+        - install_hana_python_packages
 {% endif %}
 {% endif %}
 {% endfor %}
