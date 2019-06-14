@@ -46,7 +46,7 @@ install_hana_python_packages:
       - user: {{ node.sid.lower() }}adm
       - group: sapsys
       - enforce_toplevel: False
-      - source: {{ grains['hana_inst_folder']~'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
+      - source: {{ node.install.software_path~'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
       - options: --strip=1 --wildcards 'hdbcli/*.py'
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
