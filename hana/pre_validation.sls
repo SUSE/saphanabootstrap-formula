@@ -44,6 +44,11 @@
     {% endif %}
   {% endif %}
   {# Check HANA Systen replication mode finish #}
+  {# Check HANA exporter #}
+  {% if node.add_exporter is defined and node.add_exporter == false%}
+    {% do node.pop('exporter') %}
+  {% endif %}
+  {# Check HANA exporter finish #}
 
   {% endif %}
 {% endfor %}
