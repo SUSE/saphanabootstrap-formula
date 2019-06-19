@@ -1,0 +1,20 @@
+{%- from "hana/map.jinja" import hana with context -%}
+{% set host = grains['host'] %}
+
+{% for node in hana.nodes %}
+{% if node.host == host and node.exporter is defined %}
+
+{% set dbinst = '{:0>2}'.format(node.instance) %}
+
+{
+  "exposition_port": {{ node.exporter.exposition_port|default(8001) }},
+  "hana": {
+    "host": "{{ node.host }}",
+    "port": 3{{ dbinst }}15,
+    "user": "{{ node.exporter.user }}",
+    "password": "{{ node.exporter.password }}"
+  }
+}
+
+{% endif %}
+{% endfor %}
