@@ -4,7 +4,8 @@
 {% for node in hana.nodes %}
 {% if node.host == host and node.exporter is defined %}
 
-{% set config_file = '/etc/hanadb_exporter/config_{{ node.sid.lower() }}_{{ '{:0>2}'.format(node.instance) }}.json' %}
+{% set instance = '{:0>2}'.format(node.instance) %}
+{% set config_file = '/etc/hanadb_exporter/config_{}_{}.json'.format(node.sid, instance) %}
 
 hanadb_exporter:
   pkg.installed
@@ -13,18 +14,23 @@ python3-PyHDB:
   pkg.installed
 
 configure_exporter:
-    file.managed:
-      - source: salt://hana/templates/hanadb_exporter.j2
-      - name: {{ config_file }}
-      - template: jinja
-      - require:
-        - hanadb_exporter
-        - python-PyHDB
+  file.managed:
+    - source: salt://hana/templates/hanadb_exporter.j2
+    - name: {{ config_file }}
+    - template: jinja
+    - require:
+      - hanadb_exporter
+      - python3-PyHDB
+
+stop_exporter:
+  process.absent:
+    - name: hanadb_exporter -c {{ config_file }} -m /etc/hanadb_exporter/metrics.json
+    - require:
+        - configure_exporter
 
 start_exporter:
   cmd.run:
-    - name: hanadb_exporter -c {{ config_file }} -m /etc/hanadb_exporter/metrics.json
-    - unless: ps -ef | grep 'hanadb_exporter -c {{ config_file }} -m /etc/hanadb_exporter/metrics.json'
+    - name: nohup hanadb_exporter -c {{ config_file }} -m /etc/hanadb_exporter/metrics.json &>/dev/null &
     - require:
         - configure_exporter
 
