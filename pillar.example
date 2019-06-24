@@ -30,6 +30,12 @@ hana:
           user_password: 'Qwerty1234'
           database: 'SYSTEMDB'
           file: 'backup'
+      # Optional: Add hanadb_exporter to the instance
+      exporter:
+        exposition_port: 8001 # Optional, 8001 by default
+        user: 'SYSTEM'
+        password: 'Qwerty1234'
+
 
     - host: 'hana02'
       sid: 'prd'

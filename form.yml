@@ -183,3 +183,27 @@ hana:
           $name: Timeout to wait until the primary node is enabled
           $type: text
           $optional: true
+
+      add_exporter:
+        $name: Add SAP HANA database metrics exporter
+        $type: boolean
+        $default: false
+        $help: Mark if you want add the SAP HANA database metrics exporter
+      exporter:
+        $name: SAP HANA database metrics exporter
+        $optional: true
+        $visibleIf: .add_exporter == true
+        $type: group
+        exposition_port:
+          $name: SAP HANA exposter exposition port
+          $type: text
+          $optional: true
+        user:
+          $name: SAP HANA user
+          $type: text
+          $default: SYSTEM
+          $optional: false
+        password:
+          $name: SAP HANA password
+          $type: password
+          $optional: false
