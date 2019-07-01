@@ -5,6 +5,7 @@
 {% if node.host == host and node.exporter is defined %}
 
 {% set dbinst = '{:0>2}'.format(node.instance) %}
+{% set node_subix = '{}_{}'.format(node.sid, dbinst) %}
 
 {
   "exposition_port": {{ node.exporter.exposition_port|default(8001) }},
@@ -13,6 +14,10 @@
     "port": 3{{ dbinst }}15,
     "user": "{{ node.exporter.user }}",
     "password": "{{ node.exporter.password }}"
+  },
+  logging: {
+    "config_file": "/etc/hanadb_exporter/logging_config.ini",
+    "log_file": "/var/log/hanadb_exporter_{{ node_subix }}.log"
   }
 }
 
