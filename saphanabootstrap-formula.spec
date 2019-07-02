@@ -19,7 +19,7 @@
 # See also http://en.opensuse.org/openSUSE:Specfile_guidelines
 
 Name:           saphanabootstrap-formula
-Version:        0.2.3
+Version:        0.2.4
 Release:        0
 Summary:        SAP HANA platform deployment formula
 License:        Apache-2.0
@@ -33,7 +33,7 @@ Requires:       salt-shaptools
 
 # On SLE/Leap 15-SP1 and TW requires the new salt-formula configuration location.
 %if ! (0%{?sle_version:1} && 0%{?sle_version} < 150100)
-Requires:       salt-formulas-configuration
+Requires:       salt-standalone-formulas-configuration
 %endif
 
 %define fname hana
@@ -102,9 +102,9 @@ fi
 %{fdir}/states/%{fname}/%{ftemplates}
 %{fdir}/metadata/%{fname}
 
-%dir %attr(0755, root, salt) %{fdir}
-%dir %attr(0755, root, salt) %{fdir}/states
-%dir %attr(0755, root, salt) %{fdir}/metadata
+%dir %attr(0750, root, salt) %{fdir}
+%dir %attr(0750, root, salt) %{fdir}/states
+%dir %attr(0750, root, salt) %{fdir}/metadata
 
 %endif
 
