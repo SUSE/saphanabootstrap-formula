@@ -5,7 +5,8 @@
 {% if node.host == host and node.exporter is defined %}
 
 {% set instance = '{:0>2}'.format(node.instance) %}
-{% set config_file = '/etc/hanadb_exporter/config_{}_{}.json'.format(node.sid, instance) %}
+{% set daemon_instance = '{}_{}'.format(node.sid, instance) %}
+{% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
 hanadb_exporter:
   pkg.installed
@@ -22,15 +23,11 @@ configure_exporter:
       - hanadb_exporter
       - python3-PyHDB
 
-stop_exporter:
-  process.absent:
-    - name: hanadb_exporter -c {{ config_file }} -m /etc/hanadb_exporter/metrics.json
-    - require:
-        - configure_exporter
-
 start_exporter:
-  cmd.run:
-    - name: nohup hanadb_exporter -c {{ config_file }} -m /etc/hanadb_exporter/metrics.json &>/dev/null &
+  service.running:
+    - name: hanadb_exporter@{{ daemon_instance }}
+    - enable: True
+    - reload: True
     - require:
         - configure_exporter
 
