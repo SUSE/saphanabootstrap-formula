@@ -9,10 +9,16 @@
 {% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
 hanadb_exporter:
-  pkg.installed
+  pkg.installed:
+  - retry:
+      attempts: 3
+      interval: 15
 
 python3-PyHDB:
-  pkg.installed
+  pkg.installed:
+  - retry:
+      attempts: 3
+      interval: 15
 
 configure_exporter:
   file.managed:
