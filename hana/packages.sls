@@ -17,6 +17,9 @@ patterns-sap-hana:
 {% else %}
 install_required_packages:
   pkg.installed:
+    - retry:
+        attempts: 3
+        interval: 15
     - pkgs:
       - libnuma1
       - libltdl7
@@ -30,4 +33,7 @@ python-shaptools:
 python3-shaptools:
 {% endif %}
   pkg.installed:
+    - retry:
+        attempts: 3
+        interval: 15
     - resolve_capabilities: true
