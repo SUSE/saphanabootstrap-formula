@@ -1,7 +1,13 @@
 -------------------------------------------------------------------
+Mon Jul  8 15:02:02 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
+
+- Version bump 0.2.6
+  * Add support for Power machines 
+
+-------------------------------------------------------------------
 Wed Jul  3 07:58:55 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
--  Version bump 0.2.5
+- Version bump 0.2.5
   * hanadb_exporter executed as a daemon
   * hanadb_exporter installation suggested 
 
