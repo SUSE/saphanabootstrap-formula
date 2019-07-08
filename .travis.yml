@@ -2,12 +2,29 @@ sudo: required
 services:
   - docker
 
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb http://repo.saltstack.com/apt/ubuntu/14.04/amd64/latest trusty main'
+        key_url: 'https://repo.saltstack.com/apt/ubuntu/14.04/amd64/latest/SALTSTACK-GPG-KEY.pub'
+    packages:
+        - salt-common
+
 stages:
+  - validation
   - delivery
   - submit
 
 jobs:
   include:
+    - stage: validation
+
+      script:
+        - |
+          # validate states
+          ci/validate-formula.sh
+
+
     - stage: delivery
       if: type != pull_request
       env:
