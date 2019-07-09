@@ -1,14 +1,13 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
-{% for node in hana.nodes %}
-{% if node.host == host and node.exporter is defined %}
+{% for node in hana.nodes if node.host == host and node.exporter is defined %}
 
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set daemon_instance = '{}_{}'.format(node.sid, instance) %}
 {% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
-{% if loop.index == 1 %}
+{% if loop.first %}
 hanadb_exporter:
   pkg.installed:
   - retry:
@@ -22,7 +21,7 @@ python3-PyHDB:
       interval: 15
 {% endif %}
 
-configure_exporter:
+configure_exporter_{{ daemon_instance }}:
   file.managed:
     - source: salt://hana/templates/hanadb_exporter.j2
     - name: {{ config_file }}
@@ -31,13 +30,12 @@ configure_exporter:
       - hanadb_exporter
       - python3-PyHDB
 
-start_exporter:
+start_exporter_{{ daemon_instance }}:
   service.running:
     - name: hanadb_exporter@{{ daemon_instance }}
     - enable: True
     - reload: True
     - require:
-        - configure_exporter
+        - configure_exporter_{{ daemon_instance }}
 
-{% endif %}
 {% endfor %}
