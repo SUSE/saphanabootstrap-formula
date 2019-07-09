@@ -30,6 +30,7 @@ echo "==========================================="
 
 cat >grains <<EOF
 host: hana02
+hana_inst_folder: myfold
 EOF
 
 cat >minion <<EOF
