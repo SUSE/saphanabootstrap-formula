@@ -8,6 +8,7 @@
 {% set daemon_instance = '{}_{}'.format(node.sid, instance) %}
 {% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
+{% if loop.index == 1 %}
 hanadb_exporter:
   pkg.installed:
   - retry:
@@ -19,6 +20,7 @@ python3-PyHDB:
   - retry:
       attempts: 3
       interval: 15
+{% endif %}
 
 configure_exporter:
   file.managed:
