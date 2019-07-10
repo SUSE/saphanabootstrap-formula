@@ -91,7 +91,7 @@ location loc_{{ qas_sid }}_never_on_{{ qas_remote_host }} rsc_SAP_{{ qas_sid }}_
 colocation col_{{ qas_sid }}_never_with_{{ sid }}-ip -inf: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:Started \
  rsc_ip_{{ sid }}_HDB{{ instance }}
 
-order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote inf: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
+order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote Mandatory: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
  msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
 
 {% endif %}
