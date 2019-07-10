@@ -36,7 +36,6 @@ hana:
         user: 'SYSTEM'
         password: 'Qwerty1234'
 
-
     - host: 'hana02'
       sid: 'prd'
       instance: 00
@@ -56,6 +55,14 @@ hana:
         # Optional timeout value in seconds to wait until the primary node
         # 100 seconds by default
         primary_timeout: 100
+      scenario_type: 'cost-optimized'
+      cost_optimized_parameters:
+          global_allocation_limit: '32100'
+          preload_column_tables: False
+      exporter:
+        exposition_port: 8001 # Optional, 8001 by default
+        user: 'SYSTEM'
+        password: 'Qwerty1234'
 
     - host: hana02
       sid: 'qas'
@@ -67,3 +74,7 @@ hana:
         root_password: 's'
         system_user_password: 'Qwerty1234'
         sapadm_password: 'Qwerty1234'
+      exporter:
+        exposition_port: 8002 # Optional, 8001 by default
+        user: 'SYSTEM'
+        password: 'Qwerty1234'
