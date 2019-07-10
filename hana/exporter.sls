@@ -28,7 +28,8 @@ configure_exporter_{{ daemon_instance }}:
     - template: jinja
     - require:
       - hanadb_exporter
-      - python3-PyHDB
+    - context: # set up context for template hanadb_exporter.j2
+        sid: {{ node.sid }}
 
 start_exporter_{{ daemon_instance }}:
   service.running:
