@@ -41,7 +41,7 @@ install_srTakeover_hook:
         - setup_srHook_directory
 
 {% set platform = salt.slsutil.renderer('salt://hana/get_platform.sls') %}
-{% set py_packages_folder = '{}/DATA_UNITS/{}/client/PYDBAPI.TGZ'.format(grains['hana_inst_folder'], platform) %}
+{% set py_packages_folder = '{}/DATA_UNITS/HDB_CLIENT_LINUX_{}/client/PYDBAPI.TGZ'.format(grains['hana_inst_folder'], platform) %}
 
 install_hana_python_packages:
     archive.extracted:
