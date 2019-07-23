@@ -23,7 +23,7 @@ EOF
 
 sudo salt-call state.show_highstate --local --file-root=./ --config-dir=. --pillar-root=example/pillar --retcode-passthrough -l debug
 
-echo 
+echo
 echo "==========================================="
 echo " Using secondary host                      "
 echo "==========================================="

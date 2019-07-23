@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 23 11:17:36 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
+
+- Version bump 0.2.8
+  * Add support for Power machines
+  * Fix issues with SAP HANA deployment template and the exporter
+
+-------------------------------------------------------------------
 Mon Jul 22 08:26:16 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Version bump 0.2.7
@@ -16,7 +23,7 @@ Mon Jul  8 11:49:55 UTC 2019 - Dario Maiocchi <dmaiocchi@suse.com>
 -------------------------------------------------------------------
 Wed Jul  3 07:58:55 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
--  Version bump 0.2.5
+- Version bump 0.2.5
   * hanadb_exporter executed as a daemon
   * hanadb_exporter installation suggested
 

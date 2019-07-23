@@ -40,13 +40,23 @@ install_srTakeover_hook:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
 
+{% set platform = grains['cpuarch'].upper() %}
+{% if platform not in ['X86_64', 'PPC64LE'] %}
+failure:
+  test.fail_with_changes:
+    - name: 'not supported platform. only x86_64 and ppc64le are supported'
+    - failhard: True
+{% endif %}
+
+{% set py_packages_folder = '{}/DATA_UNITS/HDB_CLIENT_LINUX_{}/client/PYDBAPI.TGZ'.format(grains['hana_inst_folder'], platform) %}
+
 install_hana_python_packages:
     archive.extracted:
       - name: /hana/shared/srHook
       - user: {{ node.sid.lower() }}adm
       - group: sapsys
       - enforce_toplevel: False
-      - source: {{ grains['hana_inst_folder']~'/DATA_UNITS/HDB_CLIENT_LINUX_X86_64/client/PYDBAPI.TGZ' }}
+      - source: {{ py_packages_folder }}
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
