@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 31 12:26:05 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
+
+- Fix errors in the form.yml file to match with the formula names
+- Fix some styling issues 
+
+-------------------------------------------------------------------
 Tue Jul 23 11:17:36 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Version bump 0.2.8

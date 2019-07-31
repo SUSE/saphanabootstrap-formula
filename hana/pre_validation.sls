@@ -2,10 +2,9 @@
 
 {% set host = grains['host'] %}
 
-{% for node in hana.nodes %}
-  {% if node.host == host %}
+{% for node in hana.nodes if node.host == host %}
 
-  {# Check HANA insatll checkbox #}
+  {# Check HANA install checkbox #}
   {% if node.install_checkbox is defined and node.install_checkbox == false %}
 
     {% do node.pop('install') %}
@@ -23,9 +22,9 @@
       {% do node.install.update({'extra_parameters': new_extra_parameters}) %}
     {% endif %}
   {% endif %}
-  {# Check HANA insatll checkbox finish #}
+  {# Check HANA install checkbox finish #}
 
-  {# Check HANA Systen replication mode #}
+  {# Check HANA System replication mode #}
   {% if node.system_replication is defined %}
     {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Secondary" %}
       {% do node.pop('secondary') %}
@@ -45,10 +44,9 @@
   {% endif %}
   {# Check HANA Systen replication mode finish #}
   {# Check HANA exporter #}
-  {% if node.add_exporter is defined and node.add_exporter == false%}
+  {% if node.add_exporter is defined and node.add_exporter == false %}
     {% do node.pop('exporter') %}
   {% endif %}
   {# Check HANA exporter finish #}
 
-  {% endif %}
 {% endfor %}
