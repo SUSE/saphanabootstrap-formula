@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
@@ -29,7 +30,6 @@ dbport="{{ dbport }}"
 {% endif %}
 {% endfor %}
 
-#!/usr/bin/env python2
 """
 Auto-generated HA/DR hook script
 
