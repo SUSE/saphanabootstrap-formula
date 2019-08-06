@@ -28,6 +28,8 @@ setup_srHook_directory:
       - group: sapsys
       - mode: 755
       - makedirs: True
+      - require:
+        - reduce_memory_resources_{{ node.host+node.sid }}
 
 install_srTakeover_hook:
     file.managed:
@@ -35,9 +37,9 @@ install_srTakeover_hook:
       - name: /hana/shared/srHook/srTakeover.py
       - user: {{ node.sid.lower() }}adm
       - group: sapsys
+      - mode: 755
       - template: jinja
       - require:
-        - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
 
 {% set platform = grains['cpuarch'].upper() %}
@@ -50,16 +52,35 @@ failure:
 
 {% set py_packages_folder = '{}/DATA_UNITS/HDB_CLIENT_LINUX_{}/client/PYDBAPI.TGZ'.format(grains['hana_inst_folder'], platform) %}
 
-install_hana_python_packages:
+extract_hana_pydbapi_archive:
     archive.extracted:
       - name: /hana/shared/srHook
-      - user: {{ node.sid.lower() }}adm
-      - group: sapsys
       - enforce_toplevel: False
       - source: {{ py_packages_folder }}
+      - options: --transform 's|-[0-9]*\.[0-9]*\.[0-9]*|-package|' --wildcards 'hdbcli*'
       - require:
-        - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
+
+extract_hdbcli_client_files:
+    archive.extracted:
+      - name: /hana/shared/srHook/
+      - source: /hana/shared/srHook/hdbcli-package.tar.gz
+      - enforce_toplevel: False
+      - options:  --strip=2 --wildcards '*/hdbcli/*.py'
+      - require:
+        - extract_hana_pydbapi_archive
+
+chmod_hdbcli_client_files:
+    file.managed:
+      - user: {{ node.sid.lower() }}adm
+      - group: sapsys
+      - mode: 755
+      - names:
+        - /hana/shared/srHook/dbapi.py
+        - /hana/shared/srHook/resultrow.py
+        - /hana/shared/srHook/__init__.py
+      - require:
+        - extract_hdbcli_client_files
 
 configure_ha_dr_provider_srTakeover:
     file.append:
@@ -74,7 +95,7 @@ configure_ha_dr_provider_srTakeover:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
         - install_srTakeover_hook
-        - install_hana_python_packages
+        - extract_hdbcli_client_files
 {% endif %}
 {% endif %}
 {% endfor %}
