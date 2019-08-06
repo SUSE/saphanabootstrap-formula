@@ -72,8 +72,10 @@ extract_hdbcli_client_files:
 
 remove_hdbcli_tar_package:
     file.absent:
-      - name: /hana/shared/srHook/hdbcli-package.tar.gz
-      
+      - names: 
+        - /hana/shared/srHook/hdbcli-package.tar.gz
+        - /hana/shared/srHook/hdbcli
+
 chmod_hdbcli_client_files:
     file.managed:
       - user: {{ node.sid.lower() }}adm
