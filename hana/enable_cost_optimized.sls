@@ -70,6 +70,10 @@ extract_hdbcli_client_files:
       - require:
         - extract_hana_pydbapi_archive
 
+remove_hdbcli_tar_package:
+    file.absent:
+      - name: /hana/shared/srHook/hdbcli-package.tar.gz
+      
 chmod_hdbcli_client_files:
     file.managed:
       - user: {{ node.sid.lower() }}adm
