@@ -1,8 +1,16 @@
 -------------------------------------------------------------------
+Wed Aug  7 07:46:25 UTC 2019 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version bump 0.2.9
+  * Fix srHook script usage for cost optimized scenario
+  * Add scenario type options to the form.yml file
+    (boo#1137989)
+
+-------------------------------------------------------------------
 Wed Jul 31 12:26:05 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Fix errors in the form.yml file to match with the formula names
-- Fix some styling issues 
+- Fix some styling issues
 
 -------------------------------------------------------------------
 Tue Jul 23 11:17:36 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
