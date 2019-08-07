@@ -24,6 +24,12 @@
   {% endif %}
   {# Check HANA install checkbox finish #}
 
+  {# Check HANA Scenario type #}
+  {% if node.scenario_type is defined and node.scenario_type != "cost-optimized" %}
+    {% do node.pop('cost_optimized_parameters') %}
+  {% endif %}  
+  {# Check HANA Scenario type finish #}
+
   {# Check HANA System replication mode #}
   {% if node.system_replication is defined %}
     {% if node.system_replication.system_replication_options is defined and node.system_replication.system_replication_options != "Secondary" %}
@@ -42,7 +48,8 @@
 
     {% endif %}
   {% endif %}
-  {# Check HANA Systen replication mode finish #}
+  {# Check HANA System replication mode finish #}
+
   {# Check HANA exporter #}
   {% if node.add_exporter is defined and node.add_exporter == false %}
     {% do node.pop('exporter') %}
