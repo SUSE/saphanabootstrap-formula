@@ -2,8 +2,7 @@
 
 {% set host = grains['host'] %}
 
-{% for node in hana.nodes %}
-  {% if node.host == host %}
+{% for node in hana.nodes if node.host == host %}
 
   {# Check HANA install checkbox #}
   {% if node.install_checkbox is defined and node.install_checkbox == false %}
@@ -26,11 +25,8 @@
   {# Check HANA install checkbox finish #}
 
   {# Check HANA Scenario type #}
-  {% if node.scenario_type is defined %}
-    {% if node.scenario_type != "cost-optimized" %}
-      {% do node.pop('cost_optimized_parameters') %}
-    {% endif %}
-
+  {% if node.scenario_type is defined and node.scenario_type != "cost-optimized" %}
+    {% do node.pop('cost_optimized_parameters') %}
   {% endif %}  
   {# Check HANA Scenario type finish #}
 
@@ -54,5 +50,10 @@
   {% endif %}
   {# Check HANA System replication mode finish #}
 
+  {# Check HANA exporter #}
+  {% if node.add_exporter is defined and node.add_exporter == false %}
+    {% do node.pop('exporter') %}
   {% endif %}
+  {# Check HANA exporter finish #}
+
 {% endfor %}

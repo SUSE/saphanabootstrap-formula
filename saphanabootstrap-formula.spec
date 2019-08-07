@@ -19,7 +19,7 @@
 # See also http://en.opensuse.org/openSUSE:Specfile_guidelines
 
 Name:           saphanabootstrap-formula
-Version:        0.2.0
+Version:        0.2.8
 Release:        0
 Summary:        SAP HANA platform deployment formula
 License:        Apache-2.0
@@ -30,6 +30,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 Requires:       habootstrap-formula
 Requires:       salt-shaptools
+Suggests:       hanadb_exporter >= 0.3.1
 
 # On SLE/Leap 15-SP1 and TW requires the new salt-formula configuration location.
 %if ! (0%{?sle_version:1} && 0%{?sle_version} < 150100)
@@ -78,8 +79,12 @@ fi
 %if 0%{?sle_version:1} && 0%{?sle_version} < 150100
 %files
 %defattr(-,root,root,-)
-%license LICENSE
+%if 0%{?sle_version} < 120300
+%doc README.md LICENSE
+%else
 %doc README.md
+%license LICENSE
+%endif
 /srv/salt/%{fname}
 /srv/salt/%{fname}/%{ftemplates}
 
@@ -89,8 +94,8 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%license LICENSE
 %doc README.md
+%license LICENSE
 %dir %{fdir}
 %dir %{fdir}/states
 %dir %{fdir}/metadata
@@ -98,9 +103,9 @@ fi
 %{fdir}/states/%{fname}/%{ftemplates}
 %{fdir}/metadata/%{fname}
 
-%dir %attr(0755, root, salt) %{fdir}
-%dir %attr(0755, root, salt) %{fdir}/states
-%dir %attr(0755, root, salt) %{fdir}/metadata
+%dir %attr(-, root, root) %{fdir}
+%dir %attr(-, root, root) %{fdir}/states
+%dir %attr(-, root, root) %{fdir}/metadata
 
 %endif
 

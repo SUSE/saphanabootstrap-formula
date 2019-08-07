@@ -1,6 +1,11 @@
 hana:
   $name: HANA
   $type: group
+  install_packages:
+    $name: Install required packages
+    $type: boolean
+    $default: true
+    $help: Install all required packages from currently existing repositories
   nodes:
     $name: Nodes
     $type: edit-group
@@ -123,14 +128,18 @@ hana:
           $optional: true
           $visibleIf: .create_backup == true
           $type: group
-          user:
+          key_name:
             $name: Key Name (hdbuserstore)
             $type: text
-            $optional: false
-          password:
+            $optional: true
+          user_name:
+            $name: SAP user
+            $type: text
+            $optional: true
+          user_password:
             $name: SAP user password
             $type: password
-            $optional: false
+            $optional: true
           database:
             $name: Database name to backup
             $type: text
@@ -151,7 +160,7 @@ hana:
           $optional: true
           $visibleIf: .create_userkey == true
           $type: group
-          key:
+          key_name:
             $name: New key name
             $type: text
             $optional: false
@@ -160,13 +169,15 @@ hana:
             $type: text
             $optional: false
             $help: Use the format <host>:<port number>
-          user:
+          user_name:
+            $name: SAP user
             $type: text
             $default: SYSTEM
             $optional: false
-          password:
-            $name: User password
+          user_password:
+            $name: SAP user password
             $type: password
+            $optional: false
           database:
             $name: Database name
             $type: text
@@ -199,7 +210,35 @@ hana:
           $name: Operation mode
           $type: select
           $values: [logreplay, delta_datashipping]
-        timeout:
+        primary_timeout:
           $name: Timeout to wait until the primary node is enabled
           $type: text
           $optional: true
+        interval:
+          $name: Interval used to check if the primary instance is ready
+          $type: text
+          $optional: true
+
+      add_exporter:
+        $name: Add SAP HANA database metrics exporter
+        $type: boolean
+        $default: false
+        $help: Mark if you want add the SAP HANA database metrics exporter
+      exporter:
+        $name: SAP HANA database metrics exporter
+        $optional: true
+        $visibleIf: .add_exporter == true
+        $type: group
+        exposition_port:
+          $name: SAP HANA exposter exposition port
+          $type: text
+          $optional: true
+        user:
+          $name: SAP HANA user
+          $type: text
+          $default: SYSTEM
+          $optional: false
+        password:
+          $name: SAP HANA password
+          $type: password
+          $optional: false

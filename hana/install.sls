@@ -4,8 +4,7 @@
 include:
     - .enable_cost_optimized
 
-{% for node in hana.nodes %}
-{% if node.host == host and node.install is defined %}
+{% for node in hana.nodes if node.host == host and node.install is defined %}
 
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
@@ -29,5 +28,4 @@ hana_install_{{ node.host+node.sid }}:
       {% endfor %}
     {% endif %}
 
-{% endif %}
 {% endfor %}
