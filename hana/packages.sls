@@ -1,17 +1,12 @@
 #required packages to install SAP HANA
 
-{% set pattern_available = 1 %}
 {% if grains['os_family'] == 'Suse' %}
-{% set pattern_available = salt['cmd.retcode']('zypper search patterns-sap-hana') %}
-{% endif %}
-
-{% if pattern_available == 0 %}
-{% set repo = salt['pkg.info_available']('patterns-sap-hana')['patterns-sap-hana']['repository'] %}
-patterns-sap-hana:
-  pkg.installed:
-    - fromrepo: {{ repo }}
+install-patterns-sap-hana:
+  pkg.latest:
+    - name: patterns-sap-hana
+    - refresh: True
     - retry:
-        attempts: 3
+        attempts: 5
         interval: 15
 
 {% else %}
