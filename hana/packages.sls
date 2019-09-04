@@ -6,7 +6,8 @@
 {% endif %}
 
 {% if pattern_available == 0 %}
-{% set repo = salt['pkg.info_available']('patterns-sap-hana')['patterns-sap-hana']['repository'] %}
+# refresh is disabled to avoid errors during the call
+{% set repo = salt['pkg.info_available']('patterns-sap-hana', refresh=False)['patterns-sap-hana']['repository'] %}
 patterns-sap-hana:
   pkg.installed:
     - fromrepo: {{ repo }}
