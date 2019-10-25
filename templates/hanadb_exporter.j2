@@ -9,9 +9,15 @@
 
 {
   "exposition_port": {{ node.exporter.exposition_port|default(8001) }},
+  "multi_tenant": {{ node.exporter.multi_tenant|default(true)}},
+  "timeout": {{node.exporter.timeout|default(600)}},
   "hana": {
     "host": "{{ node.host }}",
-    "port": 3{{ dbinst }}15,
+    {% if node.exporter.multi_tenant|default(true) is sameas true %}
+    "port": 3{{ dbinst }}13,
+    {% else %}
+    "port": {{ node.exporter.port|default(30015) }},
+    {% endif %}
     "user": "{{ node.exporter.user }}",
     "password": "{{ node.exporter.password }}"
   },

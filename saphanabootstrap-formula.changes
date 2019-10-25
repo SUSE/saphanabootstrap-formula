@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 25 07:22:15 UTC 2019 - Xabier Arbulu <xarbulu@suse.com>
+
+- Version bump 0.3.0
+  * Add support for multi tenant hanadb_exporter
+
+-------------------------------------------------------------------
 Wed Sep  4 06:55:01 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 
 - Update the pkg.info_available call to avoid repositories refresh as
