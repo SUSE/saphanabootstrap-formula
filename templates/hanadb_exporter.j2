@@ -13,10 +13,10 @@
   "timeout": {{node.exporter.timeout|default(600)}},
   "hana": {
     "host": "{{ node.host }}",
-    {% if node.exporter.multi_tenant|default(true) is sameas true %}
+    {% if node.exporter.multi_tenant|default(true) is sameas true and node.exporter.port is not defined %}
     "port": 3{{ dbinst }}13,
     {% else %}
-    "port": {{ node.exporter.port|default(30015) }},
+    "port": {{ node.exporter.port }},
     {% endif %}
     "user": "{{ node.exporter.user }}",
     "password": "{{ node.exporter.password }}"

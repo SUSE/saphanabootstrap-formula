@@ -230,13 +230,14 @@ hana:
         $visibleIf: .add_exporter == true
         $type: group
         exposition_port:
-          $name: SAP HANA exposter exposition port
+          $name: SAP HANA exporter exposition port
           $type: text
           $optional: false
         multi_tenant:
           $name: Enable Multi tenant monitoring
           $type: boolean
           $default: true
+          $help: If enabled, the exporter will select all the tenants listed on the SYSTEMDB metadata and open a connection to each of them in order to collect metrics
         user:
           $name: SAP HANA user
           $type: text
@@ -247,13 +248,14 @@ hana:
           $type: password
           $optional: false
         port:
-          $name: HANA database port. Only used when multi-tenant value is False
+          $name: HANA database port
           $type: text
-          $visibleIf: .multi_tenant == false
-          $default: 30015
+          $default: 30013
           $optional: false
+          $help: If multi tenant is enabled, this port must point to a SYSTEMDB database port (3XX13 be default)
         timeout:
-          $name: Timeout in seconds for HANA database connection
+          $name: Connection timeout
           $type: text
           $default: 600
           $optional: true
+          $help: Timeout in seconds for HANA database connection
