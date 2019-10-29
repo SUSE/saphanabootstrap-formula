@@ -19,7 +19,7 @@
 # See also http://en.opensuse.org/openSUSE:Specfile_guidelines
 
 Name:           saphanabootstrap-formula
-Version:        0.2.9
+Version:        0.3.0
 Release:        0
 Summary:        SAP HANA platform deployment formula
 License:        Apache-2.0
@@ -30,7 +30,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
 Requires:       habootstrap-formula
 Requires:       salt-shaptools
-Suggests:       hanadb_exporter >= 0.3.1
+Suggests:       hanadb_exporter >= 0.5.0
 
 # On SLE/Leap 15-SP1 and TW requires the new salt-formula configuration location.
 %if ! (0%{?sle_version:1} && 0%{?sle_version} < 150100)

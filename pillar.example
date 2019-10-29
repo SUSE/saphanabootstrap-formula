@@ -33,8 +33,11 @@ hana:
       # Optional: Add hanadb_exporter to the instance
       exporter:
         exposition_port: 8001 # Optional, 8001 by default
+        multi_tenant: true # Enable the exporter as multi tenant. This will create the connection with the SYSTEMDB database and all tenants
         user: 'SYSTEM'
         password: 'Qwerty1234'
+        #port: 30015 # HANA database port. If multi_tenant is set this value is 3XX13 by default where XX is the instance number
+        timeout: 600 # Timeout in seconds to start the connection with HANA database
 
     - host: 'hana02'
       sid: 'prd'
