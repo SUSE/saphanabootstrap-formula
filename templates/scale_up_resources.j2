@@ -53,8 +53,7 @@ ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance 
 {% if data.platform == "azure" %}
 
 primitive rsc_nc_{{ sid }}_HDB{{ instance }} anything \
-  params binfile="/usr/bin/nc" cmdline_options="-l -k 62503" \
-  meta resource-stickiness=0 \
+  params binfile="/usr/bin/socat" cmdline_options="-U TCP-LISTEN:62503,backlog=10,fork,reuseaddr /dev/null" \
   op monitor timeout="20" interval="10" depth="0"
 
 group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_nc_{{ sid }}_HDB{{ instance }}
