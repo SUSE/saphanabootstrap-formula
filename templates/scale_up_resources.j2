@@ -17,9 +17,11 @@ op_defaults \
 # production HANA
 #
 
+{% set nic = "nic="~pillar.cluster.interface|default('eth0')|json if data.platform == "gcp" else "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
+
 primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
     params \
-    ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if data.platform == "gcp" else data.virtual_ip_mask }}" {{ "nic=" ~ pillar.cluster.interface|default('eth0') }} \
+    ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if data.platform == "gcp" else data.virtual_ip_mask }}" {{ nic }} \
     op start timeout="20" op stop timeout="20" \
     op monitor interval="10" timeout="20"
 
@@ -52,11 +54,11 @@ ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance 
 
 {% if data.platform == "azure" %}
 
-primitive rsc_nc_{{ sid }}_HDB{{ instance }} anything \
+primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
   params binfile="/usr/bin/socat" cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
   op monitor timeout="20" interval="10" depth="0"
 
-group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_nc_{{ sid }}_HDB{{ instance }}
+group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
