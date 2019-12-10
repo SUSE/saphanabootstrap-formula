@@ -5,7 +5,7 @@
 
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set daemon_instance = '{}_{}'.format(node.sid, instance) %}
-{% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
+{% set config_file = '/usr/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
 {% if loop.first %}
 hanadb_exporter:
