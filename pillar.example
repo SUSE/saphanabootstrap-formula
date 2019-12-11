@@ -55,6 +55,8 @@ hana:
         remote_instance: '00'
         replication_mode: 'sync'
         operation_mode: 'logreplay'
+        # If primary node is not defined the password can we set here (primary node password has preference)
+        #primary_password: 'Qwerty1234'
         # Optional timeout value in seconds to wait until the primary node
         # 100 seconds by default
         primary_timeout: 100
