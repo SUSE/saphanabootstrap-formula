@@ -5,7 +5,7 @@
 
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set daemon_instance = '{}_{}'.format(node.sid, instance) %}
-{% set config_file = '/usr/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
+{% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
 {% if loop.first %}
 hanadb_exporter:
@@ -20,6 +20,20 @@ python3-PyHDB:
       attempts: 3
       interval: 15
 {% endif %}
+
+configure_exporter_logging_{{ daemon_instance }}:
+  file.managed:
+    - name: /etc/hanadb_exporter/logging_config.ini
+    - source: /usr/etc/hanadb_exporter/logging_config.ini
+    - require:
+      - hanadb_exporter
+
+configure_exporter_metrics_{{ daemon_instance }}:
+  file.managed:
+    - name: /etc/hanadb_exporter/metrics.json
+    - source: /usr/etc/hanadb_exporter/metrics.json
+    - require:
+      - hanadb_exporter
 
 configure_exporter_{{ daemon_instance }}:
   file.managed:
