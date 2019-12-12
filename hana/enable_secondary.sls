@@ -3,9 +3,21 @@
 
 {% for node in hana.nodes if node.host == host and node.secondary is defined %}
 
-{% for prim_node in hana.nodes %}
-{% if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
-{% set primary_pass = prim_node.password %}
+# The primary password is retrieved in this order
+# 1. If the primary node is defined in the pillar, primary password will be used
+# 2. If secondary.primary_pass is defined this password will be used
+# 3. The secondary machine password will be used
+{% set password = {} %}
+
+{% for prim_node in hana.nodes if node.secondary.remote_host == prim_node.host and prim_node.primary is defined %}
+{% do password.update({'primary': prim_node.password }) %}
+{% endfor %}
+
+{% if password.primary is not defined and node.secondary.primary_password is defined %}
+{% do password.update({'primary': node.secondary.primary_password }) %}
+{% elif password.primary is not defined %}
+{% do password.update({'primary': node.password }) %}
+{% endif %}
 
 {{ node.secondary.name }}:
   hana.sr_secondary_registered:
@@ -18,8 +30,7 @@
     - operation_mode: {{ node.secondary.operation_mode }}
     - timeout: {{ node.secondary.primary_timeout|default(100) }}
     - interval: {{ node.secondary.interval|default(10) }}
-    - primary_pass: {{ primary_pass }}
+    - primary_pass: {{ password.primary }}
 
-{% endif %}
-{% endfor %}
+
 {% endfor %}
