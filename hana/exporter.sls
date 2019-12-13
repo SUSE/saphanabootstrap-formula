@@ -21,6 +21,20 @@ python3-PyHDB:
       interval: 15
 {% endif %}
 
+configure_exporter_logging_{{ daemon_instance }}:
+  file.managed:
+    - name: /etc/hanadb_exporter/logging_config.ini
+    - source: /usr/etc/hanadb_exporter/logging_config.ini
+    - require:
+      - hanadb_exporter
+
+configure_exporter_metrics_{{ daemon_instance }}:
+  file.managed:
+    - name: /etc/hanadb_exporter/metrics.json
+    - source: /usr/etc/hanadb_exporter/metrics.json
+    - require:
+      - hanadb_exporter
+
 configure_exporter_{{ daemon_instance }}:
   file.managed:
     - source: salt://hana/templates/hanadb_exporter.j2
