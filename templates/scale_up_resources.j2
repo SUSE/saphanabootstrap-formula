@@ -1,6 +1,7 @@
 {% set data = pillar.cluster.configure.template.parameters %}
 {% set sid = data.sid.upper() %}
 {% set instance = '{:0>2}'.format(data.instance) %}
+{% set cloud_provider = grains['cloud_provider'] %}
 
 #
 # defaults
@@ -17,11 +18,11 @@ op_defaults \
 # production HANA
 #
 
-{% set nic = "nic="~pillar.cluster.interface|default('eth0')|json if data.platform == "gcp" else "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
+{% set nic = "nic="~pillar.cluster.interface|default('eth0')|json if cloud_provider == "google-cloud-platform" else "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
 
 primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
     params \
-    ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if data.platform == "gcp" else data.virtual_ip_mask }}" {{ nic }} \
+    ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if cloud_provider == "google-cloud-platform" else data.virtual_ip_mask }}" {{ nic }} \
     op start timeout="20" op stop timeout="20" \
     op monitor interval="10" timeout="20"
 
@@ -52,7 +53,7 @@ primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHana \
 ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance }} \
     meta clone-max="2" clone-node-max="1" interleave="true"
 
-{% if data.platform == "azure" %}
+{% if cloud_provider == "microsoft-azure" %}
 
 primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
   params binfile="/usr/bin/socat" cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
