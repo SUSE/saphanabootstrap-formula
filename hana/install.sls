@@ -16,6 +16,9 @@ hana_install_{{ node.host+node.sid }}:
     - root_password: {{ node.install.root_password }}
     {% if node.install.config_file is defined %}
     - config_file: {{ node.install.config_file }}
+    {% endif %}
+    {% if node.install.hdb_pwd_file is defined %}
+    - hdb_pwd_file: {{ node.install.hdb_pwd_file }}
     {% else %}
     - system_user_password: {{ node.install.system_user_password }}
     - sapadm_password: {{ node.install.sapadm_password }}
