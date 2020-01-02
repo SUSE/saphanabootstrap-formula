@@ -12,6 +12,9 @@ hana:
         software_path: '/root/sap_inst/51052481'
         root_user: 'root'
         root_password: 's'
+        # Fetch HANA passwords from XML file 
+        hdb_pwd_file: '/root/passwords.xml'
+        # Or specify HANA system & sapadm users' passwords like below
         system_user_password: 'Qwerty1234'
         sapadm_password: 'Qwerty1234'
       primary:
