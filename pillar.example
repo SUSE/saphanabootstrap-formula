@@ -13,7 +13,7 @@ hana:
         root_user: 'root'
         root_password: 's'
         # Fetch HANA passwords from XML file 
-        hdb_pwd_file: '/root/passwords.xml'
+        hdb_pwd_file: 'salt://passwords.xml'
         # Or specify HANA system & sapadm users' passwords like below
         system_user_password: 'Qwerty1234'
         sapadm_password: 'Qwerty1234'
