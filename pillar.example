@@ -3,6 +3,12 @@ hana:
   # If set to false, this packages must be installed before the formula
   # execution manually
   # install_packages: true
+
+  # saptune solution to apply to all nodes ( by default nothing is applied)
+  # you can also use this to a single node if need to differ. see hana2 
+  # Warning: only a unique solution can exist into a node.
+  saptune_solution: 'HANA'
+
   nodes:
     - host: 'hana01'
       sid: 'prd'
@@ -46,6 +52,7 @@ hana:
       sid: 'prd'
       instance: 00
       password: 'Qwerty1234'
+      saptune_solution: 'MAXDB'
       install:
         software_path: '/root/sap_inst/51052481'
         root_user: 'root'
