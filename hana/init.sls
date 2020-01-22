@@ -5,6 +5,7 @@ include:
   - hana.packages
 {% endif %}
   - hana.pre_validation
+  - hana.saptune
   - hana.install
   - hana.enable_primary
   - hana.enable_secondary
