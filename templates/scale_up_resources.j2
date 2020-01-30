@@ -30,8 +30,15 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
 
 property $id="cib-bootstrap-options" \
     stonith-enabled="true" \
-    stonith-action="poweroff" \
+    stonith-action="off" \
     stonith-timeout="150s"
+
+primitive res_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
+    params tag={{ data.instance_tag }} profile={{ data.cluster_profile}} \
+    op start interval=0 timeout=180 \
+    op stop interval=0 timeout=180 \
+    op monitor interval=120 timeout=60 \
+    meta target-role=Started
 
 primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
     params ip={{ data.virtual_ip }} routing_table={{ data.route_table}} \
