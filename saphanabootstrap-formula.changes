@@ -1,7 +1,13 @@
 -------------------------------------------------------------------
+Thu Jan 30 15:31:06 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Version 0.4.4
+  * Update HANA resources template to add AWS specific RA
+
+-------------------------------------------------------------------
 Tue Jan 21 14:41:29 UTC 2020 - Dario Maiocchi <dmaiocchi@suse.com>
 
--  Version 0.4.3
+- Version 0.4.3
   * Add saptune module to apply a specific solution
 
 -------------------------------------------------------------------
