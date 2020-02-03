@@ -1,7 +1,7 @@
-{% set data = pillar.cluster.configure.template.parameters %}
-{% set sid = data.sid.upper() %}
-{% set instance = '{:0>2}'.format(data.instance) %}
-{% set cloud_provider = grains['cloud_provider'] %}
+{%- set data = pillar.cluster.configure.template.parameters %}
+{%- set sid = data.sid.upper() %}
+{%- set instance = '{:0>2}'.format(data.instance) %}
+{%- set cloud_provider = grains['cloud_provider'] %}
 
 #
 # defaults
@@ -14,17 +14,57 @@ rsc_defaults \
 op_defaults \
     timeout="600"
 
-#
-# production HANA
-#
-
-{% set nic = "nic="~pillar.cluster.interface|default('eth0')|json if cloud_provider == "google-cloud-platform" else "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
+{%- if cloud_provider not in ["amazon-web-services"] %}
+# Create virtual ip. gcp must be changed when gcp-vpc-move-route RA is available
+{%- set nic = "nic="~pillar.cluster.interface|default('eth0')|json if cloud_provider == "google-cloud-platform" else "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
 
 primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
     params \
     ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if cloud_provider == "google-cloud-platform" else data.virtual_ip_mask }}" {{ nic }} \
     op start timeout="20" op stop timeout="20" \
     op monitor interval="10" timeout="20"
+{%- endif %}
+
+# Platform dependant (stonith, virtual ip address, cib options, etc) resource
+{%- if cloud_provider == "amazon-web-services" %}
+
+property $id="cib-bootstrap-options" \
+    stonith-enabled="true" \
+    stonith-action="off" \
+    stonith-timeout="150s"
+
+primitive res_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
+    params tag={{ data.instance_tag }} profile={{ data.cluster_profile}} \
+    op start interval=0 timeout=180 \
+    op stop interval=0 timeout=180 \
+    op monitor interval=120 timeout=60 \
+    meta target-role=Started
+
+primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
+    params ip={{ data.virtual_ip }} routing_table={{ data.route_table}} \
+    interface={{ pillar.cluster.interface|default('eth0')|json }} profile={{ data.cluster_profile}} \
+    op start interval=0 timeout=180 \
+    op stop interval=0 timeout=180 \
+    op monitor interval=60 timeout=60
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+
+{%- elif cloud_provider == "microsoft-azure" %}
+
+primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
+    params binfile="/usr/bin/socat" cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
+    op monitor timeout="20" interval="10" depth="0"
+
+group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+
+{%- else %}
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+
+{%- endif %}
+
+# SAP HANA resources
 
 primitive rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHanaTopology \
     params \
@@ -53,28 +93,12 @@ primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHana \
 ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance }} \
     meta clone-max="2" clone-node-max="1" interleave="true"
 
-{% if cloud_provider == "microsoft-azure" %}
-
-primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
-  params binfile="/usr/bin/socat" cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
-  op monitor timeout="20" interval="10" depth="0"
-
-group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
-
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
-
-{% else %}
-
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
-
-{% endif %}
-
 order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} msl_SAPHana_{{ sid }}_HDB{{ instance }}
 
-{% if data.cost_optimized_parameters is defined %}
-{% set qas_sid = data.cost_optimized_parameters.sid.upper() %}
-{% set qas_instance = '{:0>2}'.format(data.cost_optimized_parameters.instance) %}
-{% set qas_remote_host = data.cost_optimized_parameters.remote_host %}
+{%- if data.cost_optimized_parameters is defined %}
+{%- set qas_sid = data.cost_optimized_parameters.sid.upper() %}
+{%- set qas_instance = '{:0>2}'.format(data.cost_optimized_parameters.instance) %}
+{%- set qas_remote_host = data.cost_optimized_parameters.remote_host %}
 
 #
 # non-production HANA
@@ -91,9 +115,9 @@ primitive rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} ocf:heartbeat:SAPDatabase 
 location loc_{{ qas_sid }}_never_on_{{ qas_remote_host }} rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} -inf: {{ qas_remote_host }}
 
 colocation col_{{ qas_sid }}_never_with_{{ sid }}-ip -inf: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:Started \
- rsc_ip_{{ sid }}_HDB{{ instance }}
+   rsc_ip_{{ sid }}_HDB{{ instance }}
 
 order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote Mandatory: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
- msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
+   msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
 
-{% endif %}
+{%- endif %}
