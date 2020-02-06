@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb  6 13:58:37 UTC 2020 - Dario Maiocchi <dmaiocchi@suse.com>
+
+- Version 0.4.5
+  * Change name of pkg to prometheus-hanadb_exporter 
+
+-------------------------------------------------------------------
 Thu Jan 30 15:31:06 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Version 0.4.4
