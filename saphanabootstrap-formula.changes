@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 11 10:51:56 UTC 2020 - Dario Maiocchi <dmaiocchi@suse.com>
+
+-  Cersion 0.4.5
+  * Rename systemd service to prometheus-hanadb prefix
+
+-------------------------------------------------------------------
 Thu Jan 30 15:31:06 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Version 0.4.4

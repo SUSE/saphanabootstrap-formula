@@ -47,7 +47,7 @@ configure_exporter_{{ daemon_instance }}:
 
 start_exporter_{{ daemon_instance }}:
   service.running:
-    - name: hanadb_exporter@{{ daemon_instance }}
+    - name: prometheus-hanadb_exporter@{{ daemon_instance }}
     - enable: True
     - reload: True
     - require:
