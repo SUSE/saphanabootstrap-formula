@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Tue Feb 11 10:51:56 UTC 2020 - Dario Maiocchi <dmaiocchi@suse.com>
 
--  Version 0.4.5
+-  Version 0.5.0
   * Change the package name to prometheus-hanadb_exporter (jsc#SLE-10545)
 
 -------------------------------------------------------------------
