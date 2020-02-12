@@ -31,7 +31,7 @@ BuildArch:      noarch
 Requires:       habootstrap-formula
 Requires:       salt-shaptools
 Requires:       salt-formulas-configuration
-Suggests:       prometheus-hanadb_exporter >= 0.5.0
+Suggests:       prometheus-hanadb_exporter >= 0.7.0
 
 %define fname hana
 %define fdir  %{_datadir}/salt-formulas
