@@ -41,7 +41,7 @@ hana:
           file: 'backup'
       # Optional: Add hanadb_exporter to the instance
       exporter:
-        exposition_port: 8001 # Optional, 8001 by default
+        exposition_port: 9668 # Optional, 9668 by default
         multi_tenant: true # Enable the exporter as multi tenant. This will create the connection with the SYSTEMDB database and all tenants
         user: 'SYSTEM'
         password: 'Qwerty1234'
@@ -75,7 +75,7 @@ hana:
           global_allocation_limit: '32100'
           preload_column_tables: False
       exporter:
-        exposition_port: 8001 # Optional, 8001 by default
+        exposition_port: 9668 # Optional, 9668 by default
         user: 'SYSTEM'
         password: 'Qwerty1234'
 
@@ -90,6 +90,6 @@ hana:
         system_user_password: 'Qwerty1234'
         sapadm_password: 'Qwerty1234'
       exporter:
-        exposition_port: 8002 # Optional, 8001 by default
+        exposition_port: 9669 # Optional, 9668 by default
         user: 'SYSTEM'
         password: 'Qwerty1234'
