@@ -8,7 +8,7 @@
 {% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
 {% if loop.first %}
-hanadb_exporter:
+prometheus-hanadb_exporter:
   pkg.installed:
   - retry:
       attempts: 3
@@ -26,14 +26,14 @@ configure_exporter_logging_{{ daemon_instance }}:
     - name: /etc/hanadb_exporter/logging_config.ini
     - source: /usr/etc/hanadb_exporter/logging_config.ini
     - require:
-      - hanadb_exporter
+      - prometheus-hanadb_exporter
 
 configure_exporter_metrics_{{ daemon_instance }}:
   file.managed:
     - name: /etc/hanadb_exporter/metrics.json
     - source: /usr/etc/hanadb_exporter/metrics.json
     - require:
-      - hanadb_exporter
+      - prometheus-hanadb_exporter
 
 configure_exporter_{{ daemon_instance }}:
   file.managed:
@@ -41,13 +41,13 @@ configure_exporter_{{ daemon_instance }}:
     - name: {{ config_file }}
     - template: jinja
     - require:
-      - hanadb_exporter
+      - prometheus-hanadb_exporter
     - context: # set up context for template hanadb_exporter.j2
         sid: {{ node.sid }}
 
 start_exporter_{{ daemon_instance }}:
   service.running:
-    - name: hanadb_exporter@{{ daemon_instance }}
+    - name: prometheus-hanadb_exporter@{{ daemon_instance }}
     - enable: True
     - reload: True
     - require:
