@@ -14,13 +14,12 @@ rsc_defaults \
 op_defaults \
     timeout="600"
 
-{%- if cloud_provider not in ["amazon-web-services"] %}
-# Create virtual ip. gcp must be changed when gcp-vpc-move-route RA is available
-{%- set nic = "nic="~pillar.cluster.interface|default('eth0')|json if cloud_provider == "google-cloud-platform" else "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
+{%- if cloud_provider not in ["amazon-web-services", "google-cloud-platform"] %}
+{%- set nic = "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
 
 primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
     params \
-    ip="{{ data.virtual_ip }}" cidr_netmask="{{ 32 if cloud_provider == "google-cloud-platform" else data.virtual_ip_mask }}" {{ nic }} \
+    ip="{{ data.virtual_ip }}" cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
     op start timeout="20" op stop timeout="20" \
     op monitor interval="10" timeout="20"
 {%- endif %}
@@ -33,21 +32,36 @@ property $id="cib-bootstrap-options" \
     stonith-action="off" \
     stonith-timeout="150s"
 
-primitive res_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
-    params tag={{ data.instance_tag }} profile={{ data.cluster_profile}} \
+primitive rsc_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
+    params tag={{ data.instance_tag }} profile={{ data.cluster_profile }} \
     op start interval=0 timeout=180 \
     op stop interval=0 timeout=180 \
     op monitor interval=120 timeout=60 \
     meta target-role=Started
 
 primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
-    params ip={{ data.virtual_ip }} routing_table={{ data.route_table}} \
-    interface={{ pillar.cluster.interface|default('eth0')|json }} profile={{ data.cluster_profile}} \
+    params ip={{ data.virtual_ip }} routing_table={{ data.route_table }} \
+    interface={{ pillar.cluster.interface|default('eth0')|json }} profile={{ data.cluster_profile }} \
     op start interval=0 timeout=180 \
     op stop interval=0 timeout=180 \
     op monitor interval=60 timeout=60
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+
+{%- elif cloud_provider == "google-cloud-platform" %}
+
+# This stonith resource will be duplicated for each node in the cluster
+primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
+    params action=reboot plug={{ grains['host'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['host'] }}" \
+    meta target-role=Started
+
+primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
+    params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_table }} \
+    op start interval=0 timeout=180 \
+    op stop interval=0 timeout=180 \
+    op monitor interval=60 timeout=60
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_gcp_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- elif cloud_provider == "microsoft-azure" %}
 
