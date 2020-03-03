@@ -1,7 +1,13 @@
 -------------------------------------------------------------------
+Tue Mar  3 09:51:59 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Version 0.5.1
+  * Adapt the cluster template to use the proper gcp agents
+
+-------------------------------------------------------------------
 Tue Feb 11 10:51:56 UTC 2020 - Dario Maiocchi <dmaiocchi@suse.com>
 
--  Version 0.5.0
+- Version 0.5.0
   * Change the package name to prometheus-hanadb_exporter (jsc#SLE-10545)
 
 -------------------------------------------------------------------
