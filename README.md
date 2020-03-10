@@ -30,10 +30,10 @@ sudo cp salt-shaptools/salt/modules/* /srv/salt/_modules
 sudo cp salt-shaptools/salt/states/* /srv/salt/_states
 ```
 
-## Install (Suse distros)
+## Install (SUSE distros)
 
 The easiest way to install the formula in SUSE distributions is using a rpm package.
-For that follow the next sequence to install all the dependencies (opensuse leap 15
+For that follow the next sequence to install all the dependencies (openSUSE Leap 15
 is used in the example):
 
 ```bash
@@ -42,7 +42,7 @@ sudo zypper ref
 sudo zypper in saphanabootstrap-formula
 ```
 
-To use the formula in Suse Manager:
+To use the formula in SUSE Manager:
 ```bash
 sudo zypper in saphanabootstrap-formula-suma
 ```
@@ -85,7 +85,7 @@ SaltStack GPG renderer provides a secure encryption/decryption of pillar data. T
 - If a masterless approach is used (as in the current automated deployment) the gpg private key must be imported in all the nodes. This might require the copy/paste of the keys.
 
 ## Build
-To build a new deliverable (rpm package) follow the next steps (Suse distros only):
+To build a new deliverable (rpm package) follow the next steps (SUSE distros only):
 
 ```bash
 cp -R saphanabootstrap-formula saphanabootstrap-formula-${version}
