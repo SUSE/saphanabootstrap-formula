@@ -8,13 +8,10 @@
 {% set config_file = '/etc/hanadb_exporter/{}.json'.format(daemon_instance) %}
 
 {% if loop.first %}
-prometheus-hanadb_exporter:
-  pkg.installed:
-  - retry:
-      attempts: 3
-      interval: 15
+include:
+  - hana.install_pydbapi
 
-python3-PyHDB:
+prometheus-hanadb_exporter:
   pkg.installed:
   - retry:
       attempts: 3
@@ -52,5 +49,6 @@ start_exporter_{{ daemon_instance }}:
     - reload: True
     - require:
         - configure_exporter_{{ daemon_instance }}
+        - hana_install_pydbapi_client
 
 {% endfor %}
