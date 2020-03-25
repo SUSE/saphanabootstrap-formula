@@ -5,7 +5,7 @@ hana:
   # install_packages: true
 
   # saptune solution to apply to all nodes ( by default nothing is applied)
-  # you can also use this to a single node if need to differ. see hana2 
+  # you can also use this to a single node if need to differ. see hana2
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
 
@@ -18,7 +18,7 @@ hana:
         software_path: '/root/sap_inst/51052481'
         root_user: 'root'
         root_password: 's'
-        # Fetch HANA passwords from XML file 
+        # Fetch HANA passwords from XML file
         hdb_pwd_file: 'salt://passwords.xml'
         # Or specify HANA system & sapadm users' passwords like below
         system_user_password: 'Qwerty1234'
@@ -47,6 +47,8 @@ hana:
         password: 'Qwerty1234'
         #port: 30015 # HANA database port. If multi_tenant is set this value is 3XX13 by default where XX is the instance number
         timeout: 600 # Timeout in seconds to start the connection with HANA database
+        # Set the path of the HANA Client folder, if it is not set, the node software_path will be used
+        #hana_client_path: /hana_client_path
 
     - host: 'hana02'
       sid: 'prd'
