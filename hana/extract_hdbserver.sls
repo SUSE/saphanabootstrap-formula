@@ -1,6 +1,6 @@
 {%- from "hana/map.jinja" import hana with context -%}
 
-{% if hana.hdbserver_sar_file and hana.sapcar_exe_file is defined %}
+{% if hana.hdbserver_sar_file is defined and hana.sapcar_exe_file is defined %}
 
 extract_hdbserver_sar:
     sapcar.extracted:
