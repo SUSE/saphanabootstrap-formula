@@ -6,12 +6,18 @@ include:
 
 {% for node in hana.nodes if node.host == host and node.install is defined %}
 
+{% if hana.software_path is defined or node.install.software_path is defined  %}
+{% set software_path =  node.install.software_path|default(hana.software_path) %}
+{% else %}
+{% set software_path =  hana.hdbserver_extract_dir %}
+{% endif %}
+
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
     - name: {{ node.sid }}
     - inst: {{ node.instance }}
     - password: {{ node.password }}
-    - software_path: {{ node.install.software_path }}
+    - software_path: {{ software_path }}
     - root_user: {{ node.install.root_user }}
     - root_password: {{ node.install.root_password }}
     {% if node.install.config_file is defined %}

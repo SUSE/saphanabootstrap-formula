@@ -8,6 +8,14 @@ hana:
   # you can also use this to a single node if need to differ. see hana2
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
+  
+  # Specify the path to the sapcar executable & HANA database server installation sar archive
+  # The sar archive will be extracted to path specified at hdbserver_extract_dir (optional, by default /sapmedia/HANA)
+  sapcar_exe_file: '/root/sap_inst/sapcar.exe'
+  hdbserver_sar_file: '/root/sap_inst/IMDB_SERVER_LINUX.SAR'
+  hdbserver_extract_dir:'/root/sap_inst/IMDB_SERVER_LINUX" 
+  # Or specify the path to already extracted HANA platform installation media
+  software_path: '/root/sap_inst/51052481'
 
   nodes:
     - host: 'hana01'
@@ -15,6 +23,9 @@ hana:
       instance: 00
       password: 'Qwerty1234'
       install:
+        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media 
+        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media, 
+        # given that sapcar_exe_file & hdbserver_sar_file package is also provided
         software_path: '/root/sap_inst/51052481'
         root_user: 'root'
         root_password: 's'
