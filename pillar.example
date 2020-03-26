@@ -11,11 +11,12 @@ hana:
   
   # Specify the path to the sapcar executable & HANA database server installation sar archive
   # The sar archive will be extracted to path specified at hdbserver_extract_dir (optional, by default /sapmedia/HANA)
-  sapcar_exe_file: '/root/sap_inst/sapcar.exe'
-  hdbserver_sar_file: '/root/sap_inst/IMDB_SERVER_LINUX.SAR'
-  hdbserver_extract_dir:'/root/sap_inst/IMDB_SERVER_LINUX" 
+  # Make sure to use the latest/compatible version of sapcar executable, otherwise file may be extracted incorrectly
+  sapcar_exe_file: '/sapmedia/sapcar.exe'
+  hdbserver_sar_file: '/sapmedia/IMDB_SERVER_LINUX.SAR'
+  hdbserver_extract_dir: '/sapmedia/HANA'
   # Or specify the path to already extracted HANA platform installation media
-  software_path: '/root/sap_inst/51052481'
+  software_path: '/sapmedia/HANA/51052481'
 
   nodes:
     - host: 'hana01'
@@ -26,7 +27,7 @@ hana:
         # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media 
         # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media, 
         # given that sapcar_exe_file & hdbserver_sar_file package is also provided
-        software_path: '/root/sap_inst/51052481'
+        software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'
         # Fetch HANA passwords from XML file
@@ -67,7 +68,7 @@ hana:
       password: 'Qwerty1234'
       saptune_solution: 'MAXDB'
       install:
-        software_path: '/root/sap_inst/51052481'
+        software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
@@ -97,7 +98,7 @@ hana:
       instance: 01
       password: 'Qwerty1234'
       install:
-        software_path: '/root/sap_inst/51052481'
+        software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
