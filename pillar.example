@@ -9,14 +9,15 @@ hana:
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
   
-  # Specify the path to the sapcar executable & HANA database server installation sar archive
+  # Specify the path to already extracted HANA platform installation media
+  # This will have preference over hdbserver sar archive installation media
+  software_path: '/sapmedia/HANA/51052481'
+  # Or specify the path to the sapcar executable & HANA database server installation sar archive
   # The sar archive will be extracted to path specified at hdbserver_extract_dir (optional, by default /sapmedia/HANA)
   # Make sure to use the latest/compatible version of sapcar executable, otherwise file may be extracted incorrectly
   sapcar_exe_file: '/sapmedia/sapcar.exe'
   hdbserver_sar_file: '/sapmedia/IMDB_SERVER_LINUX.SAR'
   hdbserver_extract_dir: '/sapmedia/HANA'
-  # Or specify the path to already extracted HANA platform installation media
-  software_path: '/sapmedia/HANA/51052481'
 
   nodes:
     - host: 'hana01'

@@ -16,10 +16,20 @@ hana_install_python_pip:
         interval: 15
     - resolve_capabilities: true
 
+# The software_folders is retrieved in this order: 
+# 1. node.exporter.hana_client_path
+# 2. node.install.software_path
+# 3. hana.software_path
+{% if node.exporter.hana_client_path is defined or node.install.software_path is defined  %}
+{% set software_folders = node.exporter.hana_client_path|default(node.install.software_path) %}
+{% else %}
+{% set software_folders = hana.software_path %}
+{% endif %}
+
 hana_extract_pydbapi_client:
   hana.pydbapi_extracted:
     - name: PYDBAPI.TGZ
-    - software_folders: [{{ node.exporter.hana_client_path|default(node.install.software_path) }}]
+    - software_folders: [{{ software_folders }}]
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true

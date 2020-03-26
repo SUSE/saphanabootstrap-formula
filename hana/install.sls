@@ -7,9 +7,9 @@ include:
 {% for node in hana.nodes if node.host == host and node.install is defined %}
 
 {% if hana.software_path is defined or node.install.software_path is defined  %}
-{% set software_path =  node.install.software_path|default(hana.software_path) %}
+{% set software_path = node.install.software_path|default(hana.software_path) %}
 {% else %}
-{% set software_path =  hana.hdbserver_extract_dir %}
+{% set software_path = hana.hdbserver_extract_dir %}
 {% endif %}
 
 hana_install_{{ node.host+node.sid }}:
