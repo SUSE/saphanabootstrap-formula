@@ -9,4 +9,7 @@ include:
   - hana.install
   - hana.enable_primary
   - hana.enable_secondary
+{% if hana.ha_enabled %}
+  - hana.ha_cluster
+{% endif %}
   - hana.exporter

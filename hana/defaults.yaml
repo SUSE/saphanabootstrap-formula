@@ -1,3 +1,4 @@
 hana:
   install_packages: true
+  ha_enabled: true
   nodes: []

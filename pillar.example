@@ -9,6 +9,10 @@ hana:
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
 
+  # Enable HA cluster configuration. It installs the SAPHanaSR hook.
+  # To use this option the primary and secondary nodes must be defined in the pillar file
+  ha_enabled: true
+
   nodes:
     - host: 'hana01'
       sid: 'prd'
