@@ -1,7 +1,7 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
-{% for node in hana.nodes if node.host == host %}
+{% for node in hana.nodes if node.host == host and (node.exporter.hana_client_path is defined or node.install.software_path is defined or hana.software_path is defined) %}
 {% if loop.first %}
 {% set pydbapi_output_dir = '/tmp/pydbapi' %}
 hana_install_python_pip:
@@ -19,7 +19,7 @@ hana_install_python_pip:
 hana_extract_pydbapi_client:
   hana.pydbapi_extracted:
     - name: PYDBAPI.TGZ
-    - software_folders: [{{ node.exporter.hana_client_path|default(node.install.software_path) }}]
+    - software_folders: [{{ node.exporter.hana_client_path|default(node.install.software_path)|default(hana.software_path) }}]
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true
