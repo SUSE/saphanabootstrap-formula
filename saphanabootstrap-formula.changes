@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 27 11:16:16 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Version 0.5.4
+  * Update the fence_gce usage to use gcp_instance_id 
+  
+-------------------------------------------------------------------
 Wed Mar 25 21:34:17 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.3
