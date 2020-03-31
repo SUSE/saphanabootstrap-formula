@@ -8,6 +8,16 @@ hana:
   # you can also use this to a single node if need to differ. see hana2
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
+  
+  # Specify the path to already extracted HANA platform installation media
+  # This will have preference over hdbserver sar archive installation media
+  software_path: '/sapmedia/HANA/51052481'
+  # Or specify the path to the sapcar executable & HANA database server installation sar archive
+  # The sar archive will be extracted to path specified at hdbserver_extract_dir (optional, by default /sapmedia/HANA)
+  # Make sure to use the latest/compatible version of sapcar executable, otherwise file may be extracted incorrectly
+  sapcar_exe_file: '/sapmedia/sapcar.exe'
+  hdbserver_sar_file: '/sapmedia/IMDB_SERVER_LINUX.SAR'
+  hdbserver_extract_dir: '/sapmedia/HANA'
 
   # Enable HA cluster configuration. It installs the SAPHanaSR hook.
   # To use this option the primary and secondary nodes must be defined in the pillar file
@@ -19,7 +29,10 @@ hana:
       instance: 00
       password: 'Qwerty1234'
       install:
-        software_path: '/root/sap_inst/51052481'
+        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media 
+        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media, 
+        # given that sapcar_exe_file & hdbserver_sar_file package is also provided
+        software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'
         # Fetch HANA passwords from XML file
@@ -60,7 +73,7 @@ hana:
       password: 'Qwerty1234'
       saptune_solution: 'MAXDB'
       install:
-        software_path: '/root/sap_inst/51052481'
+        software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
@@ -90,7 +103,7 @@ hana:
       instance: 01
       password: 'Qwerty1234'
       install:
-        software_path: '/root/sap_inst/51052481'
+        software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'
         system_user_password: 'Qwerty1234'
