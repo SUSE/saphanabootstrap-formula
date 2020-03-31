@@ -19,6 +19,10 @@ hana:
   hdbserver_sar_file: '/sapmedia/IMDB_SERVER_LINUX.SAR'
   hdbserver_extract_dir: '/sapmedia/HANA'
 
+  # Enable HA cluster configuration. It installs the SAPHanaSR hook.
+  # To use this option the primary and secondary nodes must be defined in the pillar file
+  ha_enabled: true
+
   nodes:
     - host: 'hana01'
       sid: 'prd'
