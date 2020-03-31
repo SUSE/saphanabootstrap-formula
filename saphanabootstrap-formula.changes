@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 31 07:25:29 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Version 0.5.5
+  * Implement the new SAPHanaSR hook usage 
+
+-------------------------------------------------------------------
 Fri Mar 20 13:19:03 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Version 0.5.2
