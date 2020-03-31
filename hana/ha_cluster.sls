@@ -6,7 +6,7 @@
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set sap_instance = '{}_{}'.format(node.sid, instance) %}
 
-# Stop SAP HanaError
+# Stop SAP Hana
 stop_hana_{{ sap_instance }}:
   module.run:
     - hana.stop:
@@ -76,7 +76,7 @@ sudoers_edit_{{ sap_instance }}:
       - sudoers_check_{{ sap_instance }}
       - stop_hana_{{ sap_instance }}
 
-# Stop SAP HanaError
+# Start SAP Hana
 start_hana_{{ sap_instance }}:
   module.run:
     - hana.start:
