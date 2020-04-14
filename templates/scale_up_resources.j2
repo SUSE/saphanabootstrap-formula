@@ -65,8 +65,8 @@ colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_gcp_vip_{{ sid }
 
 {%- elif cloud_provider == "microsoft-azure" %}
 
-primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
-    params binfile="/usr/bin/socat" cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
+primitive rsc_socat_{{ sid }}_HDB{{ instance }} azure-lb \
+    params port=625{{ instance }} \
     op monitor timeout="20" interval="10" depth="0"
 
 group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
