@@ -52,7 +52,7 @@ colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }
 
 # This stonith resource will be duplicated for each node in the cluster
 primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
-    params plug={{ grains['gcp_instance_id'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_id'] }}" \
+    params plug={{ grains['gcp_instance_name'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_name'] }}" \
     meta target-role=Started
 
 primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
