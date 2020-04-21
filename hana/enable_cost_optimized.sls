@@ -50,7 +50,8 @@ failure:
     - failhard: True
 {% endif %}
 
-{% set py_packages_folder = '{}/DATA_UNITS/HDB_CLIENT_LINUX_{}/client/PYDBAPI.TGZ'.format(grains['hana_inst_folder'], platform) %}
+{% set software_folder = node.install.software_path|default(hana.software_path) %}
+{% set py_packages_folder = '{}/DATA_UNITS/HDB_CLIENT_LINUX_{}/client/PYDBAPI.TGZ'.format(software_folder, platform) %}
 
 extract_hana_pydbapi_archive:
     archive.extracted:

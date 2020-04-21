@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 21 02:21:28 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.5.8
+  * Adjust software_path usage for cost optimized scenario 
+
+-------------------------------------------------------------------
 Fri Apr 17 08:14:08 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Version 0.5.7
