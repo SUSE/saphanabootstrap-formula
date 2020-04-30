@@ -1,12 +1,4 @@
-{%- from "hana/map.jinja" import hana with context -%}
-{% set host = grains['host'] %}
-
-{# sid is coming from exporter.sls context #}
-{% for node in hana.nodes if node.host == host and node.exporter is defined and node.sid == sid %}
-
-{% set dbinst = '{:0>2}'.format(node.instance) %}
-{% set node_subix = '{}_{}'.format(node.sid, dbinst) %}
-
+{# context is coming from exporter.sls #}
 {
   "exposition_port": {{ node.exporter.exposition_port|default(9668) }},
   "multi_tenant": {{ node.exporter.multi_tenant|default(true)|tojson }},
@@ -14,7 +6,7 @@
   "hana": {
     "host": "{{ node.host }}",
     {% if node.exporter.multi_tenant|default(true) is sameas true and node.exporter.port is not defined %}
-    "port": 3{{ dbinst }}13,
+    "port": 3{{ sap_instance_nr }}13,
     {% else %}
     "port": {{ node.exporter.port }},
     {% endif %}
@@ -23,8 +15,6 @@
   },
   "logging": {
     "config_file": "/etc/hanadb_exporter/logging_config.ini",
-    "log_file": "/var/log/hanadb_exporter_{{ node_subix }}.log"
+    "log_file": "/var/log/hanadb_exporter_{{ exporter_instance }}.log"
   }
 }
-
-{% endfor %}

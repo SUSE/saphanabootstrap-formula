@@ -8,7 +8,7 @@ hana:
   # you can also use this to a single node if need to differ. see hana2
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
-  
+
   # Specify the path to already extracted HANA platform installation media
   # This will have preference over hdbserver sar archive installation media
   software_path: '/sapmedia/HANA/51052481'
@@ -29,8 +29,8 @@ hana:
       instance: 00
       password: 'Qwerty1234'
       install:
-        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media 
-        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media, 
+        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media
+        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media,
         # given that sapcar_exe_file & hdbserver_sar_file package is also provided
         software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
