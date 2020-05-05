@@ -1,5 +1,4 @@
 {%- from "hana/map.jinja" import hana with context -%}
-{% set host = grains['host'] %}
 
 include:
   - hana.install_pydbapi
@@ -10,24 +9,24 @@ prometheus-hanadb_exporter:
       attempts: 3
       interval: 15
 
-{% for node in hana.nodes %}
-
-{% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
-{% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
-
-hanadb_exporter_logging_configuration_{{ exporter_instance }}:
+hanadb_exporter_logging_configuration:
   file.managed:
     - name: /etc/hanadb_exporter/logging_config.ini
     - source: /usr/etc/hanadb_exporter/logging_config.ini
     - require:
       - prometheus-hanadb_exporter
 
-hanadb_exporter_metrics_configuration_{{ exporter_instance }}:
+hanadb_exporter_metrics_configuration:
   file.managed:
     - name: /etc/hanadb_exporter/metrics.json
     - source: /usr/etc/hanadb_exporter/metrics.json
     - require:
       - prometheus-hanadb_exporter
+
+{% for node in hana.nodes if node.host == grains['host'] %}
+
+{% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
+{% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
 
 hanadb_exporter_configuration_{{ exporter_instance }}:
   file.managed:
@@ -43,7 +42,6 @@ hanadb_exporter_configuration_{{ exporter_instance }}:
         sap_instance_nr: {{ sap_instance_nr }}
         exporter_instance: {{ exporter_instance }}
 
-{% if host == node.host %}
 hanadb_exporter_service_{{ exporter_instance }}:
   service.running:
     - name: prometheus-hanadb_exporter@{{ exporter_instance }}
@@ -52,6 +50,5 @@ hanadb_exporter_service_{{ exporter_instance }}:
     - require:
         - hanadb_exporter_configuration_{{ exporter_instance }}
         - hana_install_pydbapi_client
-{% endif %}
 
 {% endfor %}
