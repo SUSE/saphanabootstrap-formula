@@ -13,7 +13,7 @@ prometheus-hanadb_exporter:
 {% for node in hana.nodes %}
 
 {% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
-{% set exporter_instance = '{}_HDB{}'.format(node.sid, sap_instance_nr) %}
+{% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
 
 hanadb_exporter_logging_configuration_{{ exporter_instance }}:
   file.managed:
@@ -39,7 +39,7 @@ hanadb_exporter_configuration_{{ exporter_instance }}:
       - hanadb_exporter_metrics_configuration_{{ exporter_instance }}
       - hanadb_exporter_logging_configuration_{{ exporter_instance }}
     - context:
-        node: {{ node }}
+        node: {{ node|yaml }}
         sap_instance_nr: {{ sap_instance_nr }}
         exporter_instance: {{ exporter_instance }}
 
