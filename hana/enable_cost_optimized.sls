@@ -50,15 +50,14 @@ failure:
     - failhard: True
 {% endif %}
 
-{% set software_folder = node.install.software_path|default(hana.software_path) %}
-{% set py_packages_folder = '{}/DATA_UNITS/HDB_CLIENT_LINUX_{}/client/PYDBAPI.TGZ'.format(software_folder, platform) %}
-
 extract_hana_pydbapi_archive:
-    archive.extracted:
-      - name: /hana/shared/srHook
-      - enforce_toplevel: False
-      - source: {{ py_packages_folder }}
-      - options: --transform 's|-[0-9]*\.[0-9]*\.[0-9]*|-package|' --wildcards 'hdbcli*'
+    hana.pydbapi_extracted:
+      - name: PYDBAPI.TGZ
+      - software_folders: [{{ hana.software_path }}]
+      - output_dir: /hana/shared/srHook
+      - hana_version: '20'
+      - force: true
+      - additional_extract_options: --transform s|-[0-9]*\.[0-9]*\.[0-9]*|-package| --wildcards hdbcli*
       - require:
         - setup_srHook_directory
 
