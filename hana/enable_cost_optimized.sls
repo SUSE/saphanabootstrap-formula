@@ -53,7 +53,7 @@ failure:
 extract_hana_pydbapi_archive:
     hana.pydbapi_extracted:
       - name: PYDBAPI.TGZ
-      - software_folders: [{{ hana.software_path }}]
+      - software_folders: [{{ node.install.software_path|default(hana.software_path) }}]
       - output_dir: /hana/shared/srHook
       - hana_version: '20'
       - force: true
