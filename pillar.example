@@ -99,10 +99,6 @@ hana:
       cost_optimized_parameters:
           global_allocation_limit: '32100'
           preload_column_tables: False
-      exporter:
-        exposition_port: 9668 # Optional, 9668 by default
-        user: 'SYSTEM'
-        password: 'Qwerty1234'
 
     - host: hana02
       sid: 'qas'
