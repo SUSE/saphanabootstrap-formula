@@ -82,7 +82,7 @@ hanadb_exporter_configuration_{{ exporter_instance }}:
     - context:
         host: {{ node.host }}
         exporter: {{ exporter|yaml }}
-        sap_instance_nr: {{ sap_instance_nr }}
+        sap_instance_nr: "{{ sap_instance_nr }}"
         exporter_instance: {{ exporter_instance }}
 
 {% if node.primary is defined or node.secondary is defined %}
