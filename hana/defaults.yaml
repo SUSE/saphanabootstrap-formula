@@ -1,5 +1,5 @@
 hana:
   install_packages: true
   ha_enabled: true
-  hdbserver_extract_dir: /sapmedia/HANA
+  hana_extract_dir: /sapmedia/HANA
   nodes: []
