@@ -23,7 +23,7 @@ hana:
   # To use this option the primary and secondary nodes must be defined in the pillar file
   ha_enabled: true
 
-  # optional: enables monitoring via ha_cluster_exporter (disabled by default)
+  # optional: enables monitoring via hanadb_exporter (disabled by default)
   # the exporter will be installed and configured in all the nodes
   # you can customize the exporter configuration in each node in the dedicated sections below
   monitoring_enabled: true
