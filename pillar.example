@@ -15,7 +15,7 @@ hana:
   # Or specify the path to the hana installation media archive
   # If using hana sar archive, please also provide compatible version of sapcar executable
   # The archive will be extracted to path specified at hana_extract_dir (optional, by default /sapmedia/HANA)
-  hana_archive_file:'/sapmedia/51053492.ZIP'
+  hana_archive_file: '/sapmedia/51053492.ZIP'
   hana_extract_dir: '/sapmedia/HANA'
   #sapcar_exe_file: '/sapmedia/SAPCAR'
 
