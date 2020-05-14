@@ -84,7 +84,6 @@ hanadb_exporter_configuration_{{ exporter_instance }}:
       - hanadb_exporter_metrics_configuration
       - hanadb_exporter_logging_configuration
     - context:
-        host: {{ node.host }}
         exporter: {{ exporter|yaml }}
         sap_instance_nr: "{{ sap_instance_nr }}"
         exporter_instance: {{ exporter_instance }}
