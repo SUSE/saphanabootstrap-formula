@@ -4,11 +4,15 @@
 
 {% for node in hana.nodes if node.host == grains['host'] %}
 
+# if we have a replicated setup we only take exporter configuration from the primary
 {% if node.secondary is not defined %}
-{% set exporter = node.exporter %}
+{% set exporter = node.exporter|default(None) %}
 {% else %}
-{% set exporter = (hana.nodes|selectattr("host", "equalto", node.secondary.remote_host)|selectattr("primary", "defined")|first).exporter %}
+{% set primary = (hana.nodes|selectattr("host", "equalto", node.secondary.remote_host)|selectattr("primary", "defined")|first) %}
+{% set exporter = primary.exporter|default(None) %}
 {% endif %}
+
+{% if exporter is not none %}
 
 {% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
 {% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
@@ -85,7 +89,7 @@ hanadb_exporter_configuration_{{ exporter_instance }}:
         sap_instance_nr: "{{ sap_instance_nr }}"
         exporter_instance: {{ exporter_instance }}
 
-{% if node.primary is defined or node.secondary is defined %}
+{% if hana.ha_enabled %}
 {% set service_status = "disabled" %}
 {% set service_enabled = False %}
 {% else %}
@@ -101,4 +105,5 @@ hanadb_exporter_service_{{ exporter_instance }}:
     - require:
         - hanadb_exporter_configuration_{{ exporter_instance }}
 
+{% endif %}
 {% endfor %}
