@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.5.9
+  * Update extraction functionality for cost optimized scenario
+
+-------------------------------------------------------------------
 Fri May 15 08:19:31 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
 
 - Implement exporter Pacemaker resource, refactor monitoring settings
