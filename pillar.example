@@ -14,9 +14,9 @@ hana:
   software_path: '/sapmedia/HANA/51052481'
   # Or specify the path to the hana installation media archive
   # If using hana sar archive, please also provide compatible version of sapcar executable
-  # The archive will be extracted to path specified at hana_extract_dest (optional, by default /sapmedia/HANA)
+  # The archive will be extracted to path specified at hana_extract_dir (optional, by default /sapmedia/HANA)
   hana_archive_file: '/sapmedia/51053492.ZIP'
-  hana_extract_dest: '/sapmedia/HANA'
+  hana_extract_dir: '/sapmedia/HANA'
   #sapcar_exe_file: '/sapmedia/SAPCAR'
 
   # Enable HA cluster configuration. It installs the SAPHanaSR hook.
@@ -30,7 +30,7 @@ hana:
       password: 'Qwerty1234'
       install:
         # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media.
-        # If both of these paths are not set, hana_extract_dest path will be used for installation media, 
+        # If both of these paths are not set, hana_extract_dir path will be used for installation media, 
         # given that hana_archive_file package is also provided
         software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
