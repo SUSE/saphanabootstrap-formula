@@ -13,4 +13,6 @@ include:
 {% if hana.ha_enabled %}
   - hana.ha_cluster
 {% endif %}
-  - hana.exporter
+{% if hana.monitoring_enabled %}
+  - hana.monitoring
+{% endif %}

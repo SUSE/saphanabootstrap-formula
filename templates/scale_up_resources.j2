@@ -2,6 +2,7 @@
 {%- set sid = data.sid.upper() %}
 {%- set instance = '{:0>2}'.format(data.instance) %}
 {%- set cloud_provider = grains['cloud_provider'] %}
+{%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
 #
 # defaults
@@ -133,5 +134,19 @@ colocation col_{{ qas_sid }}_never_with_{{ sid }}-ip -inf: rsc_SAP_{{ qas_sid }}
 
 order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote Mandatory: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
    msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
+
+{%- endif %}
+
+# hanadb_exporter resource
+
+{%- if monitoring_enabled %}
+
+primitive rsc_exporter_{{ sid }}_HDB{{ instance }} systemd:prometheus-hanadb_exporter@{{ sid }}_HDB{{ instance }} \
+    op start interval=0 timeout=100 \
+    op stop interval=0 timeout=100 \
+    op monitor interval=10 \
+    meta target-role=Started
+
+colocation col_exporter_{{ sid }}_HDB{{ instance }} +inf: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- endif %}
