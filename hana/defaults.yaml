@@ -3,3 +3,4 @@ hana:
   ha_enabled: true
   hana_extract_dir: /sapmedia/HANA
   nodes: []
+  monitoring_enabled: false
