@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.5.9
+  * Update extraction functionality for cost optimized scenario 
+
+-------------------------------------------------------------------
 Tue Apr 21 02:21:28 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.8
