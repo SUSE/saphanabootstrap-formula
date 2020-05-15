@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri May 15 08:19:31 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
+
+- Implement exporter Pacemaker resource, refactor monitoring settings
+
+-------------------------------------------------------------------
 Tue Apr 21 02:21:28 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.8
