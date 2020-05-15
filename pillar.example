@@ -8,7 +8,7 @@ hana:
   # you can also use this to a single node if need to differ. see hana2
   # Warning: only a unique solution can exist into a node.
   saptune_solution: 'HANA'
-  
+
   # Specify the path to already extracted HANA platform installation media
   # This will have preference over hdbserver sar archive installation media
   software_path: '/sapmedia/HANA/51052481'
@@ -23,14 +23,19 @@ hana:
   # To use this option the primary and secondary nodes must be defined in the pillar file
   ha_enabled: true
 
+  # optional: enables monitoring via hanadb_exporter (disabled by default)
+  # the exporter will be installed and configured in all the nodes
+  # you can customize the exporter configuration in each node in the dedicated sections below
+  monitoring_enabled: true
+
   nodes:
     - host: 'hana01'
       sid: 'prd'
       instance: 00
       password: 'Qwerty1234'
       install:
-        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media 
-        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media, 
+        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media
+        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media,
         # given that sapcar_exe_file & hdbserver_sar_file package is also provided
         software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
@@ -56,7 +61,8 @@ hana:
           user_password: 'Qwerty1234'
           database: 'SYSTEMDB'
           file: 'backup'
-      # Optional: Add hanadb_exporter to the instance
+      # hanadb_exporter configuration
+      # only applies when monitoring_enabled is true
       exporter:
         exposition_port: 9668 # Optional, 9668 by default
         multi_tenant: true # Enable the exporter as multi tenant. This will create the connection with the SYSTEMDB database and all tenants
@@ -93,10 +99,6 @@ hana:
       cost_optimized_parameters:
           global_allocation_limit: '32100'
           preload_column_tables: False
-      exporter:
-        exposition_port: 9668 # Optional, 9668 by default
-        user: 'SYSTEM'
-        password: 'Qwerty1234'
 
     - host: hana02
       sid: 'qas'

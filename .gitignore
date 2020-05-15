@@ -1,0 +1,5 @@
+/example/pillar/hana.sls
+/grains
+/minion
+/top.sls
+/var/
