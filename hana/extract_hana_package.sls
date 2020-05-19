@@ -20,10 +20,16 @@ extract_hana_archive:
 
 {%- elif hana_package.endswith((".exe", ".EXE")) %}
 
+install_unrar_package:
+  pkg.installed:
+    - name: unrar_wrapper
+
 extract_hana_multipart_archive:
   cmd.run:
     - name: unrar x {{ hana_package }}
     - cwd: {{ hana_extract_dir }}
+    - require:
+        - install_unrar_package    
 
 {%- elif hana_package.endswith((".sar", ".SAR")) and hana.sapcar_exe_file is defined %}
 

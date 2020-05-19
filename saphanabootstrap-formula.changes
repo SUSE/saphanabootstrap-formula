@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue May 19 23:24:55 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Add support to extract zip,rar,exe,sar hana media 
+
+-------------------------------------------------------------------
 Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.9
