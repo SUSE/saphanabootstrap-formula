@@ -20,9 +20,10 @@ extract_hana_archive:
 
 {%- elif hana_package.endswith((".exe", ".EXE")) %}
 
+{% set unrar_package = 'unrar_wrapper' if grains['osrelease_info'][0] == 15 else 'unrar' %}
 install_unrar_package:
   pkg.installed:
-    - name: unrar_wrapper
+    - name: {{ unrar_package }}
 
 extract_hana_multipart_archive:
   cmd.run:
