@@ -72,7 +72,7 @@ primitive rsc_socat_{{ sid }}_HDB{{ instance }} azure-lb \
 
 group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
 
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- else %}
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master

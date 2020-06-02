@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jun  2 00:21:55 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.5.10
+  * Change colocation weight for col_saphana_ip for Azure provider 
+
+-------------------------------------------------------------------
 Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.9
