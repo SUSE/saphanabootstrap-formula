@@ -2,7 +2,9 @@
 Tue Jun  2 00:21:55 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.10
-  * Change colocation weight for col_saphana_ip for Azure provider 
+  * Change colocation weight for col_saphana_ip for Azure provider
+
+  (jsc#ECO-1965, jsc#SLE-4047)
 
 -------------------------------------------------------------------
 Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
@@ -19,7 +21,7 @@ Fri May 15 08:19:31 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
 Tue Apr 21 02:21:28 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.8
-  * Adjust software_path usage for cost optimized scenario 
+  * Adjust software_path usage for cost optimized scenario
 
 -------------------------------------------------------------------
 Fri Apr 17 08:14:08 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
