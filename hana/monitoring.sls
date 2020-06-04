@@ -20,11 +20,7 @@
 {% if loop.first %}
 install_python_pip:
   pkg.installed:
-    {% if grains['pythonversion'][0] == 2 %}
-    - name: python-pip
-    {% else %}
     - name: python3-pip
-    {% endif %}
     - retry:
         attempts: 3
         interval: 15
@@ -42,11 +38,7 @@ extract_pydbapi_client:
 # TODO: Improve this to use pip.installed somehow
 install_pydbapi_client:
   cmd.run:
-    {% if grains['pythonversion'][0] == 2 %}
-    - name: /usr/bin/python -m pip install {{ pydbapi_output_dir }}/hdbcli-*.tar.gz
-    {% else %}
     - name: /usr/bin/python3 -m pip install {{ pydbapi_output_dir }}/hdbcli-*.tar.gz
-    {% endif %}
     - require:
       - install_python_pip
       - extract_pydbapi_client
