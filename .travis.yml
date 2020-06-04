@@ -36,14 +36,12 @@ jobs:
 
       script:
         - |
-          docker run -t -v "$(pwd):/package" \
-          -e OBS_USER=$OBS_USER \
-          -e OBS_PASS=$OBS_PASS \
-          -e FOLDER=$FOLDER \
-          -e OBS_PROJECT=$OBS_PROJECT \
-          -e PACKAGE_NAME=$PACKAGE_NAME \
+          docker run -t -v "$(pwd):/package" -w /package \
+          -e OBS_USER -e OBS_PASS -e FOLDER -e OBS_PROJECT -e PACKAGE_NAME \
           shap/continuous_deliver \
-          /bin/bash -c "cd /package;/scripts/upload.sh"
+          /bin/bash -c "sed -i 's~%%VERSION%%~$TRAVIS_COMMIT~' _service && \
+          sed -i 's~%%REPOSITORY%%~$TRAVIS_REPO_SLUG~' _service && \
+          /scripts/upload.sh"
 
     - stage: submit
       if: type != pull_request AND branch = master
@@ -55,11 +53,6 @@ jobs:
 
       script:
         - |
-          docker run -t -v "$(pwd):/package" \
-          -e OBS_USER=$OBS_USER \
-          -e OBS_PASS=$OBS_PASS \
-          -e OBS_PROJECT=$OBS_PROJECT \
-          -e PACKAGE_NAME=$PACKAGE_NAME \
-          -e TARGET_PROJECT=$TARGET_PROJECT \
-          shap/continuous_deliver \
-          /bin/bash -c "cd /package;/scripts/submit.sh"
+          docker run -t -v "$(pwd):/package" -w /package \
+          -e OBS_USER -e OBS_PASS -e OBS_PROJECT -e PACKAGE_NAME -e TARGET_PROJECT shap/continuous_deliver \
+          /scripts/submit.sh
