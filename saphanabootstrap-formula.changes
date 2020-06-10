@@ -1,7 +1,25 @@
 -------------------------------------------------------------------
-Tue May 19 23:24:55 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+Wed Jun 10 01:49:02 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Add support to extract zip,rar,exe,sar hana media 
+
+-------------------------------------------------------------------
+Fri Jun  5 14:42:12 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
+
+- Fix provisioning of hanadb_exporter in SLE12, where python3-pip must be always installed.
+
+-------------------------------------------------------------------
+Tue Jun  2 00:21:55 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.5.10
+  * Change colocation weight for col_saphana_ip for Azure provider \
+
+  (jsc#ECO-1965, jsc#SLE-4047)
+
+-------------------------------------------------------------------
+Fri May 15 08:19:31 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
+
+- Implement exporter Pacemaker resource, refactor monitoring settings
 
 -------------------------------------------------------------------
 Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
@@ -10,15 +28,10 @@ Fri May 15 01:55:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
   * Update extraction functionality for cost optimized scenario
 
 -------------------------------------------------------------------
-Fri May 15 08:19:31 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
-
-- Implement exporter Pacemaker resource, refactor monitoring settings
-
--------------------------------------------------------------------
 Tue Apr 21 02:21:28 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Version 0.5.8
-  * Adjust software_path usage for cost optimized scenario 
+  * Adjust software_path usage for cost optimized scenario
 
 -------------------------------------------------------------------
 Fri Apr 17 08:14:08 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
