@@ -34,7 +34,8 @@ extract_hana_multipart_archive:
 
 {# Below is temporary workaround to update the extraction path when using unrar for multipart rar archive#}
 {# TODO: Find better solution to set or detect the correct extraction path when extracting multipart rar archive#}
-{% set archive_name = salt['file.basename']((hana_package.split('_')[0]).split('.')[0]) %}
+{% set archive_base_name = salt['file.basename'](hana_package.split('.')[0]) %}
+{% set archive_name = archive_base_name.split('_')[0] %}
 {% set hana_extract_dir = hana_extract_dir| path_join(archive_name) %}
 
 {%- elif hana_package.endswith((".sar", ".SAR")) and hana.sapcar_exe_file is defined %}
