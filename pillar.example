@@ -10,14 +10,14 @@ hana:
   saptune_solution: 'HANA'
 
   # Specify the path to already extracted HANA platform installation media
-  # This will have preference over hdbserver sar archive installation media
+  # This will have preference over hana installation media archive
   software_path: '/sapmedia/HANA/51052481'
-  # Or specify the path to the sapcar executable & HANA database server installation sar archive
-  # The sar archive will be extracted to path specified at hdbserver_extract_dir (optional, by default /sapmedia/HANA)
-  # Make sure to use the latest/compatible version of sapcar executable, otherwise file may be extracted incorrectly
-  sapcar_exe_file: '/sapmedia/sapcar.exe'
-  hdbserver_sar_file: '/sapmedia/IMDB_SERVER_LINUX.SAR'
-  hdbserver_extract_dir: '/sapmedia/HANA'
+  # Or specify the path to the hana installation media archive
+  # If using hana sar archive, please also provide compatible version of sapcar executable
+  # The archive will be extracted to path specified at hana_extract_dir (optional, by default /sapmedia/HANA)
+  hana_archive_file: '/sapmedia/51053492.ZIP'
+  hana_extract_dir: '/sapmedia/HANA'
+  #sapcar_exe_file: '/sapmedia/SAPCAR'
 
   # Enable HA cluster configuration. It installs the SAPHanaSR hook.
   # To use this option the primary and secondary nodes must be defined in the pillar file
@@ -34,9 +34,9 @@ hana:
       instance: 00
       password: 'Qwerty1234'
       install:
-        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media
-        # If both of these paths are not set, hdbserver_extract_dir path will be used for installation media,
-        # given that sapcar_exe_file & hdbserver_sar_file package is also provided
+        # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media.
+        # If both of these paths are not set, hana_extract_dir path will be used for installation media, 
+        # given that hana_archive_file package is also provided
         software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
         root_password: 's'

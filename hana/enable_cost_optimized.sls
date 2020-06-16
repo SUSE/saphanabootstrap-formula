@@ -1,4 +1,6 @@
 {%- from "hana/map.jinja" import hana with context -%}
+{%- from "hana/extract_hana_package.sls" import hana_extract_dir with context -%}
+
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
@@ -53,7 +55,7 @@ failure:
 extract_hana_pydbapi_archive:
     hana.pydbapi_extracted:
       - name: PYDBAPI.TGZ
-      - software_folders: [{{ node.install.software_path|default(hana.software_path) }}]
+      - software_folders: [{{ node.install.software_path|default(hana.software_path)|default(hana_extract_dir) }}]
       - output_dir: /hana/shared/srHook
       - hana_version: '20'
       - force: true

@@ -6,7 +6,7 @@ include:
 {% endif %}
   - hana.pre_validation
   - hana.saptune
-  - hana.extract_hdbserver
+  - hana.extract_hana_package
   - hana.install
   - hana.enable_primary
   - hana.enable_secondary
