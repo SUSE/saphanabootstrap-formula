@@ -5,8 +5,8 @@ services:
 addons:
   apt:
     sources:
-      - sourceline: 'deb http://repo.saltstack.com/apt/ubuntu/14.04/amd64/latest trusty main'
-        key_url: 'https://repo.saltstack.com/apt/ubuntu/14.04/amd64/latest/SALTSTACK-GPG-KEY.pub'
+      - sourceline: 'deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/2019.2/ bionic main'
+        key_url: 'http://repo.saltstack.com/apt/ubuntu/18.04/amd64/2019.2/SALTSTACK-GPG-KEY.pub'
     packages:
         - salt-common
 
