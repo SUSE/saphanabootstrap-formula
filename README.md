@@ -1,10 +1,10 @@
-# SAP HANA replication bootstrap salt formula
+# SAP HANA platform bootstrap Salt formula
 
 Salt formula to bootstrap and manage a multi SAP HANA platform environment.
 
 ## Features
 
-The formula provides the capability to create a multi node SAP HANA environment. Here some features:
+The formula provides the capability to create a multi node SAP HANA environment. Here are some of the features:
 - Install one or multiple SAP HANA instances (in one or multiple nodes)
 - Setup a System replication configuration between two SAP HANA nodes
 - Extract the required files from the provided `.tar`, `.sar`, `.exe` files
@@ -21,14 +21,14 @@ The project can be installed in many ways, including but not limited to:
 
 ### RPM
 
-On openSUSE or SUSE Linux Enterprise you can just use the `zypper` system package manager:
+On openSUSE or SUSE Linux Enterprise use `zypper` package manager:
 ```shell
 zypper install saphanabootstrap-formula
 ```
 
-**Important!** This will install the formula in `/usr/share/salt-formulas/states/hana`. Make sure that `/usr/share/salt-formulas/states` entry is correctly configured in your salt minion configuration `file_roots` entry if the formula is used in a masterless mode.
+**Important!** This will install the formula in `/usr/share/salt-formulas/states/hana`. Make sure that `/usr/share/salt-formulas/states` entry is correctly configured in your Salt minion configuration `file_roots` entry if the formula is used in a masterless mode.
 
-You can find the latest development repositories at [SUSE's Open Build Service](https://build.opensuse.org/package/show/network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula).
+Find the latest development repositories at  SUSE's Open Build Service[network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula](https://build.opensuse.org/package/show/network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula).
 
 ### Manual clone
 
@@ -37,30 +37,47 @@ git clone https://github.com/SUSE/saphanabootstrap-formula
 cp -R cluster /srv/salt
 ```
 
-**Important!** The formulas depends on [salt-shaptools](https://github.com/SUSE/salt-shaptools) package, so make sure it is installed properly if you follow the manual installation (the package can be installed as a RPM package too).
+**Important!** The formulas depends on [salt-shaptools](https://github.com/SUSE/salt-shaptools) package. Make sure it is installed properly if you follow the manual installation (the package can be installed as a RPM package too).
 
 ## Usage
 
-To use the formula the `hana` entry must be included in the salt execution `top.sls` file. Here an example to execute the hana formula in all of the nodes:
+Follow the next steps to configure the formula execution. After this, the formula can be executed using `master/minion` or `masterless` options:
 
-```
-# This file is /srv/salt/top.sls
-base:
-  '*':
-    - hana
-```
+1. Modify the `top.sls` file (by default stored in `/srv/salt`) including the `hana` entry.
 
-To configure the execution a pillar file is needed. Here an example of a pillar file for this formula: [pillar.example](https://github.com/SUSE/saphanabootstrap-formula/blob/master/pillar.example)
-This file must be stored in `/srv/pillar` as `hana.sls` and the same folder must contain a `top.sls` to use it. For example:
+   Here an example to execute the HANA formula in all of the nodes:
 
-```
-# This file is /srv/pillar/top.sls
-base:
-  '*':
-    - hana
-```
+   ```
+   # This file is /srv/salt/top.sls
+   base:
+     '*':
+       - hana
+   ```
 
-**Important!** The hostnames and minion names of the hana nodes must match the output of the `hostname` command.
+2. Customize the execution pillar file. Here an example of a pillar file for this formula with all of the options: [pillar.example](https://github.com/SUSE/saphanabootstrap-formula/blob/master/pillar.example)
+
+3. Set the execution pillar file. For that, modify the `top.sls` of the pillars (by default stored in `/srv/pillar`) including the `hana` entry and copy your specific `hana.sls` pillar file in the same folder.
+
+   Here an example to apply the recently created `hana.sls` pillar file to all of the nodes:
+
+   ```
+   # This file is /srv/pillar/top.sls
+   base:
+     '*':
+       - hana
+   ```
+
+4. Execute the formula.
+
+   1. Master/Minion execution.
+
+      `salt '*' state.highstate`
+
+   2. Masterless execution.
+
+      `salt-call --local state.highstate`
+
+**Important!** The hostnames and minion names of the HANA nodes must match the output of the `hostname` command.
 
 
 ### Salt pillar encryption
@@ -80,9 +97,9 @@ SaltStack GPG renderer provides a secure encryption/decryption of pillar data. T
 
 ## OBS Packaging
 
-The CI will automatically publish new releases to SUSE's Open Build Service every time a pull request is merged in the `master` branch. For that, update the new package version in [saphanabootstrap-formula.spec](https://github.com/SUSE/saphanabootstrap-formula/blob/master/saphanabootstrap-formula.spec) and
+The CI automatically publishes new releases to SUSE's Open Build Service every time a pull request is merged into `master` branch. For that, update the new package version in [saphanabootstrap-formula.spec](https://github.com/SUSE/saphanabootstrap-formula/blob/master/saphanabootstrap-formula.spec) and
 add the new changes in [saphanabootstrap-formula.changes](https://github.com/SUSE/saphanabootstrap-formula/blob/master/saphanabootstrap-formula.changes).
 
-The new version will published at:
+The new version is published at:
 - https://build.opensuse.org/package/show/network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula
 - https://build.opensuse.org/package/show/openSUSE:Factory/saphanabootstrap-formula (only if the spec file version is increased)
