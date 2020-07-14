@@ -35,7 +35,7 @@ hana:
       password: 'Qwerty1234'
       install:
         # Specify the path to local installation media here, otherwise global variable software_path will be used for installation media.
-        # If both of these paths are not set, hana_extract_dir path will be used for installation media, 
+        # If both of these paths are not set, hana_extract_dir path will be used for installation media,
         # given that hana_archive_file package is also provided
         software_path: '/sapmedia/HANA/51052481'
         root_user: 'root'
@@ -90,6 +90,8 @@ hana:
         remote_instance: '00'
         replication_mode: 'sync'
         operation_mode: 'logreplay'
+        # For Active/Active HANA setup
+        #operation_mode: 'logreplay_readaccess'
         # If primary node is not defined the password can we set here (primary node password has preference)
         #primary_password: 'Qwerty1234'
         # Optional timeout value in seconds to wait until the primary node
