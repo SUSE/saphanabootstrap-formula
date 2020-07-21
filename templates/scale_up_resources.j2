@@ -57,7 +57,7 @@ primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stoni
     meta target-role=Started
 
 primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
-    params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_table }} \
+    params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name }} \
     op start interval=0 timeout=180 \
     op stop interval=0 timeout=180 \
     op monitor interval=60 timeout=60
@@ -135,6 +135,54 @@ colocation col_{{ qas_sid }}_never_with_{{ sid }}-ip -inf: rsc_SAP_{{ qas_sid }}
 order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote Mandatory: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
    msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
 
+{%- endif %}
+
+# Active/Active HANA resources
+
+{%- if data.virtual_ip_secondary is defined %}
+{%- if cloud_provider not in ["amazon-web-services", "google-cloud-platform"] %}
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:IPaddr2 \
+    op monitor interval="10s" timeout="20s" \
+    params ip={{ data.virtual_ip_secondary }}
+
+{%- elif cloud_provider == "amazon-web-services" %}
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:suse:aws-vpc-move-ip \
+    params ip={{ data.virtual_ip_secondary }} routing_table={{ data.route_table }} \
+    interface={{ pillar.cluster.interface|default('eth0')|json }} profile={{ data.cluster_profile }} \
+    op start interval=0 timeout=180 \
+    op stop interval=0 timeout=180 \
+    op monitor interval=60 timeout=60
+
+{%- elif cloud_provider == "google-cloud-platform" %}
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:gcp-vpc-move-route \
+    params ip={{ data.virtual_ip_secondary }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name_secondary }} \
+    op start interval=0 timeout=180 \
+    op stop interval=0 timeout=180 \
+    op monitor interval=60 timeout=60
+
+{%- endif %}
+
+{%- if cloud_provider == "microsoft-azure" %}
+
+primitive rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled azure-lb \
+    params port=626{{ instance }} \
+    op monitor timeout="20" interval="10" depth="0"
+
+group g_ip_{{ sid }}_HDB{{ instance }}_readenabled \
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 4000: \
+    g_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+
+{%- else %}
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+
+{%- endif %}
 {%- endif %}
 
 # hanadb_exporter resource
