@@ -3,6 +3,8 @@
 {%- set instance = '{:0>2}'.format(data.instance) %}
 {%- set cloud_provider = grains['cloud_provider'] %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
+{%- set scale_out = data.scale_out|default(False)%}
+{%- set majority_maker = data.majority_maker|default(False)%}
 
 #
 # defaults
@@ -92,7 +94,7 @@ primitive rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHanaTopolo
 clone cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} \
     meta is-managed="true" clone-node-max="1" interleave="true"
 
-primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHana \
+primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} {% if not scale_out %}ocf:suse:SAPHana{% else %}ocf:suse:SAPHanaController{% endif %} \
     params \
     SID="{{ sid }}" \
     InstanceNumber="{{ instance }}" \
@@ -106,9 +108,18 @@ primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHana \
     op monitor interval="61" role="Slave" timeout="700"
 
 ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance }} \
+    {%- if not scale_out %}
     meta clone-max="2" clone-node-max="1" interleave="true"
+    {%- else %}
+    meta clone-node-max="1" master-max="1" interleave="true"
+    {%- endif %}
 
 order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} msl_SAPHana_{{ sid }}_HDB{{ instance }}
+
+{%- if majority_maker %}
+location SAPHanaCon_not_on_majority_maker msl_SAPHana_{{ sid }}_HDB{{ instance }} resource-discovery=never -inf: {{ majority_maker }}
+location SAPHanaTop_not_on_majority_maker cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} resource-discovery=never -inf: {{ majority_maker }}
+{%- endif %}
 
 {%- if data.cost_optimized_parameters is defined %}
 {%- set qas_sid = data.cost_optimized_parameters.sid.upper() %}
