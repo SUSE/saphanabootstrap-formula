@@ -1,6 +1,21 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {% set host = grains['host'] %}
 
+{% if hana.scale_out %}
+{% set sr_hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
+remove_SAPHanaSR:
+  pkg.removed:
+    - name: SAPHanaSR
+
+install_SAPHanaSR_ScaleOut:
+  pkg.installed:
+    - pkgs:
+      - SAPHanaSR-ScaleOut
+      - SAPHanaSR-ScaleOut-doc
+{% else %}
+{% set sr_hook_path = '/usr/share/SAPHanaSR' %}
+{% endif %}
+
 {% for node in hana.nodes if node.host == host %}
 
 {% set instance = '{:0>2}'.format(node.instance) %}
@@ -25,7 +40,7 @@ configure_ha_hook_{{ sap_instance }}:
 
         [ha_dr_provider_SAPHanaSR]
         provider = SAPHanaSR
-        path = /usr/share/SAPHanaSR
+        path = {{ sr_hook_path }}
         execution_order = 1
 
         [trace]
