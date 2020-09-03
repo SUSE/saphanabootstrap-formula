@@ -34,7 +34,7 @@ Find the latest development repositories at  SUSE's Open Build Service[network:h
 
 ```
 git clone https://github.com/SUSE/saphanabootstrap-formula
-cp -R cluster /srv/salt
+cp -R hana /srv/salt
 ```
 
 **Important!** The formulas depends on [salt-shaptools](https://github.com/SUSE/salt-shaptools) package. Make sure it is installed properly if you follow the manual installation (the package can be installed as a RPM package too).
