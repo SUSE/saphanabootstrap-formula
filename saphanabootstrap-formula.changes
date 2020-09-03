@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep  3 06:28:41 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Add the option to deploy a HANA scale out scenario
+- Update scale_up_resources.j2 name by cluster_resources.j2
+
+-------------------------------------------------------------------
 Wed Jul 15 10:30:22 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Add hana active/active resources to the cluster template
