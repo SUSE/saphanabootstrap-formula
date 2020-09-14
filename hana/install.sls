@@ -10,8 +10,8 @@ include:
 add_sidadm_grains:
   cmd.run:
     - name: |
-        sed -i '/ad_sid_uid/d' /etc/salt/grains
-        sed -i '/ad_sid_gid/d' /etc/salt/grains
+        sed -i '/sid_uid/d' /etc/salt/grains
+        sed -i '/sid_gid/d' /etc/salt/grains
         echo "sid_uid: `id {{node.sid}}adm -u`" >> /etc/salt/grains
         echo "sid_gid: `id {{node.sid}}adm -g`" >> /etc/salt/grains
 
