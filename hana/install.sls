@@ -6,6 +6,16 @@ include:
 
 {% for node in hana.nodes if node.host == host and node.install is defined %}
 
+# this state is used in case we have ad integration and grains are passed to installation
+add_sidadm_grains:
+  cmd.run:
+    - name: |
+        sed -i '/ad_sid_uid/d' /etc/salt/grains
+        sed -i '/ad_sid_gid/d' /etc/salt/grains
+        echo "sid_uid: `id {{node.sid}}adm -u`" >> /etc/salt/grains
+        echo "sid_gid: `id {{node.sid}}adm -g`" >> /etc/salt/grains
+
+
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
     - name: {{ node.sid }}
@@ -25,10 +35,8 @@ hana_install_{{ node.host+node.sid }}:
     {% endif %}
     - extra_parameters:
       - hostname: {{ node.host }}
-    {% if grains.get('sidadm_ad_groupid', False) and grains.get('sidadm_ad_userid', False) %}
-      - userid:  {{ sidadm_ad_userid }}
-      - groupid: {{ sidadm_ad_groupid }}
-    {% endif %}
+      - userid:  {{ sid_uid }}
+      - groupid: {{ sid_gid }}
     {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 %}
       {% for key,value in node.install.extra_parameters.items() %}
       - {{ key }}: {{ value }}
