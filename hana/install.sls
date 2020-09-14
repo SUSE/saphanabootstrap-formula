@@ -6,19 +6,6 @@ include:
 
 {% for node in hana.nodes if node.host == host and node.install is defined %}
 
-# TODO:
-# 0) check with 
-
-# realmd list | grep active  -> this give dinamically if node is connected to AD
-
-
-#populate variable with ID and GID set dinamically by sssd
-# 1) get_id
-
-
-# 2) get_uid
-
-
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
     - name: {{ node.sid }}
@@ -38,9 +25,9 @@ hana_install_{{ node.host+node.sid }}:
     {% endif %}
     - extra_parameters:
       - hostname: {{ node.host }}
-    {% if ad_connected is True %}
-      - userid:  {{node_ad_uid}}
-      - groupid: {{node_ad_groupid}}
+    {% if grains.get('sidadm_ad_groupid', False) and grains.get('sidadm_ad_userid', False) %}
+      - userid:  {{ sidadm_ad_userid }}
+      - groupid: {{ sidadm_ad_groupid }}
     {% endif %}
     {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 %}
       {% for key,value in node.install.extra_parameters.items() %}
