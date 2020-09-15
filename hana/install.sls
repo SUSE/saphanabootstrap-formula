@@ -48,4 +48,8 @@ hana_install_{{ node.host+node.sid }}:
       - {{ key }}: {{ value }}
       {% endfor %}
     {% endif %}
+   {% if grains.get('ad_server', True) %}
+   - require:
+      - cmd: add_sidadm_grains
+   {% endif %}
 {% endfor %}
