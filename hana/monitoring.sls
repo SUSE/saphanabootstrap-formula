@@ -61,8 +61,6 @@ hanadb_exporter_configuration_{{ exporter_instance }}:
     - template: jinja
     - require:
       - prometheus-hanadb_exporter
-      - hanadb_exporter_metrics_configuration
-      - hanadb_exporter_logging_configuration
     - context:
         exporter: {{ exporter|yaml }}
         sap_instance_nr: "{{ sap_instance_nr }}"
