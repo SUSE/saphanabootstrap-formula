@@ -54,7 +54,7 @@ mkdir -p %{buildroot}%{fdir}/states/%{fname}
 mkdir -p %{buildroot}%{fdir}/metadata/%{fname}
 cp -R %{fname} %{buildroot}%{fdir}/states
 cp -R %{ftemplates} %{buildroot}%{fdir}/states/%{fname}
-cp -R form.yml %{buildroot}%{fdir}/metadata/%{fname}
+cp -R form.yml pillar.example %{buildroot}%{fdir}/metadata/%{fname}
 if [ -f metadata.yml ]
 then
   cp -R metadata.yml %{buildroot}%{fdir}/metadata/%{fname}

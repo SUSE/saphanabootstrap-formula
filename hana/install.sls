@@ -1,4 +1,5 @@
 {%- from "hana/map.jinja" import hana with context -%}
+{%- from "hana/extract_hana_package.sls" import hana_extract_dir with context -%}
 {% set host = grains['host'] %}
 
 include:
@@ -11,7 +12,7 @@ hana_install_{{ node.host+node.sid }}:
     - name: {{ node.sid }}
     - inst: {{ node.instance }}
     - password: {{ node.password }}
-    - software_path: {{ node.install.software_path|default(hana.software_path)|default(hana.hdbserver_extract_dir) }}
+    - software_path: {{ node.install.software_path|default(hana.software_path)|default(hana_extract_dir) }}
     - root_user: {{ node.install.root_user }}
     - root_password: {{ node.install.root_password }}
     {% if node.install.config_file is defined %}

@@ -1,4 +1,25 @@
 -------------------------------------------------------------------
+Thu Aug 20 02:00:46 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.6.0
+  * Include pillar example file in package
+  (bsc#1174994, jsc#SLE-4047)
+
+-------------------------------------------------------------------
+Wed Jul 15 10:30:22 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Add hana active/active resources to the cluster template
+- Change `route_table` by `route_name` to make the variable usage
+  more meaningful
+
+-------------------------------------------------------------------
+Wed Jun 10 01:49:02 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Add support to extract zip,rar,exe,sar hana media
+- This change brings non backward compatible changes. The variable
+  hdbserver_extract_dir is replaced by hana_extract_dir
+
+-------------------------------------------------------------------
 Fri Jun  5 14:42:12 UTC 2020 - Stefano Torresi <stefano.torresi@suse.com>
 
 - Fix provisioning of hanadb_exporter in SLE12, where python3-pip must be always installed.
