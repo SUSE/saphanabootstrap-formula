@@ -52,30 +52,15 @@ prometheus-hanadb_exporter:
   - require:
       - install_pydbapi_client
 
-hanadb_exporter_logging_configuration:
-  file.managed:
-    - name: /etc/hanadb_exporter/logging_config.ini
-    - source: /usr/etc/hanadb_exporter/logging_config.ini
-    - require:
-      - prometheus-hanadb_exporter
-
-hanadb_exporter_metrics_configuration:
-  file.managed:
-    - name: /etc/hanadb_exporter/metrics.json
-    - source: /usr/etc/hanadb_exporter/metrics.json
-    - require:
-      - prometheus-hanadb_exporter
 {% endif %}
 
 hanadb_exporter_configuration_{{ exporter_instance }}:
   file.managed:
     - source: salt://hana/templates/hanadb_exporter.j2
-    - name: /etc/hanadb_exporter/{{ exporter_instance }}.json
+    - name: /usr/etc/hanadb_exporter/{{ exporter_instance }}.json
     - template: jinja
     - require:
       - prometheus-hanadb_exporter
-      - hanadb_exporter_metrics_configuration
-      - hanadb_exporter_logging_configuration
     - context:
         exporter: {{ exporter|yaml }}
         sap_instance_nr: "{{ sap_instance_nr }}"
