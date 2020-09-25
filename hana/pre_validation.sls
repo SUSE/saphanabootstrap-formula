@@ -5,14 +5,12 @@
 {# Check HANA archive media checkbox #}
 {% if hana.use_hana_archive_file is defined and node.use_hana_archive_file == false %}
     {% do hana.pop('hana_archive_file') %}
-    {% do hana.pop('hana_extract_dir') %}
-    {% do hana.pop('sapcar_exe_file') %}
 {% endif %}
 
 {% for node in hana.nodes if node.host == host %}
 
   {# Check HANA install checkbox #}
-  {% if node.install_checkbox is defined and node.install_checkbox == false %}
+  {% if node.install_checkbox is defined and hana.install_checkbox == false %}
 
     {% do node.pop('install') %}
 

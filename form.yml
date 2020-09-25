@@ -10,6 +10,7 @@ hana:
   saptune_solution:
     $name: saptune solution to apply
     $type: text
+    $default: HANA
     $help: saptune solution to apply to all nodes
     $optional: true
   software_path:
@@ -32,7 +33,7 @@ hana:
     $name: Path to extract the HANA installation media archive
     $visibleIf: .use_hana_archive_file == true
     $type: text
-    $default: /sapmedia/HANA
+    $default: /sapmedia_extract/HANA
     $help: The HANA archive will be extracted to this path. By default this path is /sapmedia/HANA
     $optional: true
   sapcar_exe_file:
