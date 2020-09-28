@@ -1,0 +1,9 @@
+# we need to have different top file per formulas so call it with postfix formula
+# top-hana.sls , top-netweaver.sls etc etc
+
+state_top: top-hana.sls
+file_roots:
+  base:
+    - /usr/share/salt-formulas/states
+use_superseded:
+- module.run
