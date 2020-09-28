@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep 30 16:43:32 UTC 2020 - Dario Maiocchi <dmaiocchi@suse.com>
+
+- Version 0.6.2:
+* add runner for executing formula as standalone with pillar modification
+
+-------------------------------------------------------------------
 Thu Sep 24 20:23:13 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Change the default 'hana_extract_dir' hana media extraction location

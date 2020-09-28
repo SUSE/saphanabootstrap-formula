@@ -1,0 +1,96 @@
+#!/bin/bash -e
+
+# Script to install salt formulas 
+
+# these variables are formula specific:
+FORMULA_LOG="/var/log/salt-hana-formula.log"
+FORMULA_NAME='hana'
+FORMULA_CONFIG='/usr/share/salt-formulas/config/hana'
+
+# we need to prevent salt-call running in circustance which we don't want to
+prevalidate () {
+  # check if we do have a config directory, otherwise fail. (salt will try to load default, which is not reproducible situation)
+  if [ ! -d "$FORMULA_CONFIG" ]; then
+    log_error "$FORMULA_CONFIG doesn't exists. Do you have installed formula $FORMULA_NAME correctly?" 
+  fi
+  log_info "$FORMULA_CONFIG exists"
+}
+
+LOG_LEVEL='error'
+
+print_help () {
+    cat <<-EOF
+Install hana-formula, executing salt-call.
+
+Supported Options:
+  -l [LOG_LEVEL]   Set log level of saltstack. Default: error. 
+  -h               Show this help.
+EOF
+}
+
+log_info () {
+    NODE=`hostname`
+    TIMESTAMP=`date -u`
+    GREEN='\033[0;32m'
+    NC='\033[0m' # No Color
+    printf "${GREEN}$TIMESTAMP::$NODE $1 ${NC}\n"
+}
+
+log_error () {
+    NODE=`hostname`
+    TIMESTAMP=`date -u`
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
+    printf "${RED}$TIMESTAMP::$NODE::[ERROR] $1 ${NC}\n"
+    exit 1
+}
+
+
+run_salt () {
+   log_info "[PREFLIGHT]: Ensuring systems is satisfying pre-requisites ..."
+   prevalidate
+   
+   log_info "[PREFLIGHT]: ------------------------------------------> DONE!"
+   # get log level
+   if [ ! -z "$1" ]
+     then
+	LOG_LEVEL="$1"
+   fi
+   log_info "[SETUP]: Using LOG level \"$LOG_LEVEL\" for running salt-call..."
+  
+   log_info "[SETUP]: copying existing grains from /etc/salt/grains to salt-call working dir..."
+   cp /etc/salt/grains /usr/share/salt-formulas/config/hana/
+
+   log_info "[SETUP]: ----------------------------------------------> DONE!"
+   log_info "[FORMULA]: formula $FORMULA_NAME will be executed. Please wait.."
+   salt-call --local \
+     --log-level=$LOG_LEVEL \
+     --log-file=$FORMULA_LOG \
+     --log-file-level=debug \
+     --retcode-passthrough \
+     --force-color \
+     --config=$FORMULA_CONFIG \
+     state.apply $FORMULA_NAME || log_error "formula $FORMULA_NAME installation failed. Please check log file $FORMULA_LOG"
+
+}
+
+while getopts ":hl:" opt; do
+    case $opt in
+        h)
+            print_help
+            exit 0
+            ;;
+        l)
+            log_level=$OPTARG
+            ;;
+        *)
+            echo "Invalid option -$OPTARG" >&2
+            print_help
+            exit 1
+            ;;
+    esac
+done
+# The variable OPTIND holds the number of options parsed by the last call to getopts. 
+# It is common practice to call the shift command at the end of your processing loop to remove options that have already been handled from $@.
+shift $((OPTIND -1))
+run_salt $log_level

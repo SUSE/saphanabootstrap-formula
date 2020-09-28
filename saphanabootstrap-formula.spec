@@ -52,6 +52,13 @@ formulas with forms, available on SUSE Manager 4.0.
 
 mkdir -p %{buildroot}%{fdir}/states/%{fname}
 mkdir -p %{buildroot}%{fdir}/metadata/%{fname}
+mkdir -p %{buildroot}%{fdir}/config/%{fname}
+mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}%{fdir}/config/%{fname}/pillar/%{fname}
+install -m755 pillar.example %{buildroot}%{fdir}/config/%{fname}/pillar/%{fname}/hana.sls
+install -m755 config/minion %{buildroot}%{fdir}/config/%{fname}/
+install -m755 config/pillar/top.sls %{buildroot}%{fdir}/config/%{fname}/pillar/
+install -m755  run-saphanabootstrap-formula %{buildroot}/usr/bin/run-saphanabootstrap-formula
 cp -R %{fname} %{buildroot}%{fdir}/states
 cp -R %{ftemplates} %{buildroot}%{fdir}/states/%{fname}
 cp -R form.yml pillar.example %{buildroot}%{fdir}/metadata/%{fname}
@@ -59,7 +66,6 @@ if [ -f metadata.yml ]
 then
   cp -R metadata.yml %{buildroot}%{fdir}/metadata/%{fname}
 fi
-
 
 %files
 %defattr(-,root,root,-)
@@ -73,7 +79,15 @@ fi
 %dir %attr(0755, root, salt) %{fdir}
 %dir %attr(0755, root, salt) %{fdir}/states
 %dir %attr(0755, root, salt) %{fdir}/metadata
+%dir %attr(0755, root, salt) %{fdir}/config
+%dir %attr(0755, root, salt) %{fdir}/config/hana/
+%dir %attr(0755, root, salt) %{fdir}/config/hana/pillar
+%dir %attr(0755, root, salt) %{fdir}/config/hana/pillar/hana
 
+%attr(0755, root, salt) /usr/bin/run-saphanabootstrap-formula
+%attr(0755, root, salt) %{fdir}/config/%{fname}/pillar/top.sls
+%attr(0755, root, salt) %{fdir}/config/%{fname}/pillar/hana/hana.sls
+%attr(0755, root, salt) %{fdir}/config/%{fname}/minion
 %attr(0755, root, salt) %{fdir}/states/%{fname}
 %attr(0755, root, salt) %{fdir}/states/%{fname}/%{ftemplates}
 %attr(0755, root, salt) %{fdir}/metadata/%{fname}
