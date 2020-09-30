@@ -2,6 +2,7 @@
 {%- set sid = data.sid.upper() %}
 {%- set instance = '{:0>2}'.format(data.instance) %}
 {%- set cloud_provider = grains['cloud_provider'] %}
+{%- set native_fencing = data.native_fencing|default(True) %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
 #
@@ -28,6 +29,7 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
 # Platform dependant (stonith, virtual ip address, cib options, etc) resource
 {%- if cloud_provider == "amazon-web-services" %}
 
+{%- if native_fencing %}
 property $id="cib-bootstrap-options" \
     stonith-enabled="true" \
     stonith-action="off" \
@@ -39,6 +41,7 @@ primitive rsc_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
     op stop interval=0 timeout=180 \
     op monitor interval=120 timeout=60 \
     meta target-role=Started
+{%- endif %}
 
 primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
     params ip={{ data.virtual_ip }} routing_table={{ data.route_table }} \
@@ -51,10 +54,12 @@ colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }
 
 {%- elif cloud_provider == "google-cloud-platform" %}
 
+{%- if native_fencing %}
 # This stonith resource will be duplicated for each node in the cluster
 primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
     params plug={{ grains['gcp_instance_name'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_name'] }}" \
     meta target-role=Started
+{%- endif %}
 
 primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
     params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name }} \
