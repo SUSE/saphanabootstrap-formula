@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Oct  1 07:06:46 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+
+- Set the native fence mechanism usage for CSP as optional 
+
+-------------------------------------------------------------------
 Thu Sep 24 20:23:13 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
 - Change the default 'hana_extract_dir' hana media extraction location
