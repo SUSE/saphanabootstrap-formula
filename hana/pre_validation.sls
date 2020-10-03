@@ -3,7 +3,7 @@
 {% set host = grains['host'] %}
 
 {# Check HANA archive media checkbox #}
-{% if hana.use_hana_archive_file is defined and node.use_hana_archive_file == false %}
+{% if hana.use_hana_archive_file is defined and hana.use_hana_archive_file == false %}
     {% do hana.pop('hana_archive_file') %}
 {% endif %}
 

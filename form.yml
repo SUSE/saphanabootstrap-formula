@@ -6,7 +6,6 @@ hana:
     $type: boolean
     $default: true
     $help: Install all required packages from currently existing repositories
-    $optional: true
   saptune_solution:
     $name: saptune solution to apply
     $type: text
@@ -34,7 +33,7 @@ hana:
     $visibleIf: .use_hana_archive_file == true
     $type: text
     $default: /sapmedia_extract/HANA
-    $help: The HANA archive will be extracted to this path. By default this path is /sapmedia/HANA
+    $help: The HANA archive will be extracted to this path. By default this path is /sapmedia_extract/HANA
     $optional: true
   sapcar_exe_file:
     $name: Path to sapcar executable if extracting HANA SAR archive
