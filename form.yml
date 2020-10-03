@@ -6,6 +6,51 @@ hana:
     $type: boolean
     $default: true
     $help: Install all required packages from currently existing repositories
+  saptune_solution:
+    $name: saptune solution to apply
+    $type: text
+    $default: HANA
+    $help: saptune solution to apply to all nodes
+    $optional: true
+  software_path:
+    $name: Path to HANA platform installation media folder
+    $type: text
+    $help: The path to already extracted HANA platform installation media folder which can be local or already mounted shared location (NFS, SMB, etc). This will have preference over hana installation media archive
+    $optional: true
+  use_hana_archive_file:
+    $name: Use archive file for HANA platform installation 
+    $type: boolean
+    $default: false
+    $help: Mark this option if you want to use a hana archive file for the HANA installation
+  hana_archive_file:
+    $name: Path to HANA platform installation media archive
+    $visibleIf: .use_hana_archive_file == true
+    $type: text
+    $help: The path to installation media archive in any of the RAR, ZIP, EXE or SAR format. For SAR archive, please also provide the sapcar executable path for extraction
+    $optional: true
+  hana_extract_dir:
+    $name: Path to extract the HANA installation media archive
+    $visibleIf: .use_hana_archive_file == true
+    $type: text
+    $default: /sapmedia_extract/HANA
+    $help: The HANA archive will be extracted to this path. By default this path is /sapmedia_extract/HANA
+    $optional: true
+  sapcar_exe_file:
+    $name: Path to sapcar executable if extracting HANA SAR archive
+    $visibleIf: .use_hana_archive_file == true
+    $type: text
+    $help: The path to sapcar executable to extract HANA SAR archive
+    $optional: true
+  ha_enabled:
+    $name: Enable HA cluster configuration
+    $type: boolean
+    $default: true
+    $help: Enable the HA cluster configuration which will install the SAPHanaSR hook. To use this option the primary and secondary nodes must be defined in the pillar file
+  monitoring_enabled:
+    $name: Enable the host to be monitored by exporters
+    $type: boolean
+    $default: false
+    $help: Enable the node monitoring via exporters which will be installed and configured in all the nodes. Customize the exporter configuration in each node's dedicated sections.
   nodes:
     $name: Nodes
     $type: edit-group
@@ -60,10 +105,10 @@ hana:
         $optional: true
         $type: group
         software_path:
-          $name: Downloaded HANA software path
+          $name: Path to local HANA installation media
           $type: text
           $optional: false
-          $help: This is a local or already monted shared location (NFS, SMB, etc). The SAP HANA binaries must be already uncompressed
+          $help: The path to already extracted HANA platform installation media folder which can be local or already mounted shared location (NFS, SMB, etc). This will have preference over global software path.
         root_user:
           $name: Machine root user
           $type: text
@@ -82,6 +127,16 @@ hana:
           $visibleIf: .use_config_file == true
           $type: text
           $help: Path to the config file location. The template can be generated with the hdblcm --dump_configfile_template option
+        use_hdb_pwd_file:
+          $name: Fetch HANA passwords from XML file
+          $type: boolean
+          $default: false
+          $help: Mark this option if you want to fetch HANA passwords from XML file for the HANA installation options
+        hdb_pwd_file:
+          $name: Path to XML file with HANA Passwords
+          $visibleIf: .use_hdb_pwd_file == true
+          $type: text
+          $help: Path to the XML file location. The password template can be generated with the hdblcm --dump_configfile_template option        
         sapadm_password:
           $name: SAP admin password (<sid>adm)
           $visibleIf: .use_config_file == false
