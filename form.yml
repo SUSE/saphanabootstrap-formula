@@ -104,8 +104,14 @@ hana:
         $visibleIf: .install_checkbox == true
         $optional: true
         $type: group
+        local_software_path_checkbox:
+          $name: Use local HANA installation media
+          $type: boolean
+          $default: false
+          $help: Specify the installation media on this node, otherwise global software path will be used.
         software_path:
           $name: Path to local HANA installation media
+          $visibleIf: .local_software_path_checkbox == true
           $type: text
           $optional: false
           $help: The path to already extracted HANA platform installation media folder which can be local or already mounted shared location (NFS, SMB, etc). This will have preference over global software path.
