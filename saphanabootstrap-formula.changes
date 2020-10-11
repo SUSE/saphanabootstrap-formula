@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
-Tue Oct  6 21:36:18 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+Thu Oct  8 02:34:37 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
-- Fix the hana media extraction and installation logic when using exe archives  
+- Update the SUMA hana form metadata, to show hana form under SAP deployment group 
 
 -------------------------------------------------------------------
 Sat Oct  3 04:59:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
