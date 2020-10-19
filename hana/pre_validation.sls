@@ -2,6 +2,11 @@
 
 {% set host = grains['host'] %}
 
+{# Check HANA archive media checkbox #}
+{% if hana.use_hana_archive_file is defined and hana.use_hana_archive_file == false %}
+    {% do hana.pop('hana_archive_file', none) %}
+{% endif %}
+
 {% for node in hana.nodes if node.host == host %}
 
   {# Check HANA install checkbox #}
@@ -12,6 +17,14 @@
   {% elif node.install_checkbox is defined and node.install_checkbox == true %}
     {% if node.install.use_config_file == false %}
       {% do node.install.pop('config_file') %}
+    {% endif %}
+
+    {% if node.install.local_software_path_checkbox == false %}
+      {% do node.install.pop('software_path') %}
+    {% endif %}
+
+    {% if node.install.use_hdb_pwd_file == false %}
+      {% do node.install.pop('hdb_pwd_file') %}
     {% endif %}
 
     {% if node.install.extra_parameters is defined and node.install.extra_parameters|length > 0 and node.install.extra_parameters is not mapping %}

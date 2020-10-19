@@ -1,6 +1,7 @@
 {%- from "hana/map.jinja" import hana with context -%}
-{%- from "hana/extract_hana_package.sls" import hana_extract_dir with context -%}
+{%- from 'hana/macros/get_hana_exe_extract_dir.sls' import get_hana_exe_extract_dir with context %}
 {% set host = grains['host'] %}
+{% set hana_extract_dir = get_hana_exe_extract_dir(hana) %}
 
 include:
     - .enable_cost_optimized

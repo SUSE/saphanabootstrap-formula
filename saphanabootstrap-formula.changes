@@ -1,7 +1,29 @@
 -------------------------------------------------------------------
-Thu Oct  1 07:06:46 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
+Mon Oct 19 14:48:50 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Set the native fence mechanism usage for CSP as optional 
+
+-------------------------------------------------------------------
+Tue Oct 13 15:50:43 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Version 0.6.2:
+  * Update the package version after SUMA form update and extraction logic update
+  (jsc#SLE-4047) 
+
+-------------------------------------------------------------------
+Sun Oct 11 04:21:32 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Fix the hana media extraction and installation logics when using exe archives 
+
+-------------------------------------------------------------------
+Thu Oct  8 02:34:37 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Update the SUMA hana form metadata, to show hana form under SAP deployment group 
+
+-------------------------------------------------------------------
+Sat Oct  3 04:59:38 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
+
+- Update SUMA form.yml file and prevalidation state with latest changes in formula 
 
 -------------------------------------------------------------------
 Thu Sep 24 20:23:13 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
