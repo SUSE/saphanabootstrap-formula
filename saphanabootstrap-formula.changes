@@ -1,8 +1,7 @@
 -------------------------------------------------------------------
 Wed Nov 11 04:25:03 UTC 2020 - Simranpal Singh <simranpal.singh@suse.com>
 
-- Version 0.6.3
- * Add support to extract and install HANA Client sar packages
+- Add support to extract and install HANA Client sar packages
 
 -------------------------------------------------------------------
 Mon Oct 19 14:48:50 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>

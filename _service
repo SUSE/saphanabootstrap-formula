@@ -4,7 +4,7 @@
     <param name="scm">git</param>
     <param name="exclude">.git</param>
     <param name="filename">saphanabootstrap-formula</param>
-    <param name="versionformat">0.6.3+git.%ct.%h</param>
+    <param name="versionformat">0.6.2+git.%ct.%h</param>
     <param name="revision">%%VERSION%%</param>
   </service>
 

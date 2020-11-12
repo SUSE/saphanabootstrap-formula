@@ -19,8 +19,8 @@ hana:
   hana_archive_file: '/sapmedia/51053492.ZIP'
   hana_extract_dir: '/sapmedia_extract/HANA'
   # The HANA Client sar archive is needed for monitoring if HANA DB sar archive is provided. It will be extracted to hana_client_extract_dir path (optional, by default /sapmedia_extract/HANA_CLIENT)
-  client_archive_file: '/sapmedia/IMDB_CLIENT20_003_144-80002090.SAR'
-  client_extract_dir: '/sapmedia_extract/HANA_CLIENT'
+  hana_client_archive_file: '/sapmedia/IMDB_CLIENT20_003_144-80002090.SAR'
+  hana_client_extract_dir: '/sapmedia_extract/HANA_CLIENT'
   #sapcar_exe_file: '/sapmedia/SAPCAR'
 
   # Enable HA cluster configuration. It installs the SAPHanaSR hook.
