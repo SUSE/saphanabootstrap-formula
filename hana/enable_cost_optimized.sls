@@ -1,11 +1,6 @@
 {%- from "hana/map.jinja" import hana with context -%}
-{%- from 'hana/macros/get_hana_exe_extract_dir.sls' import get_hana_exe_extract_dir with context %}
-# If hana archive used for installation is sar format, it will not contain the hana client, so we need to use a hana client archive
-{%- if hana.hana_client_archive_file is defined and hana.hana_archive_file is defined and hana.hana_archive_file.endswith((".sar", ".SAR")) %}
-{%- set hana_client_path = hana.hana_client_extract_dir %}
-{%- else %}
-{%- set hana_client_path = get_hana_exe_extract_dir(hana) %}
-{%- endif %}
+{%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
+{%- set hana_client_path = get_hana_client_path(hana) %}
 
 {% set host = grains['host'] %}
 
