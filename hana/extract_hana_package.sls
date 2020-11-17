@@ -56,7 +56,7 @@ extract_hana_client_sar_archive:
   sapcar.extracted:
     - name: {{ hana.hana_client_archive_file }}
     - sapcar_exe: {{ hana.sapcar_exe_file }}
-    - output_dir: {{ hana_client_extract_dir }}
+    - output_dir: {{ hana.hana_client_extract_dir }}
     - options: "-manifest SIGNATURE.SMF"
 {% endif %}
 
