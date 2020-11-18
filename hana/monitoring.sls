@@ -1,6 +1,6 @@
 {%- from "hana/map.jinja" import hana with context -%}
-{%- from 'hana/macros/get_hana_exe_extract_dir.sls' import get_hana_exe_extract_dir with context %}
-{% set hana_extract_dir = get_hana_exe_extract_dir(hana) %}
+{%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
+{%- set hana_client_path = get_hana_client_path(hana) %}
 
 {% set pydbapi_output_dir = '/tmp/pydbapi' %}
 
@@ -31,7 +31,7 @@ install_python_pip:
 extract_pydbapi_client:
   hana.pydbapi_extracted:
     - name: PYDBAPI.TGZ
-    - software_folders: [{{ exporter.hana_client_path|default(node.install.software_path)|default(hana.software_path)|default(hana_extract_dir) }}]
+    - software_folders: [{{ node.install.software_path|default(hana.software_path)|default(hana_client_path) }}]
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true

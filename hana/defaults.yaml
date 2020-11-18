@@ -2,5 +2,6 @@ hana:
   install_packages: true
   ha_enabled: true
   hana_extract_dir: /sapmedia_extract/HANA
+  hana_client_extract_dir: /sapmedia_extract/HANA_CLIENT
   nodes: []
   monitoring_enabled: false

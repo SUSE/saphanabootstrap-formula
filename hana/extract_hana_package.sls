@@ -51,5 +51,14 @@ copy_signature_file_to_installer_dir:
     - require:
         - extract_hdbserver_sar_archive
 
+{%- if hana.hana_client_archive_file is defined and hana.hana_client_archive_file.endswith((".sar", ".SAR")) %}
+extract_hana_client_sar_archive:
+  sapcar.extracted:
+    - name: {{ hana.hana_client_archive_file }}
+    - sapcar_exe: {{ hana.sapcar_exe_file }}
+    - output_dir: {{ hana.hana_client_extract_dir }}
+    - options: "-manifest SIGNATURE.SMF"
+{% endif %}
+
 {%- endif %}
 {%- endif %}
