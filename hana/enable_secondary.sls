@@ -31,6 +31,7 @@
     - timeout: {{ node.secondary.primary_timeout|default(100) }}
     - interval: {{ node.secondary.interval|default(10) }}
     - primary_pass: {{ password.primary }}
-
+    - require:
+      - hana_install_{{ node.host+node.sid }}
 
 {% endfor %}

@@ -27,6 +27,8 @@ install_python_pip:
         attempts: 3
         interval: 15
     - resolve_capabilities: true
+    - require:
+      - hana_install_{{ node.host+node.sid }}
 
 extract_pydbapi_client:
   hana.pydbapi_extracted:
@@ -35,6 +37,8 @@ extract_pydbapi_client:
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true
+    - require:
+      - hana_install_{{ node.host+node.sid }}
 
 # pip.installed cannot manage file names with regular expressions
 # TODO: Improve this to use pip.installed somehow
