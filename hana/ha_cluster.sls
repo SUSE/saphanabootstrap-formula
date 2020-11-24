@@ -13,8 +13,8 @@ stop_hana_{{ sap_instance }}:
       - sid: {{ node.sid }}
       - inst: {{ node.instance }}
       - password: {{ node.password }}
-      - require:
-        - hana_install_{{ node.host+node.sid }}
+    - require:
+      - hana_install_{{ node.host+node.sid }}
 
 # Add SAPHANASR hook
 # It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
