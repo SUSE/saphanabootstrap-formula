@@ -54,6 +54,8 @@ sudoers_backup_{{ sap_instance }}:
     - name: {{ tmp_sudoers }}
     - source: {{ sudoers }}
     - unless: cat {{ sudoers }} | grep {{ node.sid }}adm
+    - require:
+      - stop_hana_{{ sap_instance }}
 
 sudoers_append_{{ sap_instance }}:
   file.append:
