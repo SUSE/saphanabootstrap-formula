@@ -13,6 +13,8 @@ stop_hana_{{ sap_instance }}:
       - sid: {{ node.sid }}
       - inst: {{ node.instance }}
       - password: {{ node.password }}
+    - require:
+      - hana_install_{{ node.host+node.sid }}
 
 # Add SAPHANASR hook
 # It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
@@ -52,6 +54,8 @@ sudoers_backup_{{ sap_instance }}:
     - name: {{ tmp_sudoers }}
     - source: {{ sudoers }}
     - unless: cat {{ sudoers }} | grep {{ node.sid }}adm
+    - require:
+      - stop_hana_{{ sap_instance }}
 
 sudoers_append_{{ sap_instance }}:
   file.append:

@@ -27,5 +27,7 @@
         - database: {{ node.primary.backup.database }}
         - file: {{ node.primary.backup.file }}
       {% endif %}
+      - require:
+        - hana_install_{{ node.host+node.sid }}
 
 {% endfor %}
