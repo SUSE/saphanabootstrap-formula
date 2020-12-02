@@ -11,4 +11,8 @@ apply_saptune_solution_{{ host }}_{{ name }}:
   saptune.solution_applied:
     - name: {{ saptune_solution }}
 
+start_saptune_daemon_{{ host }}_{{ name }}:
+  cmd.run:
+    - name: saptune daemon start
+
 {% endfor %}
