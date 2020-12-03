@@ -11,4 +11,9 @@ apply_saptune_solution_{{ host }}_{{ name }}:
   saptune.solution_applied:
     - name: {{ saptune_solution }}
 
+# Start the saptune systemd service to ensure the system is well-tuned after a system reboot
+start_saptune_service_{{ host }}_{{ name }}:
+  cmd.run:
+    - name: saptune daemon start
+
 {% endfor %}
