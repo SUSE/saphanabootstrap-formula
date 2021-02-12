@@ -1,10 +1,11 @@
 name: Formula CI
-# Description: "Moving saphanabootstrap-formula from Travis to Github Actions"
-# The CI automatically publishes new releases every time a pull request is merged into master
+# this workflow will
+# - run formula validation step - test/validate-formula.sh
+# - deliver the package content to the configured repository
+# - submit the new package content to the upstream repository
 on: [push, pull_request]
 env:
   PACKAGE_NAME: saphanabootstrap-formula 
-
 jobs:
 
   validation:
@@ -13,19 +14,15 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-
     - name: Add salt repository
       uses: myci-actions/add-deb-repo@4
       with:
-        repo: deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/2019.2/ bionic main
-        key-server: http://repo.saltstack.com/apt/ubuntu/18.04/amd64/2019.2/SALTSTACK-GPG-KEY.pub
-    
-
+        repo: deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest/ bionic main
+        key-server: http://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest/SALTSTACK-GPG-KEY.pub
     - name: install salt
       run: sudo apt-get install salt-common
     - name: validation script
       run: ci/validate-formula.sh
-
 
   delivery:
     needs: validation
@@ -37,25 +34,22 @@ jobs:
         OBS_USER: ${{ secrets.OBS_USER }}
         OBS_PASS: ${{ secrets.OBS_PASS }}
         OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
-
     steps:
     - uses: actions/checkout@v2 
       with:
         fetch-depth: 0
-# OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
-# that is used to run osc commands                
     - name: configure OSC  
+    # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
+    # that is used to run osc commands 
       run: | 
         /scripts/init_osc_creds.sh
         mkdir -p $HOME/.config/osc
         cp /root/.config/osc/oscrc $HOME/.config/osc
-
     - name: deliver package
       run: |
         sed -i 's~%%VERSION%%~${{ github.sha }}~' _service && \
         sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' _service && \
         /scripts/upload.sh 
-      
 
   submit:
     needs: [validation, delivery]
@@ -68,7 +62,6 @@ jobs:
         OBS_PASS: ${{ secrets.OBS_PASS }}
         OBS_PROJECT: ${{ secrets.OBS_PROJECT}}
         TARGET_PROJECT: ${{ secrets.TARGET_PROJECT}}
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -83,4 +76,3 @@ jobs:
        sed -i 's~%%VERSION%%~${{ github.sha }}~' _service && \
        sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' _service && \
        /scripts/submit.sh
-
