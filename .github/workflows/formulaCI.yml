@@ -1,6 +1,6 @@
 name: Formula CI
 # this workflow will
-# - run formula validation step - test/validate-formula.sh
+# - run formula validation step - ci/validate-formula.sh
 # - deliver the package content to the configured repository
 # - submit the new package content to the upstream repository
 on: [push, pull_request]
@@ -17,8 +17,8 @@ jobs:
     - name: Add salt repository
       uses: myci-actions/add-deb-repo@4
       with:
-        repo: deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest/ bionic main
-        key-server: http://repo.saltstack.com/apt/ubuntu/18.04/amd64/latest/SALTSTACK-GPG-KEY.pub
+        repo: deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/3000/ bionic main
+        key-server: http://repo.saltstack.com/apt/ubuntu/18.04/amd64/3000/SALTSTACK-GPG-KEY.pub
     - name: install salt
       run: sudo apt-get install salt-common
     - name: validation script
