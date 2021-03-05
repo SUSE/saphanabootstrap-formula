@@ -1,10 +1,10 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
-{%- set hana_client_path = get_hana_client_path(hana) %}
 
 {% set host = grains['host'] %}
 
 {% for node in hana.nodes %}
+{%- set hana_client_path = get_hana_client_path(hana, node) %}
 {% if node.host == host and node.scenario_type is defined and node.scenario_type.lower() == 'cost-optimized' and node.cost_optimized_parameters is defined%}
 
 reduce_memory_resources_{{  node.host+node.sid }}:
@@ -56,7 +56,7 @@ failure:
 extract_hana_pydbapi_archive:
     hana.pydbapi_extracted:
       - name: PYDBAPI.TGZ
-      - software_folders: [{{ node.install.software_path|default(hana.software_path)|default(hana_client_path) }}]
+      - software_folders: [{{ hana_client_path }}]
       - output_dir: /hana/shared/srHook
       - hana_version: '20'
       - force: true
@@ -75,12 +75,12 @@ extract_hdbcli_client_files:
 
 remove_hdbcli_tar_package:
     file.absent:
-      - names: 
+      - names:
         - /hana/shared/srHook/hdbcli-package.tar.gz
         - /hana/shared/srHook/hdbcli
       - require:
         - extract_hdbcli_client_files
-        
+
 chmod_hdbcli_client_files:
     file.managed:
       - user: {{ node.sid.lower() }}adm

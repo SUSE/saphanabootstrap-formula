@@ -1,10 +1,10 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
-{%- set hana_client_path = get_hana_client_path(hana) %}
 
 {% set pydbapi_output_dir = '/tmp/pydbapi' %}
 
 {% for node in hana.nodes if node.host == grains['host'] %}
+{%- set hana_client_path = get_hana_client_path(hana, node) %}
 
 # if we have a replicated setup we only take exporter configuration from the primary
 {% if node.secondary is not defined %}
@@ -33,7 +33,7 @@ install_python_pip:
 extract_pydbapi_client:
   hana.pydbapi_extracted:
     - name: PYDBAPI.TGZ
-    - software_folders: [{{ node.install.software_path|default(hana.software_path)|default(hana_client_path) }}]
+    - software_folders: [{{ hana_client_path }}]
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true
