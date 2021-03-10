@@ -10,23 +10,25 @@ hana:
   saptune_solution: 'HANA'
 
   # HANA installation media can be provided in one of the two methods: extracted HANA platform folder or HANA media archive
-  # 1. Path to already extracted HANA platform installation media. This will have preference over hana installation media archive
+  # 1. Path to an already extracted HANA platform installation media. This will have preference over hana installation media archive
   software_path: '/sapmedia/HANA/51052481'
   # 2. Or specify the path to the hana installation media archive
   # If using hana sar archive, please also provide compatible version of sapcar executable
   # The archive will be extracted to path specified at hana_extract_dir (optional, by default /sapmedia_extract/HANA)
-  # hana_extract_dir should be a new directory and seperate from location where the compressed files are present, to avoid conflicts in file permissions.
+  # hana_extract_dir should be a new directory and separated from the location where the compressed files are present, to avoid conflicts in file permissions.
   hana_archive_file: '/sapmedia/51053492.ZIP'
   hana_extract_dir: '/sapmedia_extract/HANA'
-  
-  # HANA Client packages are needed for monitoring & cost-optimized scenario. HANA Client is already included in HANA platform media unless a HANA database sar archive is used 
+
+  # HANA Client packages are needed for monitoring & cost-optimized scenario. HANA Client is already included in HANA platform media unless a HANA database sar archive is used
   # If the HANA archive used for installation is sar format specified above, you need to provide HANA Client in one of the two ways: extracted HANA client folder or HANA client sar archive file
+  # If any of the next two options are used, this HANA Client will have preference over the HANA Client coming in the HANA platform described above. If HANA platform is used, it is usually better to
+  # not use the HANA Client as it might bring some compatibility issue.
   # 1. Path to already extracted hana client folder
   #hana_client_software_path: '/sapmedia/IMDB_CLIENT'
   # 2. Or specify the path to the hana client sar archive file. It will be extracted to hana_client_extract_dir path (optional, by default /sapmedia_extract/HANA_CLIENT)
   hana_client_archive_file: '/sapmedia/IMDB_CLIENT20_003_144-80002090.SAR'
   hana_client_extract_dir: '/sapmedia_extract/HANA_CLIENT'
-  
+
   #If using a sar archive for hana platform or hana client media, please provide compatible version of sapcar executable
   #sapcar_exe_file: '/sapmedia/SAPCAR'
 
