@@ -5,6 +5,10 @@
 {%- set native_fencing = data.native_fencing|default(True) %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
+{%- if cloud_provider == "google-cloud-platform" %}
+{%- set vip_mechanism = data.virtual_ip_mechanism|default("load-balancer") %}
+{%- endif %}
+
 ###########
 # Defaults
 ###########
@@ -64,6 +68,23 @@ primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- elif cloud_provider == "google-cloud-platform" %}
+{%- if vip_mechanism == "load-balancer" %}
+
+primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
+    params binfile="/usr/bin/socat" \
+    cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
+    op monitor timeout=20s interval=10 \
+    op_params depth=0
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }} IPaddr2 \
+    params ip={{ data.virtual_ip }} cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
+    op monitor interval=10s
+
+group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+
+{%- elif vip_mechanism == "route" %}
 
 primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
     params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name }} \
@@ -73,6 +94,7 @@ primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-rou
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_gcp_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
+{%- endif %}
 {%- elif cloud_provider == "microsoft-azure" %}
 
 primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
