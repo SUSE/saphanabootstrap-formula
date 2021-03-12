@@ -53,7 +53,7 @@ sudoers_backup_{{ sap_instance }}:
   file.copy:
     - name: {{ tmp_sudoers }}
     - source: {{ sudoers }}
-    - unless: cat {{ sudoers }} | grep {{ node.sid }}adm
+    - unless: cat {{ sudoers }} | grep {{ node.sid.lower() }}adm
     - require:
       - stop_hana_{{ sap_instance }}
 
@@ -61,7 +61,7 @@ sudoers_append_{{ sap_instance }}:
   file.append:
     - name: {{ tmp_sudoers }}
     - text: |
-        {{ node.sid }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid }}_site_srHook_*
+        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_*
     - require:
       - sudoers_backup_{{ sap_instance }}
 
