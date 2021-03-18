@@ -5,9 +5,13 @@
 {%- set native_fencing = data.native_fencing|default(True) %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
-#
-# defaults
-#
+{%- if cloud_provider == "google-cloud-platform" %}
+{%- set vip_mechanism = data.virtual_ip_mechanism|default("load-balancer") %}
+{%- endif %}
+
+###########
+# Defaults
+###########
 
 rsc_defaults \
     resource-stickiness="1000" \
@@ -16,20 +20,12 @@ rsc_defaults \
 op_defaults \
     timeout="600"
 
-{%- if cloud_provider not in ["amazon-web-services", "google-cloud-platform"] %}
-{%- set nic = "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
-
-primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
-    params \
-    ip="{{ data.virtual_ip }}" cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
-    op start timeout="20" op stop timeout="20" \
-    op monitor interval="10" timeout="20"
-{%- endif %}
-
-# Platform dependant (stonith, virtual ip address, cib options, etc) resource
-{%- if cloud_provider == "amazon-web-services" %}
+#####################################################
+# Fencing agents - Native agents for cloud providers
+#####################################################
 
 {%- if native_fencing %}
+{%- if cloud_provider == "amazon-web-services" %}
 property $id="cib-bootstrap-options" \
     stonith-enabled="true" \
     stonith-action="off" \
@@ -41,7 +37,26 @@ primitive rsc_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
     op stop interval=0 timeout=180 \
     op monitor interval=120 timeout=60 \
     meta target-role=Started
+
+{%- elif cloud_provider == "google-cloud-platform" %}
+
+property $id="cib-bootstrap-options" \
+    stonith-enabled="true"
+
+# This stonith resource will be duplicated for each node in the cluster
+primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
+    params plug={{ grains['gcp_instance_name'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_name'] }}" \
+    meta target-role=Started
+
 {%- endif %}
+{%- endif %}
+
+######################################
+# Floating IP address resource agents
+######################################
+
+{%- set nic = "nic="~pillar.cluster.interface|json if pillar.cluster.interface is defined else "" %}
+{%- if cloud_provider == "amazon-web-services" %}
 
 primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
     params ip={{ data.virtual_ip }} routing_table={{ data.route_table }} \
@@ -53,13 +68,23 @@ primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- elif cloud_provider == "google-cloud-platform" %}
+{%- if vip_mechanism == "load-balancer" %}
 
-{%- if native_fencing %}
-# This stonith resource will be duplicated for each node in the cluster
-primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
-    params plug={{ grains['gcp_instance_name'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_name'] }}" \
-    meta target-role=Started
-{%- endif %}
+primitive rsc_socat_{{ sid }}_HDB{{ instance }} anything \
+    params binfile="/usr/bin/socat" \
+    cmdline_options="-U TCP-LISTEN:625{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
+    op monitor timeout=20s interval=10 \
+    op_params depth=0
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }} IPaddr2 \
+    params ip={{ data.virtual_ip }} cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
+    op monitor interval=10s
+
+group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+
+{%- elif vip_mechanism == "route" %}
 
 primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
     params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name }} \
@@ -69,7 +94,14 @@ primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-rou
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_gcp_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
+{%- endif %}
 {%- elif cloud_provider == "microsoft-azure" %}
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
+    params \
+    ip="{{ data.virtual_ip }}" cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
+    op start timeout="20" op stop timeout="20" \
+    op monitor interval="10" timeout="20"
 
 primitive rsc_socat_{{ sid }}_HDB{{ instance }} azure-lb \
     params port=625{{ instance }} \
@@ -80,11 +112,20 @@ group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_so
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- else %}
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
+    params \
+    ip="{{ data.virtual_ip }}" cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
+    op start timeout="20" op stop timeout="20" \
+    op monitor interval="10" timeout="20"
+
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- endif %}
 
+#####################
 # SAP HANA resources
+#####################
 
 primitive rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHanaTopology \
     params \
@@ -115,14 +156,14 @@ ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance 
 
 order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} msl_SAPHana_{{ sid }}_HDB{{ instance }}
 
+#######################################
+# non-production HANA - Cost optimized
+#######################################
+
 {%- if data.cost_optimized_parameters is defined %}
 {%- set qas_sid = data.cost_optimized_parameters.sid.upper() %}
 {%- set qas_instance = '{:0>2}'.format(data.cost_optimized_parameters.instance) %}
 {%- set qas_remote_host = data.cost_optimized_parameters.remote_host %}
-
-#
-# non-production HANA
-#
 
 primitive rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }} ocf:heartbeat:SAPDatabase \
     params DBTYPE="HDB" SID="{{ qas_sid }}" \
@@ -142,16 +183,12 @@ order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote Mandatory: rsc_SAP_{{ qas_
 
 {%- endif %}
 
+###############################
 # Active/Active HANA resources
+###############################
 
 {%- if data.virtual_ip_secondary is defined %}
-{%- if cloud_provider not in ["amazon-web-services", "google-cloud-platform"] %}
-
-primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:IPaddr2 \
-    op monitor interval="10s" timeout="20s" \
-    params ip={{ data.virtual_ip_secondary }}
-
-{%- elif cloud_provider == "amazon-web-services" %}
+{%- if cloud_provider == "amazon-web-services" %}
 
 primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:suse:aws-vpc-move-ip \
     params ip={{ data.virtual_ip_secondary }} routing_table={{ data.route_table }} \
@@ -160,7 +197,29 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:suse:aws-vpc-move-i
     op stop interval=0 timeout=180 \
     op monitor interval=60 timeout=60
 
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+
 {%- elif cloud_provider == "google-cloud-platform" %}
+{%- if vip_mechanism == "load-balancer" %}
+
+primitive rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled anything \
+    params binfile="/usr/bin/socat" \
+    cmdline_options="-U TCP-LISTEN:626{{ instance }},backlog=10,fork,reuseaddr /dev/null" \
+    op monitor timeout=20s interval=10 \
+    op_params depth=0
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled IPaddr2 \
+    params ip={{ data.virtual_ip_secondary }} cidr_netmask="{{ data.virtual_ip_mask|default("32") }}" {{ nic }} \
+    op monitor interval=10s
+
+group g_ip_{{ sid }}_HDB{{ instance }}_readenabled \
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled
+
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 4000: \
+    g_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+
+{%- elif vip_mechanism == "route" %}
 
 primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:gcp-vpc-move-route \
     params ip={{ data.virtual_ip_secondary }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name_secondary }} \
@@ -168,9 +227,15 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:gcp-vpc-m
     op stop interval=0 timeout=180 \
     op monitor interval=60 timeout=60
 
-{%- endif %}
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
 
-{%- if cloud_provider == "microsoft-azure" %}
+{%- endif %}
+{%- elif cloud_provider == "microsoft-azure" %}
+
+primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:IPaddr2 \
+    op monitor interval="10s" timeout="20s" \
+    params ip={{ data.virtual_ip_secondary }}
 
 primitive rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled azure-lb \
     params port=626{{ instance }} \
@@ -184,13 +249,19 @@ colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 4000: \
 
 {%- else %}
 
+primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:IPaddr2 \
+    op monitor interval="10s" timeout="20s" \
+    params ip={{ data.virtual_ip_secondary }}
+
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
     rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- endif %}
 {%- endif %}
 
-# hanadb_exporter resource
+######################################
+# prometheus-hanadb_exporter resource
+######################################
 
 {%- if monitoring_enabled %}
 
