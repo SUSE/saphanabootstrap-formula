@@ -105,7 +105,8 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
 
 primitive rsc_socat_{{ sid }}_HDB{{ instance }} azure-lb \
     params port=625{{ instance }} \
-    op monitor timeout="20" interval="10" depth="0"
+    op monitor timeout="20" interval="10" depth="0" \
+    meta resource-stickiness=0
 
 group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
 
