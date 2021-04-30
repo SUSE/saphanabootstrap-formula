@@ -270,8 +270,9 @@ primitive rsc_exporter_{{ sid }}_HDB{{ instance }} systemd:prometheus-hanadb_exp
     op start interval=0 timeout=100 \
     op stop interval=0 timeout=100 \
     op monitor interval=10 \
+    meta resource-stickiness=0 \
     meta target-role=Started
 
-colocation col_exporter_{{ sid }}_HDB{{ instance }} +inf: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_exporter_{{ sid }}_HDB{{ instance }} 1: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
 
 {%- endif %}

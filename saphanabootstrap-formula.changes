@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Apr 30 16:15:21 UTC 2021 - Bernd Schubert <bschubert@suse.com>
+
+- Changing exporter stickiness to => 0 and adjusting the colocation 
+  score from +inf to 1. This change fix the impact of a failed exporter
+  in regards to the HANA DB.
+
+-------------------------------------------------------------------
 Wed Apr 28 14:26:18 UTC 2021 - Diego Akechi <dakechi@suse.com>
 
 - Set correct stickiness for the azure-lb resource
