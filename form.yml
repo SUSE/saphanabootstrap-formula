@@ -18,7 +18,7 @@ hana:
     $help: The path to already extracted HANA platform installation media folder which can be local or already mounted shared location (NFS, SMB, etc). This will have preference over hana installation media archive
     $optional: true
   use_hana_archive_file:
-    $name: Use archive file for HANA platform installation 
+    $name: Use archive file for HANA platform installation
     $type: boolean
     $default: false
     $help: Mark this option if you want to use a hana archive file for the HANA installation
@@ -142,7 +142,7 @@ hana:
           $name: Path to XML file with HANA Passwords
           $visibleIf: .use_hdb_pwd_file == true
           $type: text
-          $help: Path to the XML file location. The password template can be generated with the hdblcm --dump_configfile_template option        
+          $help: Path to the XML file location. The password template can be generated with the hdblcm --dump_configfile_template option
         sapadm_password:
           $name: SAP admin password (<sid>adm)
           $visibleIf: .use_config_file == false
@@ -317,6 +317,6 @@ hana:
         timeout:
           $name: Connection timeout
           $type: text
-          $default: 600
+          $default: 30
           $optional: true
           $help: Timeout in seconds for HANA database connection
