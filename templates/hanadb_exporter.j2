@@ -2,7 +2,7 @@
 {
   "exposition_port": {{ exporter.exposition_port|default(9668) }},
   "multi_tenant": {{ exporter.multi_tenant|default(true)|tojson }},
-  "timeout": {{exporter.timeout|default(600)}},
+  "timeout": {{exporter.timeout|default(30)}},
   "hana": {
     "host": "{{ grains['host'] }}",
     {%- if exporter.multi_tenant|default(true) and exporter.port is not defined %}
