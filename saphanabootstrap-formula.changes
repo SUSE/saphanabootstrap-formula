@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu May  6 16:19:45 UTC 2021 - Rubén Torrero Marijnissen <rtorreromarijnissen@suse.com>
+
+- Document extra_parameters in pillar.example (bsc#1185643)
+
+-------------------------------------------------------------------
 Thu May  6 08:49:19 UTC 2021 - Xabier Arbulu <xarbulu@suse.com>
 
 - Change hanadb_exporter default timeout value to 30 seconds
