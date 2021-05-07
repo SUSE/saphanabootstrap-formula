@@ -273,6 +273,6 @@ primitive rsc_exporter_{{ sid }}_HDB{{ instance }} systemd:prometheus-hanadb_exp
     meta resource-stickiness=0 \
     meta target-role=Started
 
-colocation col_exporter_{{ sid }}_HDB{{ instance }} 1: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_exporter_{{ sid }}_HDB{{ instance }} -inf: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- endif %}
