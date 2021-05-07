@@ -4,7 +4,6 @@ Fri May 07 07:15:21 UTC 2021 - Bernd Schubert <bschubert@suse.com>
 - Changing exporter stickiness to => 0 and adjusting the colocation 
   score from +inf to -inf and changing the colocation from Master to Slave. 
   This change fix the impact of a failed exporter in regards to the HANA DB.
-- changing path for hanadb_exporter_configuration as described in the documentation
 -------------------------------------------------------------------
 Wed Apr 28 14:26:18 UTC 2021 - Diego Akechi <dakechi@suse.com>
 

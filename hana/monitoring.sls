@@ -62,7 +62,7 @@ prometheus-hanadb_exporter:
 hanadb_exporter_configuration_{{ exporter_instance }}:
   file.managed:
     - source: salt://hana/templates/hanadb_exporter.j2
-    - name: /etc/hanadb_exporter/{{ exporter_instance }}.json
+    - name: /usr/etc/hanadb_exporter/{{ exporter_instance }}.json
     - template: jinja
     - require:
       - prometheus-hanadb_exporter
