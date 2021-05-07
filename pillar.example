@@ -82,7 +82,7 @@ hana:
         user: 'SYSTEM'
         password: 'Qwerty1234'
         #port: 30015 # HANA database port. If multi_tenant is set this value is 3XX13 by default where XX is the instance number
-        timeout: 600 # Timeout in seconds to start the connection with HANA database
+        timeout: 30 # Timeout in seconds to start the connection with HANA database
 
     - host: 'hana02'
       sid: 'prd'

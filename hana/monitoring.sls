@@ -83,9 +83,8 @@ hanadb_exporter_service_{{ exporter_instance }}:
   service.{{ service_status }}:
     - name: prometheus-hanadb_exporter@{{ exporter_instance }}
     - enable: {{ service_enabled }}
-    - reload: True
-    - require:
-        - hanadb_exporter_configuration_{{ exporter_instance }}
+    - watch:
+      - file: hanadb_exporter_configuration_{{ exporter_instance }}
 
 {% endif %}
 {% endfor %}
