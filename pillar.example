@@ -58,6 +58,12 @@ hana:
         # Or specify HANA system & sapadm users' passwords like below
         system_user_password: 'Qwerty1234'
         sapadm_password: 'Qwerty1234'
+        # You can also provide additional hana configuration parameters as done in the following example
+        # See https://help.sap.com/viewer/2c1988d620e04368aa4103bf26f17727/2.0.00/en-US/c16432a77b6144dcb75aace2b4fcacff.html
+        # for details on all the supported parameters
+        extra_parameters:
+          # As an example, this parameter allows to ignore some prerequisite tests
+          ignore: check_min_mem
       primary:
         name: NUREMBERG
         userkey:
