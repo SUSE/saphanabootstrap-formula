@@ -38,8 +38,9 @@ Auto-generated HA/DR hook script
 stmnt1 = "ALTER SYSTEM ALTER CONFIGURATION ('global.ini','SYSTEM') UNSET ('memorymanager','global_allocation_limit') WITH RECONFIGURE"
 stmnt2 = "ALTER SYSTEM ALTER CONFIGURATION ('global.ini','SYSTEM') UNSET ('system_replication','preload_column_tables') WITH RECONFIGURE"
 
-import os, time, dbapi
+import os, time
 
+from hdbcli import dbapi
 from hdb_ha_dr.client import HADRBase, Helper
 
 class srTakeover(HADRBase):
