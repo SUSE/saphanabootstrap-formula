@@ -53,46 +53,6 @@ failure:
     - failhard: True
 {% endif %}
 
-extract_hana_pydbapi_archive:
-    hana.pydbapi_extracted:
-      - name: PYDBAPI.TGZ
-      - software_folders: [{{ hana_client_path }}]
-      - output_dir: /hana/shared/srHook
-      - hana_version: '20'
-      - force: true
-      - additional_extract_options: --transform s|-[0-9]*\.[0-9]*\.[0-9]*|-package| --wildcards hdbcli*
-      - require:
-        - setup_srHook_directory
-
-extract_hdbcli_client_files:
-    archive.extracted:
-      - name: /hana/shared/srHook/
-      - source: /hana/shared/srHook/hdbcli-package.tar.gz
-      - enforce_toplevel: False
-      - options:  --strip=2 --wildcards '*/hdbcli/*.py'
-      - require:
-        - extract_hana_pydbapi_archive
-
-remove_hdbcli_tar_package:
-    file.absent:
-      - names:
-        - /hana/shared/srHook/hdbcli-package.tar.gz
-        - /hana/shared/srHook/hdbcli
-      - require:
-        - extract_hdbcli_client_files
-
-chmod_hdbcli_client_files:
-    file.managed:
-      - user: {{ node.sid.lower() }}adm
-      - group: sapsys
-      - mode: 755
-      - names:
-        - /hana/shared/srHook/dbapi.py
-        - /hana/shared/srHook/resultrow.py
-        - /hana/shared/srHook/__init__.py
-      - require:
-        - extract_hdbcli_client_files
-
 configure_ha_dr_provider_srTakeover:
     file.append:
       - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
@@ -106,7 +66,6 @@ configure_ha_dr_provider_srTakeover:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
         - install_srTakeover_hook
-        - extract_hdbcli_client_files
 {% endif %}
 {% endif %}
 {% endfor %}
