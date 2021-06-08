@@ -34,10 +34,10 @@ setup_srHook_directory:
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
 
-install_srTakeover_hook:
+install_srCostOptMemConfig_hook:
     file.managed:
-      - source: salt://hana/templates/srTakeover_hook.j2
-      - name: /hana/shared/srHook/srTakeover.py
+      - source: salt://hana/templates/srCostOptMemConfig_hook.j2
+      - name: /hana/shared/srHook/srCostOptMemConfig.py
       - user: {{ node.sid.lower() }}adm
       - group: sapsys
       - mode: 755
@@ -53,19 +53,19 @@ failure:
     - failhard: True
 {% endif %}
 
-configure_ha_dr_provider_srTakeover:
+configure_ha_dr_provider_srCostOptMemConfig:
     file.append:
       - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
       - text: |
 
-          [ha_dr_provider_srTakeover]
-          provider = srTakeover
+          [ha_dr_provider_srCostOptMemConfig]
+          provider = srCostOptMemConfig
           path = /hana/shared/srHook
           execution_order = 2
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
-        - install_srTakeover_hook
+        - install_srCostOptMemConfig_hook
 {% endif %}
 {% endif %}
 {% endfor %}
