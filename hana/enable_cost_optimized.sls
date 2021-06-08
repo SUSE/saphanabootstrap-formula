@@ -61,7 +61,7 @@ configure_ha_dr_provider_srTakeover:
           [ha_dr_provider_srTakeover]
           provider = srTakeover
           path = /hana/shared/srHook
-          execution_order = 1
+          execution_order = 2
       - require:
         - reduce_memory_resources_{{ node.host+node.sid }}
         - setup_srHook_directory
