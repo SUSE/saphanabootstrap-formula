@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 17 13:56:06 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.7.2
+  * add native fencing for microsoft-azure
+
+-------------------------------------------------------------------
 Fri May  7 09:15:21 UTC 2021 - Bernd Schubert <bschubert@suse.com>
 
 - Changing exporter stickiness to => 0 and adjusting the colocation 
