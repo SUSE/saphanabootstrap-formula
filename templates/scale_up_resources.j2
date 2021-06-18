@@ -2,11 +2,15 @@
 {%- set sid = data.sid.upper() %}
 {%- set instance = '{:0>2}'.format(data.instance) %}
 {%- set cloud_provider = grains['cloud_provider'] %}
-{%- set native_fencing = data.native_fencing|default(True) %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
-{%- if cloud_provider == "google-cloud-platform" %}
+{%- if cloud_provider == "amazon-web-services" %}
+{%- set native_fencing = data.native_fencing|default(True) %}
+{%- elif cloud_provider == "google-cloud-platform" %}
+{%- set native_fencing = data.native_fencing|default(True) %}
 {%- set vip_mechanism = data.virtual_ip_mechanism|default("load-balancer") %}
+{%- elif cloud_provider == "microsoft-azure" %}
+{%- set native_fencing = data.native_fencing|default(False) %}
 {%- endif %}
 
 ###########
