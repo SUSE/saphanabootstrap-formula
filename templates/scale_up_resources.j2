@@ -45,7 +45,6 @@ primitive rsc_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
 {%- elif cloud_provider == "microsoft-azure" %}
 property $id="cib-bootstrap-options" \
     stonith-enabled="true" \
-    stonith-action="off" \
     concurrent-fencing=true
 
 primitive rsc_azure_stonith_{{ sid }}_HDB{{ instance }} stonith:fence_azure_arm \
