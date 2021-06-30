@@ -4,6 +4,8 @@
 {%- set cloud_provider = grains['cloud_provider'] %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
+{%- set native_fencing = data.native_fencing|default(False) %}
+
 {%- if cloud_provider == "amazon-web-services" %}
 {%- set native_fencing = data.native_fencing|default(True) %}
 {%- elif cloud_provider == "google-cloud-platform" %}
