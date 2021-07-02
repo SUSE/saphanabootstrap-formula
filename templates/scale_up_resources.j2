@@ -11,6 +11,8 @@
 {%- set vip_mechanism = data.virtual_ip_mechanism|default("load-balancer") %}
 {%- elif cloud_provider == "microsoft-azure" %}
 {%- set native_fencing = data.native_fencing|default(False) %}
+{%- else %}{# all other cases like openstack and libvirt #}
+{%- set native_fencing = data.native_fencing|default(False) %}
 {%- endif %}
 
 ###########
@@ -48,7 +50,7 @@ property $id="cib-bootstrap-options" \
     concurrent-fencing=true
 
 primitive rsc_azure_stonith_{{ sid }}_HDB{{ instance }} stonith:fence_azure_arm \
-    params subscriptionId={{ grains['subscription_id'] }} resourceGroup={{ grains['resource_group_name'] }} tenantId={{ grains['tenant_id'] }} login={{ grains['fence_agent_app_id'] }} passwd="{{ grains['fence_agent_client_secret'] }}" pcmk_monitor_retries=4 pcmk_action_limit=3 power_timeout=240 pcmk_reboot_timeout=900 \
+    params subscriptionId={{ data.azure_subscription_id }} resourceGroup={{ data.azure_resource_group_name }} tenantId={{ data.azure_tenant_id }} login={{ data.azure_fence_agent_app_id }} passwd="{{ data.azure_fence_agent_client_secret }}" pcmk_monitor_retries=4 pcmk_action_limit=3 power_timeout=240 pcmk_reboot_timeout=900 \
     op monitor interval=3600 timeout=120 \
     meta target-role=Started
 
