@@ -46,6 +46,11 @@ hana:
     $type: boolean
     $default: true
     $help: Enable the HA cluster configuration which will install the SAPHanaSR hook. To use this option the primary and secondary nodes must be defined in the pillar file
+  scale_out:
+    $name: Enable HANA scale-out deployment
+    $type: boolean
+    $default: false
+    $help: Enable HANA scale-out deployment. To use this option the HANA roles must be defined in the pillar file.
   monitoring_enabled:
     $name: Enable the host to be monitored by exporters
     $type: boolean

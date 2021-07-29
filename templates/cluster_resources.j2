@@ -4,6 +4,14 @@
 {%- set cloud_provider = grains['cloud_provider'] %}
 {%- set monitoring_enabled = pillar.cluster.monitoring_enabled|default(False) %}
 
+{%- set scale_out = data.scale_out|default(False)%}
+{%- set majority_maker = data.majority_maker|default("")%}
+{%- if scale_out %}
+{%- set SAPHanaResource = "SAPHanaController" %}
+{%- else %}
+{%- set SAPHanaResource = "SAPHana" %}
+{%- endif %}
+
 {%- if cloud_provider == "amazon-web-services" %}
 {%- set native_fencing = data.native_fencing|default(True) %}
 {%- elif cloud_provider == "google-cloud-platform" %}
@@ -21,7 +29,11 @@
 
 rsc_defaults \
     resource-stickiness="1000" \
+{%- if scale_out %}
+    migration-threshold="50"
+{%- else %}
     migration-threshold="5000"
+{%- endif %}
 
 op_defaults \
     timeout="600"
@@ -81,7 +93,7 @@ primitive rsc_aws_vip_{{ sid }}_HDB{{ instance }} ocf:suse:aws-vpc-move-ip \
     op stop interval=0 timeout=180 \
     op monitor interval=60 timeout=60
 
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_aws_vip_{{ sid }}_HDB{{ instance }}:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Master
 
 {%- elif cloud_provider == "google-cloud-platform" %}
 {%- if vip_mechanism == "load-balancer" %}
@@ -98,7 +110,7 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }} IPaddr2 \
 
 group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
 
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Master
 
 {%- elif vip_mechanism == "route" %}
 
@@ -108,7 +120,7 @@ primitive rsc_gcp_vip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-rou
     op stop interval=0 timeout=180 \
     op monitor interval=60 timeout=60
 
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_gcp_vip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_gcp_vip_{{ sid }}_HDB{{ instance }}:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Master
 
 {%- endif %}
 {%- elif cloud_provider == "microsoft-azure" %}
@@ -126,7 +138,7 @@ primitive rsc_socat_{{ sid }}_HDB{{ instance }} azure-lb \
 
 group g_ip_{{ sid }}_HDB{{ instance }} rsc_ip_{{ sid }}_HDB{{ instance }} rsc_socat_{{ sid }}_HDB{{ instance }}
 
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 4000: g_ip_{{ sid }}_HDB{{ instance }}:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Master
 
 {%- else %}
 
@@ -136,7 +148,7 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:IPaddr2 \
     op start timeout="20" op stop timeout="20" \
     op monitor interval="10" timeout="20"
 
-colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Master
+colocation col_saphana_ip_{{ sid }}_HDB{{ instance }} 2000: rsc_ip_{{ sid }}_HDB{{ instance }}:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Master
 
 {%- endif %}
 
@@ -155,7 +167,7 @@ primitive rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHanaTopolo
 clone cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} rsc_SAPHanaTopology_{{ sid }}_HDB{{ instance }} \
     meta is-managed="true" clone-node-max="1" interleave="true"
 
-primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHana \
+primitive rsc_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }} ocf:suse:{{ SAPHanaResource }} \
     params \
     SID="{{ sid }}" \
     InstanceNumber="{{ instance }}" \
@@ -168,10 +180,14 @@ primitive rsc_SAPHana_{{ sid }}_HDB{{ instance }} ocf:suse:SAPHana \
     op monitor interval="60" role="Master" timeout="700" \
     op monitor interval="61" role="Slave" timeout="700"
 
-ms msl_SAPHana_{{ sid }}_HDB{{ instance }} rsc_SAPHana_{{ sid }}_HDB{{ instance }} \
+ms msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }} rsc_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }} \
+{%- if scale_out %}
+    meta master-max="1" clone-node-max="1" interleave="true"
+{%- else %}
     meta clone-max="2" clone-node-max="1" interleave="true"
+{%- endif %}
 
-order ord_SAPHana_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} msl_SAPHana_{{ sid }}_HDB{{ instance }}
+order ord_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }} Optional: cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}
 
 #######################################
 # non-production HANA - Cost optimized
@@ -196,7 +212,7 @@ colocation col_{{ qas_sid }}_never_with_{{ sid }}-ip -inf: rsc_SAP_{{ qas_sid }}
    rsc_ip_{{ sid }}_HDB{{ instance }}
 
 order ord_{{ qas_sid }}_stop_before_{{ sid }}-promote Mandatory: rsc_SAP_{{ qas_sid }}_HDB{{ qas_instance }}:stop \
-   msl_SAPHana_{{ sid }}_HDB{{ instance }}:promote
+   msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:promote
 
 {%- endif %}
 
@@ -215,7 +231,7 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:suse:aws-vpc-move-i
     op monitor interval=60 timeout=60
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
-    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- elif cloud_provider == "google-cloud-platform" %}
 {%- if vip_mechanism == "load-balancer" %}
@@ -234,7 +250,7 @@ group g_ip_{{ sid }}_HDB{{ instance }}_readenabled \
     rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 4000: \
-    g_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+    g_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- elif vip_mechanism == "route" %}
 
@@ -245,7 +261,7 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:gcp-vpc-m
     op monitor interval=60 timeout=60
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
-    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- endif %}
 {%- elif cloud_provider == "microsoft-azure" %}
@@ -262,7 +278,7 @@ group g_ip_{{ sid }}_HDB{{ instance }}_readenabled \
     rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled rsc_socat_{{ sid }}_HDB{{ instance }}_readenabled
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 4000: \
-    g_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+    g_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- else %}
 
@@ -271,7 +287,7 @@ primitive rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled ocf:heartbeat:IPaddr2 \
     params ip={{ data.virtual_ip_secondary }}
 
 colocation col_saphana_ip_{{ sid }}_HDB{{ instance }}_readenabled 2000: \
-    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+    rsc_ip_{{ sid }}_HDB{{ instance }}_readenabled:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Slave
 
 {%- endif %}
 {%- endif %}
@@ -289,6 +305,14 @@ primitive rsc_exporter_{{ sid }}_HDB{{ instance }} systemd:prometheus-hanadb_exp
     meta resource-stickiness=0 \
     meta target-role=Started
 
-colocation col_exporter_{{ sid }}_HDB{{ instance }} -inf: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_SAPHana_{{ sid }}_HDB{{ instance }}:Slave
+colocation col_exporter_{{ sid }}_HDB{{ instance }} -inf: rsc_exporter_{{ sid }}_HDB{{ instance }}:Started msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}:Slave
 
+{%- endif %}
+
+######################################
+# majority maker
+######################################
+{%- if majority_maker != "" %}
+location {{ SAPHanaResource }}_not_on_majority_maker msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }} -inf: {{ majority_maker }}
+location SAPHanaTopology_not_on_majority_maker cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} -inf: {{ majority_maker }}
 {%- endif %}
