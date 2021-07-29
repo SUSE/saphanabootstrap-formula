@@ -5,7 +5,9 @@
 {% set sr_hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
 remove_SAPHanaSR:
   pkg.removed:
-    - name: SAPHanaSR
+    - pkgs:
+      - SAPHanaSR
+      - SAPHanaSR-doc
 
 install_SAPHanaSR_ScaleOut:
   pkg.installed:
