@@ -16,6 +16,17 @@ install_SAPHanaSR_ScaleOut:
       - SAPHanaSR-ScaleOut-doc
 {% else %}
 {% set sr_hook_path = '/usr/share/SAPHanaSR' %}
+remove_SAPHanaSR_ScaleOut:
+  pkg.removed:
+    - pkgs:
+      - SAPHanaSR-ScaleOut
+      - SAPHanaSR-ScaleOut-doc
+
+install_SAPHanaSR:
+  pkg.installed:
+    - pkgs:
+      - SAPHanaSR
+      - SAPHanaSR-doc
 {% endif %}
 
 {% for node in hana.nodes if node.host == host %}
