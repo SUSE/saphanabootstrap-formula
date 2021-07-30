@@ -89,15 +89,15 @@ sudoers_append_{{ sap_instance }}:
   file.append:
     - name: {{ tmp_sudoers }}
     - text: |
-        {% if hana.scale_out %}
+        {%- if hana.scale_out %}
         # SAPHanaSR-ScaleOut needs for srHook
         Cmnd_Alias SOK   = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_srHook -v SOK   -t crm_config -s SAPHanaSR
         Cmnd_Alias SFAIL = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_srHook -v SFAIL -t crm_config -s SAPHanaSR
         {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: SOK, SFAIL
-        {% else %}
+        {%- else %}
         # SAPHanaSR needs for srHook
         {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_*
-        {% endif %}
+        {%- endif %}
     - require:
       - sudoers_backup_{{ sap_instance }}
 
