@@ -34,16 +34,6 @@ install_SAPHanaSR:
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set sap_instance = '{}_{}'.format(node.sid, instance) %}
 
-# Stop SAP Hana
-stop_hana_{{ sap_instance }}:
-  module.run:
-    - hana.stop:
-      - sid: {{ node.sid }}
-      - inst: {{ node.instance }}
-      - password: {{ node.password }}
-    - require:
-      - hana_install_{{ node.host+node.sid }}
-
 # Add SAPHANASR hook
 # It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
 configure_ha_hook_{{ sap_instance }}:
@@ -58,8 +48,6 @@ configure_ha_hook_{{ sap_instance }}:
 
         [trace]
         ha_dr_saphanasr = info
-    - require:
-      - stop_hana_{{ sap_instance }}
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
@@ -69,8 +57,6 @@ configure_replication_{{ sap_instance }}:
     - content: operation_mode = {{ secondary_node.secondary.operation_mode }}
     - mode: ensure
     - after: \[system_replication\]
-    - require:
-      - stop_hana_{{ sap_instance }}
 {% endfor %}
 
 # Update /etc/sudoers to allow crm operations to the sidadm
@@ -82,8 +68,6 @@ sudoers_backup_{{ sap_instance }}:
     - name: {{ tmp_sudoers }}
     - source: {{ sudoers }}
     - unless: cat {{ sudoers }} | grep {{ node.sid.lower() }}adm
-    - require:
-      - stop_hana_{{ sap_instance }}
 
 sudoers_append_{{ sap_instance }}:
   file.append:
@@ -114,7 +98,18 @@ sudoers_edit_{{ sap_instance }}:
     - force: true
     - require:
       - sudoers_check_{{ sap_instance }}
-      - stop_hana_{{ sap_instance }}
+
+# Stop SAP Hana
+stop_hana_{{ sap_instance }}:
+  module.run:
+    - hana.stop:
+      - sid: {{ node.sid }}
+      - inst: {{ node.instance }}
+      - password: {{ node.password }}
+    - require:
+      - hana_install_{{ node.host+node.sid }}
+    - onchanges:
+      - file: /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
 
 # Start SAP Hana
 start_hana_{{ sap_instance }}:
@@ -123,7 +118,5 @@ start_hana_{{ sap_instance }}:
       - sid: {{ node.sid }}
       - inst: {{ node.instance }}
       - password: {{ node.password }}
-    - require:
-      - stop_hana_{{ sap_instance }}
 
 {% endfor %}
