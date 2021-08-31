@@ -37,26 +37,28 @@ install_SAPHanaSR:
 # Add SAPHANASR hook
 # It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
 configure_ha_hook_{{ sap_instance }}:
-  file.append:
+  ini.options_present:
     - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-    - text: |
-
-        [ha_dr_provider_SAPHanaSR]
-        provider = SAPHanaSR
-        path = {{ sr_hook_path }}
-        execution_order = 1
-
-        [trace]
-        ha_dr_saphanasr = info
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        ha_dr_provider_SAPHanaSR:
+          provider: 'SAPHanaSR'
+          path: '{{ sr_hook_path }}'
+          execution_order: '1'
+        trace:
+          ha_dr_saphanasr: 'info'
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
 configure_replication_{{ sap_instance }}:
-  file.line:
+  ini.options_present:
     - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-    - content: operation_mode = {{ secondary_node.secondary.operation_mode }}
-    - mode: ensure
-    - after: \[system_replication\]
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        system_replication:
+          operation_mode: '{{ secondary_node.secondary.operation_mode }}'
 {% endfor %}
 
 # Update /etc/sudoers to allow crm operations to the sidadm
@@ -109,7 +111,7 @@ stop_hana_{{ sap_instance }}:
     - require:
       - hana_install_{{ node.host+node.sid }}
     - onchanges:
-      - file: /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+      - ini: /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
 
 # Start SAP Hana
 start_hana_{{ sap_instance }}:

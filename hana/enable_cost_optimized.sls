@@ -54,18 +54,19 @@ failure:
 {% endif %}
 
 configure_ha_dr_provider_srCostOptMemConfig:
-    file.append:
-      - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-      - text: |
-
-          [ha_dr_provider_srCostOptMemConfig]
-          provider = srCostOptMemConfig
-          path = /hana/shared/srHook
-          execution_order = 2
-      - require:
-        - reduce_memory_resources_{{ node.host+node.sid }}
-        - setup_srHook_directory
-        - install_srCostOptMemConfig_hook
+  ini.options_present:
+    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        ha_dr_provider_srCostOptMemConfig:
+          provider: 'srCostOptMemConfig'
+          path: '/hana/shared/srHook'
+          execution_order: '2'
+    - require:
+      - reduce_memory_resources_{{ node.host+node.sid }}
+      - setup_srHook_directory
+      - install_srCostOptMemConfig_hook
 {% endif %}
 {% endif %}
 {% endfor %}
