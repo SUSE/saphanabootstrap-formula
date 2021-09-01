@@ -1,25 +1,25 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
 
-{% set pydbapi_output_dir = '/tmp/pydbapi' %}
-
-{% for node in hana.nodes if node.host == grains['host'] %}
-{%- set hana_client_path = get_hana_client_path(hana, node) %}
+{%- set pydbapi_output_dir = '/tmp/pydbapi' %}
+# first element in nodes has to be the primary
+{%- set node0 = hana.nodes[0] %}
+{%- set node1 = hana.nodes[1] %}
+{%- set hana_client_path = get_hana_client_path(hana, node0 ) %}
 
 # if we have a replicated setup we only take exporter configuration from the primary
-{% if node.secondary is not defined %}
-{% set exporter = node.exporter|default(None) %}
+{% if node0.secondary is not defined %}
+{% set primary = node0 %}
 {% else %}
-{% set primary = (hana.nodes|selectattr("host", "equalto", node.secondary.remote_host)|selectattr("primary", "defined")|first) %}
-{% set exporter = primary.exporter|default(None) %}
+{% set primary = (hana.nodes|selectattr("host", "equalto", node0.secondary.remote_host)|selectattr("primary", "defined")|first) %}
 {% endif %}
+{% set exporter = primary.exporter|default(None) %}
 
 {% if exporter is not none %}
 
-{% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
-{% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
+{% set sap_instance_nr = '{:0>2}'.format(primary.instance) %}
+{% set exporter_instance = '{}_HDB{}'.format(primary.sid.upper(), sap_instance_nr) %}
 
-{% if loop.first %}
 install_python_pip:
   pkg.installed:
     - name: python3-pip
@@ -27,8 +27,6 @@ install_python_pip:
         attempts: 3
         interval: 15
     - resolve_capabilities: true
-    - require:
-      - hana_install_{{ node.host+node.sid }}
 
 extract_pydbapi_client:
   hana.pydbapi_extracted:
@@ -37,8 +35,6 @@ extract_pydbapi_client:
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true
-    - require:
-      - hana_install_{{ node.host+node.sid }}
 
 # pip.installed cannot manage file names with regular expressions
 # TODO: Improve this to use pip.installed somehow
@@ -89,4 +85,3 @@ hanadb_exporter_service_{{ exporter_instance }}:
     {% endif %}
 
 {% endif %}
-{% endfor %}
