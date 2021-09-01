@@ -3,6 +3,7 @@ Thu Jul 29 13:21:45 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.8.0
   * add HANA scale-out support
+  * add idempotence to not affect a running HANA and cluster
 
 -------------------------------------------------------------------
 Thu Jun 17 13:56:06 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
