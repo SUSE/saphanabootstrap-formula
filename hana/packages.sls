@@ -14,6 +14,8 @@ patterns-sap-hana:
     - retry:
         attempts: 3
         interval: 15
+    # SAPHanaSR-ScaleOut conflicts with patterns-sap-hana and will be uninstalled (which will affect a running cluster)
+    - unless: rpm -q SAPHanaSR-ScaleOut
 
 {% else %}
 install_required_packages:
