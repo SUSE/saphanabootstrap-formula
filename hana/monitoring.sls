@@ -53,13 +53,12 @@ prometheus-hanadb_exporter:
   - require:
       - install_pydbapi_client
 
-{% endif %}
-
 hanadb_exporter_configuration_{{ exporter_instance }}:
   file.managed:
     - source: salt://hana/templates/hanadb_exporter.j2
     - name: /usr/etc/hanadb_exporter/{{ exporter_instance }}.json
     - template: jinja
+    - mode: '0700'
     - require:
       - prometheus-hanadb_exporter
     - context:
