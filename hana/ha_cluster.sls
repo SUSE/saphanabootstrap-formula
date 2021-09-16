@@ -101,6 +101,8 @@ sudoers_edit_{{ sap_instance }}:
     - require:
       - sudoers_check_{{ sap_instance }}
 
+# only start/stop hana if it was installed (not an scale-out standby/workers)
+{% if node.install is defined %}
 # Stop SAP Hana
 stop_hana_{{ sap_instance }}:
   module.run:
@@ -120,5 +122,8 @@ start_hana_{{ sap_instance }}:
       - sid: {{ node.sid }}
       - inst: {{ node.instance }}
       - password: {{ node.password }}
+    - require:
+      - hana_install_{{ node.host+node.sid }}
+{%- endif %}
 
 {% endfor %}
