@@ -9,7 +9,11 @@
     {%- elif hana.hana_archive_file is defined %}
     {%- set hana_client_path = get_hana_exe_extract_dir(hana) %}
     {%- else %}
-    {%- set hana_client_path = node.install.software_path|default(hana.software_path) %}
+      {%- if node.install is defined %}
+      {%- set hana_client_path = node.install.software_path|default(hana.software_path) %}
+      {%- else %}
+      {%- set hana_client_path = hana.software_path %}
+      {%- endif %}
     {%- endif %}
 {{- hana_client_path }}
 {%- endmacro %}

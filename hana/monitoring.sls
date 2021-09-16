@@ -1,24 +1,17 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
 
+{% for node in hana.nodes if node.host == grains['host'] %}
+
 {%- set pydbapi_output_dir = '/tmp/pydbapi' %}
-# first element in nodes has to be the primary
-{%- set node0 = hana.nodes[0] %}
-{%- set node1 = hana.nodes[1] %}
-{%- set hana_client_path = get_hana_client_path(hana, node0 ) %}
+{%- set hana_client_path = get_hana_client_path(hana, node ) %}
 
-# if we have a replicated setup we only take exporter configuration from the primary
-{% if node0.secondary is not defined %}
-{% set primary = node0 %}
-{% else %}
-{% set primary = (hana.nodes|selectattr("host", "equalto", node0.secondary.remote_host)|selectattr("primary", "defined")|first) %}
-{% endif %}
-{% set exporter = primary.exporter|default(None) %}
+# only run if exporter is defined
+{% if node.exporter is defined and node.instance is defined and node.sid is defined %}
+{% set exporter = node.exporter|default(None) %}
 
-{% if exporter is not none %}
-
-{% set sap_instance_nr = '{:0>2}'.format(primary.instance) %}
-{% set exporter_instance = '{}_HDB{}'.format(primary.sid.upper(), sap_instance_nr) %}
+{% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
+{% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
 
 install_python_pip:
   pkg.installed:
@@ -84,3 +77,4 @@ hanadb_exporter_service_{{ exporter_instance }}:
     {% endif %}
 
 {% endif %}
+{% endfor %}
