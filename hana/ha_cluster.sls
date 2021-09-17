@@ -34,33 +34,6 @@ install_SAPHanaSR:
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set sap_instance = '{}_{}'.format(node.sid, instance) %}
 
-# Add SAPHANASR hook
-# It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
-configure_ha_hook_{{ sap_instance }}:
-  ini.options_present:
-    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-    - separator: '='
-    - strict: False # do not touch rest of file
-    - sections:
-        ha_dr_provider_SAPHanaSR:
-          provider: 'SAPHanaSR'
-          path: '{{ sr_hook_path }}'
-          execution_order: '1'
-        trace:
-          ha_dr_saphanasr: 'info'
-
-# Configure system replication operation mode in the primary site
-{% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
-configure_replication_{{ sap_instance }}:
-  ini.options_present:
-    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-    - separator: '='
-    - strict: False # do not touch rest of file
-    - sections:
-        system_replication:
-          operation_mode: '{{ secondary_node.secondary.operation_mode }}'
-{% endfor %}
-
 # Update /etc/sudoers to allow crm operations to the sidadm
 {% set tmp_sudoers = '/tmp/sudoers' %}
 {% set sudoers = '/etc/sudoers' %}
@@ -101,8 +74,36 @@ sudoers_edit_{{ sap_instance }}:
     - require:
       - sudoers_check_{{ sap_instance }}
 
-# only start/stop hana if it was installed (not an scale-out standby/workers)
+# Add SAPHANASR hook
+# It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
+
+# only add hook and stop/start if hana was installed (not on scale-out standby/workers)
 {% if node.install is defined %}
+configure_ha_hook_{{ sap_instance }}:
+  ini.options_present:
+    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        ha_dr_provider_SAPHanaSR:
+          provider: 'SAPHanaSR'
+          path: '{{ sr_hook_path }}'
+          execution_order: '1'
+        trace:
+          ha_dr_saphanasr: 'info'
+
+# Configure system replication operation mode in the primary site
+{% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
+configure_replication_{{ sap_instance }}:
+  ini.options_present:
+    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        system_replication:
+          operation_mode: '{{ secondary_node.secondary.operation_mode }}'
+{% endfor %}
+
 # Stop SAP Hana
 stop_hana_{{ sap_instance }}:
   module.run:
