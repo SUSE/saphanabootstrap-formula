@@ -1,6 +1,7 @@
 hana:
   install_packages: true
   ha_enabled: true
+  scale_out: false
   hana_extract_dir: /sapmedia_extract/HANA
   hana_client_extract_dir: /sapmedia_extract/HANA_CLIENT
   nodes: []

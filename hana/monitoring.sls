@@ -1,25 +1,18 @@
 {%- from "hana/map.jinja" import hana with context -%}
 {%- from 'hana/macros/get_hana_client_path.sls' import get_hana_client_path with context %}
 
-{% set pydbapi_output_dir = '/tmp/pydbapi' %}
-
 {% for node in hana.nodes if node.host == grains['host'] %}
-{%- set hana_client_path = get_hana_client_path(hana, node) %}
 
-# if we have a replicated setup we only take exporter configuration from the primary
-{% if node.secondary is not defined %}
+{%- set pydbapi_output_dir = '/tmp/pydbapi' %}
+{%- set hana_client_path = get_hana_client_path(hana, node ) %}
+
+# only run if exporter is defined
+{% if node.exporter is defined and node.instance is defined and node.sid is defined %}
 {% set exporter = node.exporter|default(None) %}
-{% else %}
-{% set primary = (hana.nodes|selectattr("host", "equalto", node.secondary.remote_host)|selectattr("primary", "defined")|first) %}
-{% set exporter = primary.exporter|default(None) %}
-{% endif %}
-
-{% if exporter is not none %}
 
 {% set sap_instance_nr = '{:0>2}'.format(node.instance) %}
 {% set exporter_instance = '{}_HDB{}'.format(node.sid.upper(), sap_instance_nr) %}
 
-{% if loop.first %}
 install_python_pip:
   pkg.installed:
     - name: python3-pip
@@ -27,8 +20,6 @@ install_python_pip:
         attempts: 3
         interval: 15
     - resolve_capabilities: true
-    - require:
-      - hana_install_{{ node.host+node.sid }}
 
 extract_pydbapi_client:
   hana.pydbapi_extracted:
@@ -37,8 +28,6 @@ extract_pydbapi_client:
     - output_dir: {{ pydbapi_output_dir }}
     - hana_version: '20'
     - force: true
-    - require:
-      - hana_install_{{ node.host+node.sid }}
 
 # pip.installed cannot manage file names with regular expressions
 # TODO: Improve this to use pip.installed somehow
@@ -57,13 +46,12 @@ prometheus-hanadb_exporter:
   - require:
       - install_pydbapi_client
 
-{% endif %}
-
 hanadb_exporter_configuration_{{ exporter_instance }}:
   file.managed:
     - source: salt://hana/templates/hanadb_exporter.j2
     - name: /usr/etc/hanadb_exporter/{{ exporter_instance }}.json
     - template: jinja
+    - mode: '0700'
     - require:
       - prometheus-hanadb_exporter
     - context:
