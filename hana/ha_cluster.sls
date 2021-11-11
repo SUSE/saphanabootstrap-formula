@@ -126,8 +126,9 @@ remove_wrong_ha_hook_{{ sap_instance }}_sections_multi_target:
         ha_dr_provider_SAPHanaSR:
     - require:
       - pkg: install_SAPHanaSR
-    - onlyif:
-      - test -f {{ sr_hook_multi_target }}
+    - unless:
+      - fun: file.file_exists
+        path: sr_hook_multi_target
 
 remove_wrong_ha_hook_{{ sap_instance }}_options_multi_target:
   ini.options_absent:
@@ -161,8 +162,9 @@ remove_wrong_ha_hook_{{ sap_instance }}_options:
           - ha_dr_saphanasrmultitarget
     - require:
       - pkg: install_SAPHanaSR
-    - unless:
-      - test -f {{ sr_hook_multi_target }}
+    - onlyif:
+      - fun: file.file_exists
+        path: sr_hook_multi_target
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
