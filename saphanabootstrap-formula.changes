@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 11 15:08:11 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.8.1
+  * use multi-target Hook on HANA scale-out
+
+-------------------------------------------------------------------
 Thu Jul 29 13:21:45 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.8.0
