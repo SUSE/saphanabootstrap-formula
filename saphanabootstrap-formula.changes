@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 17 13:52:34 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.9.0
+  * define vip_mechanism for every provider and reorder resources
+    (same schema for all SAP related formulas)
+
+-------------------------------------------------------------------
 Thu Nov 11 15:08:11 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.8.1
