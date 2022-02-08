@@ -1,7 +1,9 @@
 hana:
-  # optional: Install required packages to install SAP HANA (true by default)
-  # If set to false, this packages must be installed before the formula
-  # execution manually
+  # optional: Install required rpm packages to install SAP HANA (true by default),
+  # e.g. SAP Notes 2892356 and 3029056.
+  # This will be taken care of by `patterns-sap-hana` in SLES4SAP environments.
+  # If set to false, these packages must be installed manually before the formula
+  # execution.
   # install_packages: true
 
   # saptune solution to apply to all nodes ( by default nothing is applied)
@@ -64,6 +66,7 @@ hana:
         extra_parameters:
           # As an example, this parameter allows to ignore some prerequisite tests
           ignore: check_min_mem
+      # Primary SAP HANA System Replication site
       primary:
         name: NUREMBERG
         userkey:
@@ -72,6 +75,7 @@ hana:
           user_name: 'SYSTEM'
           user_password: 'Qwerty1234'
           database: 'SYSTEMDB'
+        # Take a backup on the primary SAP HANA System Replication site (prerequisite for SR)
         backup:
           # Set key_name or user_name/user_password combination
           key_name: 'backupkey'
@@ -101,6 +105,7 @@ hana:
         root_password: 's'
         system_user_password: 'Qwerty1234'
         sapadm_password: 'Qwerty1234'
+      # Secondary SAP HANA System Replication site
       secondary:
         name: PRAGUE
         remote_host: 'hana01'

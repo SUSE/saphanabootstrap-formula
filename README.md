@@ -30,14 +30,24 @@ On openSUSE or SUSE Linux Enterprise use `zypper` package manager:
 zypper install saphanabootstrap-formula
 ```
 
-**Important!** This will install the formula in `/usr/share/salt-formulas/states/hana`. Make sure that `/usr/share/salt-formulas/states` entry is correctly configured in your Salt minion configuration `file_roots` entry if the formula is used in a masterless mode.
+**Important!** This will install the formula in `/usr/share/salt-formulas/states/hana`. In case the formula is used in a masterless mode, make sure that the `/usr/share/salt-formulas/states` entry is correctly configured in the `file_roots` entry of the Salt minion configuration.
 
-Find the latest development repositories at SUSE's Open Build Service[network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula](https://build.opensuse.org/package/show/network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula).
+Depending on the patch level of the target system and the release cycle of this project, the package in the regular repository might not be the latest one. If you want the latest features, have a look in the test development repositories at SUSE's Open Build Service [network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula](https://build.opensuse.org/package/show/network:ha-clustering:sap-deployments:devel/saphanabootstrap-formula).
 
-### Manual clone
+### Manual Installation
+
+A manual installation can be done by cloning this repository:
 
 ```
 git clone https://github.com/SUSE/saphanabootstrap-formula
+```
+
+**Important!** This will not install the the formula anywhere where salt can find it.  If the formula is used in a masterless mode, also make sure to copy the complete `netweaver` subdirectory to location defined in `file_roots` entry of your Salt minion configuration.
+
+I. e.:
+
+```
+cd saphanabootstrap-formula
 cp -R hana /srv/salt
 ```
 
@@ -49,7 +59,7 @@ Follow the next steps to configure the formula execution. After this, the formul
 
 1. Modify the `top.sls` file (by default stored in `/srv/salt`) including the `hana` entry.
 
-   Here an example to execute the HANA formula in all of the nodes:
+   Here is an example to execute the HANA formula in all of the nodes:
 
    ```
    # This file is /srv/salt/top.sls
@@ -59,6 +69,7 @@ Follow the next steps to configure the formula execution. After this, the formul
    ```
 
 2. Customize the execution pillar file. Here an example of a pillar file for this formula with all of the options: [pillar.example](https://github.com/SUSE/saphanabootstrap-formula/blob/master/pillar.example)
+The `pillar.example` can be found either as a link to the file in the master branch or a file in the file system at `/usr/share/salt-formulas/metadata/hana/pillar.example`.
 
 3. Set the execution pillar file. For that, modify the `top.sls` of the pillars (by default stored in `/srv/pillar`) including the `hana` entry and copy your specific `hana.sls` pillar file in the same folder.
 
