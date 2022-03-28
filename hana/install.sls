@@ -97,16 +97,16 @@ hana_add_hosts_pwd_file_remove_{{ node.host+node.sid }}:
 create_hana_data_{{ node.sid.upper() }}:
   file.directory:
     - name: /hana/data/{{ node.sid.upper() }}
-    - user: {{ node.sid.lower() }}adm
-    - group: sapsys
+    # - user: {{ node.sid.lower() }}adm # user might not exist yet
+    # - group: sapsys                   # group might not exist yet
     - mode: 750
     - makedirs: True
 
 create_hana_log_{{ node.sid.upper() }}:
   file.directory:
     - name: /hana/log/{{ node.sid.upper() }}
-    - user: {{ node.sid.lower() }}adm
-    - group: sapsys
+    # - user: {{ node.sid.lower() }}adm # user might not exist yet
+    # - group: sapsys                   # group might not exist yet
     - mode: 750
     - makedirs: True
 
