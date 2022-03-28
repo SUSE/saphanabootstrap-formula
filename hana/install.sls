@@ -6,7 +6,8 @@
 include:
     - .enable_cost_optimized
 
-{% for node in hana.nodes if node.host == host and node.install is defined %}
+{% for node in hana.nodes if node.host == host %}
+{% if node.install is defined %}
 
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set sap_instance = '{}_{}'.format(node.sid, instance) %}
@@ -17,7 +18,6 @@ include:
   {%set extra_parameters = False %}
   {%set extra_parameters_items = [] %}
 {% endif %}
-
 
 hana_install_{{ node.host+node.sid }}:
   hana.installed:
@@ -91,4 +91,24 @@ hana_add_hosts_pwd_file_remove_{{ node.host+node.sid }}:
 {% endif %}
 {% endfor %}
 
+{% else %} # node.install not defined
+# make sure /hana/{data,log}/${SID} exists on nodes where install does not run
+
+create_hana_data_{{ node.sid.upper() }}:
+  file.directory:
+    - name: /hana/data/{{ node.sid.upper() }}
+    - user: {{ node.sid.lower() }}adm
+    - group: sapsys
+    - mode: 750
+    - makedirs: True
+
+create_hana_log_{{ node.sid.upper() }}:
+  file.directory:
+    - name: /hana/log/{{ node.sid.upper() }}
+    - user: {{ node.sid.lower() }}adm
+    - group: sapsys
+    - mode: 750
+    - makedirs: True
+
+{% endif %}
 {% endfor %}
