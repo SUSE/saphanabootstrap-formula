@@ -1,3 +1,4 @@
+---
 name: Formula CI
 # this workflow will
 # - run formula validation step - ci/validate-formula.sh
