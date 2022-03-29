@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Thu May 13 08:16:24 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.10.0
+  * allow to disable shared HANA basepath and rework add_hosts code
+    (enables HANA scale-out on AWS)
+  * do not edit global.ini directly (if not needed)
+
+-------------------------------------------------------------------
+Thu May 05 20:18:52 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.9.1
+  * fix majority_maker code on case grain is empty
+
+-------------------------------------------------------------------
 Thu Nov 17 13:52:34 UTC 2021 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.9.0
