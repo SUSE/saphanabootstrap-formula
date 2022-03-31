@@ -273,10 +273,10 @@ colocation col_exporter_{{ sid }}_HDB{{ instance }} -inf: rsc_exporter_{{ sid }}
 
 {%- endif %}
 
+{%- if majority_maker != "" and majority_maker != "None" %}
 ######################################
 # majority maker
 ######################################
-{%- if majority_maker != "" %}
 location {{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }}_not_on_majority_maker msl_{{ SAPHanaResource }}_{{ sid }}_HDB{{ instance }} -inf: {{ majority_maker }}
 location SAPHanaTopology_{{ sid }}_HDB{{ instance }}_not_on_majority_maker cln_SAPHanaTopology_{{ sid }}_HDB{{ instance }} -inf: {{ majority_maker }}
 {%- if monitoring_enabled %}
