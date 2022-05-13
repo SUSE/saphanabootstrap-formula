@@ -45,6 +45,7 @@ hana_install_{{ node.host+node.sid }}:
       {% endif %}
       {% endfor %}
     {% endif %}
+    # needed to utilize pwd file for add_hosts
     - remove_pwd_files: False
 
 # scale-out specific
@@ -84,12 +85,13 @@ hana_add_hosts_{{ node.host+node.sid }}:
     - onlyif:
       - test -f /root/hdb_passwords.xml
 
+{% endif %}
+{% endfor %}
+
+# see "remove_pwd_files: False" above
 hana_add_hosts_pwd_file_remove_{{ node.host+node.sid }}:
   file.absent:
     - name: /root/hdb_passwords.xml
-
-{% endif %}
-{% endfor %}
 
 {% else %} # node.install not defined
 # make sure /hana/{data,log}/${SID} exists on nodes where install does not run
