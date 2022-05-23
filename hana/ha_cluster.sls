@@ -80,9 +80,8 @@ sudoers_remove_old_entries_{{ sap_instance }}_srHook:
     - repl: ''
 
 # Add SAPHANASR hook
-# It would be better to get the text from /usr/share/SAPHanaSR/samples/global.ini
 
-# only add hook and stop/start if hana was installed (not on scale-out standby/workers)
+# Only add hook if hana was installed (not on scale-out standby/workers). A restart is needed as secondary cannot register a new hook without this (e.g. via hdbsql).
 {% if node.install is defined %}
 configure_ha_hook_{{ sap_instance }}_multi_target:
   ini.options_present:
@@ -126,8 +125,9 @@ remove_wrong_ha_hook_{{ sap_instance }}_sections_multi_target:
         ha_dr_provider_SAPHanaSR:
     - require:
       - pkg: install_SAPHanaSR
-    - onlyif:
-      - test -f {{ sr_hook_multi_target }}
+    - unless:
+      - fun: file.file_exists
+        path: sr_hook_multi_target
 
 remove_wrong_ha_hook_{{ sap_instance }}_options_multi_target:
   ini.options_absent:
@@ -161,22 +161,31 @@ remove_wrong_ha_hook_{{ sap_instance }}_options:
           - ha_dr_saphanasrmultitarget
     - require:
       - pkg: install_SAPHanaSR
-    - unless:
-      - test -f {{ sr_hook_multi_target }}
+    - onlyif:
+      - fun: file.file_exists
+        path: sr_hook_multi_target
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
 configure_replication_{{ sap_instance }}:
-  ini.options_present:
-    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-    - separator: '='
-    - strict: False # do not touch rest of file
-    - sections:
-        system_replication:
-          operation_mode: '{{ secondary_node.secondary.operation_mode }}'
+  module.run:
+    - hana.set_ini_parameter:
+      - ini_parameter_values:
+        - section_name: 'system_replication'
+          parameter_name: 'operation_mode'
+          parameter_value: '{{ secondary_node.secondary.operation_mode }}'
+      - database: SYSTEMDB
+      - file_name: global.ini
+      - layer: SYSTEM
+      - reconfig: True
+      - user_name: SYSTEM
+      - user_password: {{ node.password }}
+      - password: {{ node.password }}
+      - sid: {{ node.sid }}
+      - inst: {{ node.instance }}
 {% endfor %}
 
-# Stop SAP Hana
+# Stop SAP Hana - Only needed if global.ini was edited directelly (removed old hooks).
 stop_hana_{{ sap_instance }}:
   module.run:
     - hana.stop:

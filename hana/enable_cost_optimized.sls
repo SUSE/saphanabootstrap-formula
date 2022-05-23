@@ -54,15 +54,27 @@ failure:
 {% endif %}
 
 configure_ha_dr_provider_srCostOptMemConfig:
-  ini.options_present:
-    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
-    - separator: '='
-    - strict: False # do not touch rest of file
-    - sections:
-        ha_dr_provider_srCostOptMemConfig:
-          provider: 'srCostOptMemConfig'
-          path: '/hana/shared/srHook'
-          execution_order: '2'
+  module.run:
+    - hana.set_ini_parameter:
+      - ini_parameter_values:
+        - section_name: 'ha_dr_provider_srCostOptMemConfig'
+          parameter_name: 'provider'
+          parameter_value: 'srCostOptMemConfig'
+        - section_name: 'ha_dr_provider_srCostOptMemConfig'
+          parameter_name: 'path'
+          parameter_value: '/hana/shared/srHook'
+        - section_name: 'ha_dr_provider_srCostOptMemConfig'
+          parameter_name: 'execution_order'
+          parameter_value: '2'
+      - database: SYSTEMDB
+      - file_name: global.ini
+      - layer: SYSTEM
+      - reconfig: True
+      - user_name: SYSTEM
+      - user_password: {{ node.password }}
+      - password: {{ node.password }}
+      - sid: {{ node.sid }}
+      - inst: {{ node.instance }}
     - require:
       - reduce_memory_resources_{{ node.host+node.sid }}
       - setup_srHook_directory
