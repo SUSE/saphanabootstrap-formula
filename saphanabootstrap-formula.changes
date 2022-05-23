@@ -206,7 +206,7 @@ Fri Apr 17 08:14:08 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 Tue Apr 14 13:28:03 UTC 2020 - Xabier Arbulu <xarbulu@suse.com>
 
 - Version 0.5.6
-  * Update anyting socat resource by azure-lb as recommended in
+  * Update anything socat resource by azure-lb as recommended in
   the updated best practices guide
 
 -------------------------------------------------------------------
@@ -349,7 +349,7 @@ Mon Jul 22 08:26:16 UTC 2019 - Xabier Arbulu Insausti <xarbulu@suse.com>
 Mon Jul  8 11:49:55 UTC 2019 - Dario Maiocchi <dmaiocchi@suse.com>
 
 - Version bump 0.2.6
-  * Retry pkg.install multiple times, in case a pkg installtion fails
+  * Retry pkg.install multiple times, in case a pkg installation fails
   for having a more resilient installation.
 
 -------------------------------------------------------------------

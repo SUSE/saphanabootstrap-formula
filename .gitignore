@@ -3,3 +3,8 @@
 /minion
 /top.sls
 /var/
+venv
+.envrc
+.direnv
+shell.nix
+.ropeproject

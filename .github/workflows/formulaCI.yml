@@ -1,60 +1,186 @@
+---
 name: Formula CI
 # this workflow will
 # - run formula validation step - ci/validate-formula.sh
 # - deliver the package content to the configured repository
 # - submit the new package content to the upstream repository
-on: [push, pull_request]
+on: [push, pull_request]  # yamllint disable-line rule:truthy
 env:
-  PACKAGE_NAME: saphanabootstrap-formula 
+  PACKAGE_NAME: saphanabootstrap-formula
 jobs:
+  tab:
+    name: 'tabspace checking'
+    runs-on: ubuntu-20.04
 
-  validation:
-    runs-on: ubuntu-18.04
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Add salt repository
-      uses: myci-actions/add-deb-repo@4
-      with:
-        repo: deb http://repo.saltstack.com/apt/ubuntu/18.04/amd64/3000/ bionic main
-        key-server: http://repo.saltstack.com/apt/ubuntu/18.04/amd64/3000/SALTSTACK-GPG-KEY.pub
-    - name: install salt
-      run: sudo apt-get install salt-common
-    - name: validation script
-      run: ci/validate-formula.sh
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: tab
+        run: make test-tab
+  codespell:
+    name: 'spell checking'
+    runs-on: ubuntu-20.04
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install linting tools
+        run: |
+          sudo apt-get install -y git python3 python3-pip
+          python3 -m pip install codespell
+
+      - name: codespell
+        run: make test-codespell
+
+  shellcheck:
+    name: 'script syntax check'
+    runs-on: ubuntu-20.04
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install linting tools
+        run: |
+          sudo apt-get install -y git python3 python3-pip shellcheck
+
+      - name: shellcheck
+        run: make test-shellcheck
+
+  yamllint:
+    name: 'yaml linting'
+    runs-on: ubuntu-20.04
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install linting tools
+        run: |
+          sudo apt-get install -y git python3 python3-pip
+          python3 -m pip install codespell
+
+      - name: yamllint
+        run: make test-yamllint
+
+  jsonlint:
+    name: 'json linting'
+    runs-on: ubuntu-20.04
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install linting tools
+        run: |
+          sudo apt-get install -y git python3 python3-pip
+          python3 -m pip install jsonlint
+
+      - name: jsonlint
+        run: make test-jsonlint
+
+  mlc:
+    name: 'markup link checker'
+    runs-on: ubuntu-20.04
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install linting tools
+        run: |
+          mkdir -p bin
+          curl -L https://github.com/becheran/mlc/releases/download/v0.14.3/mlc-x86_64-linux -o bin/mlc
+          chmod +x bin/mlc
+          echo "$PWD/bin" >> $GITHUB_PATH
+
+      - name: mlc
+        run: make test-mlc
+
+  salt:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: install salt
+        run: |
+          sudo curl -fsSL -o /usr/share/keyrings/salt-archive-keyring.gpg https://repo.saltproject.io/py3/ubuntu/20.04/amd64/latest/salt-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/salt-archive-keyring.gpg arch=amd64] https://repo.saltproject.io/py3/ubuntu/20.04/amd64/latest focal main" | sudo tee /etc/apt/sources.list.d/salt.list
+          sudo apt-get update
+          sudo apt-get install salt-common
+      - name: salt
+        run: make test-salt
 
   delivery:
-    needs: validation
-    runs-on: ubuntu-18.04
-    if: ${{ github.event_name != 'pull_request' }}  
-    container: 
+    needs: [tab, codespell, shellcheck, yamllint, jsonlint, mlc, salt]
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name != 'pull_request' }}
+    container:
       image: shap/continuous_deliver
       env:
         OBS_USER: ${{ secrets.OBS_USER }}
         OBS_PASS: ${{ secrets.OBS_PASS }}
         OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
     steps:
-    - uses: actions/checkout@v2 
-      with:
-        fetch-depth: 0
-    - name: configure OSC  
-    # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
-    # that is used to run osc commands 
-      run: | 
-        /scripts/init_osc_creds.sh
-        mkdir -p $HOME/.config/osc
-        cp /root/.config/osc/oscrc $HOME/.config/osc
-    - name: deliver package
-      run: |
-        sed -i 's~%%VERSION%%~${{ github.sha }}~' _service && \
-        sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' _service && \
-        /scripts/upload.sh 
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: configure OSC
+        # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
+        # that is used to run osc commands
+        run: |
+          /scripts/init_osc_creds.sh
+          mkdir -p $HOME/.config/osc
+          cp /root/.config/osc/oscrc $HOME/.config/osc
+      - name: deliver package
+        run: |
+          sed -i 's~%%VERSION%%~${{ github.sha }}~' _service && \
+          sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' _service && \
+          /scripts/upload.sh
 
   submit:
-    needs: [validation, delivery]
-    runs-on: ubuntu-18.04
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' }}    
+    needs: [tab, codespell, shellcheck, yamllint, jsonlint, mlc, salt, delivery]
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' }}
     container:
       image: shap/continuous_deliver
       env:
@@ -63,16 +189,16 @@ jobs:
         OBS_PROJECT: ${{ secrets.OBS_PROJECT}}
         TARGET_PROJECT: ${{ secrets.TARGET_PROJECT}}
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: configure OSC
-      run: | 
-        /scripts/init_osc_creds.sh
-        mkdir -p $HOME/.config/osc
-        cp /root/.config/osc/oscrc $HOME/.config/osc
-    - name: submit package
-      run: |
-       sed -i 's~%%VERSION%%~${{ github.sha }}~' _service && \
-       sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' _service && \
-       /scripts/submit.sh
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: configure OSC
+        run: |
+          /scripts/init_osc_creds.sh
+          mkdir -p $HOME/.config/osc
+          cp /root/.config/osc/oscrc $HOME/.config/osc
+      - name: submit package
+        run: |
+         sed -i 's~%%VERSION%%~${{ github.sha }}~' _service && \
+         sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' _service && \
+         /scripts/submit.sh
