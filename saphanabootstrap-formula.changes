@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 06 18:31:32 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.10.1
+  * fix hook removal conditions
+  * fix majority_maker code on case grain is empty
+
+-------------------------------------------------------------------
 Thu May 13 08:16:24 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.10.0
