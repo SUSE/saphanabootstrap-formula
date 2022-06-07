@@ -273,7 +273,7 @@ colocation col_exporter_{{ sid }}_HDB{{ instance }} -inf: rsc_exporter_{{ sid }}
 
 {%- endif %}
 
-{%- if majority_maker != "" and majority_maker != "None" %}
+{%- if majority_maker != "" and majority_maker != None and majority_maker != "None" %}
 ######################################
 # majority maker
 ######################################
