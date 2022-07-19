@@ -5,6 +5,7 @@
 {% set sr_hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
 {% set sr_hook_multi_target = sr_hook_path + '/SAPHanaSrMultiTarget.py' %}
 {% set sr_hook = sr_hook_path + '/SAPHanaSR.py' %}
+{% set sr_hook_gen = salt['cmd.run']('grep "^srHookGen = " "'~sr_hook~'" | cut -d\'"\' -f2', python_shell=true) %}
 remove_SAPHanaSR:
   pkg.removed:
     - pkgs:
@@ -21,6 +22,7 @@ install_SAPHanaSR:
 {% set sr_hook_path = '/usr/share/SAPHanaSR' %}
 {% set sr_hook_multi_target = sr_hook_path + '/SAPHanaSrMultiTarget.py' %}
 {% set sr_hook = sr_hook_path + '/SAPHanaSR.py' %}
+{% set sr_hook_gen = salt['cmd.run']('grep "^srHookGen = " "'~sr_hook~'" | cut -d\'"\' -f2', python_shell=true) %}
 remove_SAPHanaSR:
   pkg.removed:
     - pkgs:
@@ -33,6 +35,16 @@ install_SAPHanaSR:
       - SAPHanaSR
       - SAPHanaSR-doc
 {% endif %}
+
+# get HANA sites
+{% set sites = {} %}
+{% for node in hana.nodes %}
+{% if node.primary is defined %}
+{% do sites.update({'a': node.primary.name}) %}
+{% elif node.secondary is defined %}
+{% do sites.update({'b': node.secondary.name}) %}
+{% endif %}
+{% endfor %}
 
 {% for node in hana.nodes if node.host == host %}
 
@@ -51,12 +63,27 @@ sudoers_create_{{ sap_instance }}:
     - contents: |
         {%- if hana.scale_out %}
         # SAPHanaSR-ScaleOut needs for {{ sr_hook_multi_target }}
+        Cmnd_Alias GSH_QUERY      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_gsh -G
+        Cmnd_Alias GSH_UPDATE     = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_gsh -v {{ sr_hook_gen }} -l reboot
+        # be compatible with non-multi-target mode
+        Cmnd_Alias SOK_GLOB       = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_srHook -v SOK -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL_GLOB     = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_srHook -v SFAIL -t crm_config -s SAPHanaSR
+        # be compatible with multi-target mode
+        Cmnd_Alias SOK_GLOB_MTS   = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_mts -v SOK -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL_GLOB_MTS = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_mts -v SFAIL -t crm_config -s SAPHanaSR
+        Cmnd_Alias SOK_SITEA      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SOK   -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL_SITEA    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SFAIL -t crm_config -s SAPHanaSR
+        Cmnd_Alias SOK_SITEB      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SOK   -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL_SITEB    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SFAIL -t crm_config -s SAPHanaSR
+        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: GSH_QUERY, GSH_UPDATE, SOK_GLOB, SFAIL_GLOB, SOK_GLOB_MTS, SFAIL_GLOB_MTS, SOK_SITEA, SFAIL_SITEA, SOK_SITEB, SFAIL_SITEB
         {%- else %}
         # SAPHanaSR needs for {{ sr_hook }}
+        Cmnd_Alias SOK_SITEA      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SOK   -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL_SITEA    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SFAIL -t crm_config -s SAPHanaSR
+        Cmnd_Alias SOK_SITEB      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SOK   -t crm_config -s SAPHanaSR
+        Cmnd_Alias SFAIL_SITEB    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SFAIL -t crm_config -s SAPHanaSR
+        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: SOK_SITEA, SFAIL_SITEA, SOK_SITEB, SFAIL_SITEB
         {%- endif %}
-        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_*
-        # be compatible with non-multi-target mode
-        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_*
     - check_cmd: /usr/sbin/visudo -c -f
     - require:
       - pkg: install_SAPHanaSR
