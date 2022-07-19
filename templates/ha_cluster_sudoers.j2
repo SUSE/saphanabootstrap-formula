@@ -22,3 +22,6 @@ Cmnd_Alias SOK_SITEB      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() 
 Cmnd_Alias SFAIL_SITEB    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SFAIL -t crm_config -s SAPHanaSR
 {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: SOK_SITEA, SFAIL_SITEA, SOK_SITEB, SFAIL_SITEB
 {%- endif %}
+# SAPHanaSR takeover blocker needs for {{ sustkover_hook }}
+Cmnd_Alias HOOK_HELPER_TKOVER = /usr/sbin/SAPHanaSR-hookHelper --case checkTakeover --sid={{ node.sid.lower() }}
+{{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: HOOK_HELPER_TKOVER
