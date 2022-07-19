@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Jul 19 11:47:52 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.11.0
+  * use check_cmd instead of tmp sudoers file
+  * make sudoers rules more secure
+  * migrate sudoers to template file
+
+-------------------------------------------------------------------
 Thu Jun 06 18:31:32 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.10.1
