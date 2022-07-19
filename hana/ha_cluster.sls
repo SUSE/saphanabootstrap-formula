@@ -40,12 +40,14 @@ install_SAPHanaSR:
 {% set sap_instance = '{}_{}'.format(node.sid, instance) %}
 
 # Update sudoers to allow crm operations to the sidadm
-{% set tmp_sudoers = '/tmp/sudoers' %}
 {% set sudoers = '/etc/sudoers.d/SAPHanaSR' %}
 
 sudoers_create_{{ sap_instance }}:
   file.managed:
-    - name: {{ tmp_sudoers }}
+    - name: {{ sudoers }}
+    - user: root
+    - group: root
+    - mode: 0440
     - contents: |
         {%- if hana.scale_out %}
         # SAPHanaSR-ScaleOut needs for {{ sr_hook_multi_target }}
@@ -55,22 +57,9 @@ sudoers_create_{{ sap_instance }}:
         {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_*
         # be compatible with non-multi-target mode
         {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_*
+    - check_cmd: /usr/sbin/visudo -c -f
     - require:
       - pkg: install_SAPHanaSR
-
-sudoers_check_{{ sap_instance }}:
-  cmd.run:
-    - name: /usr/sbin/visudo -c -f {{ tmp_sudoers }}
-    - require:
-      - file: {{ tmp_sudoers }}
-
-sudoers_edit_{{ sap_instance }}:
-  file.copy:
-    - name: {{ sudoers }}
-    - source: {{ tmp_sudoers }}
-    - force: true
-    - require:
-      - sudoers_check_{{ sap_instance }}
 
 # remove old entries from /etc/sudoers (migration to new /etc/sudoers.d/SAPHanaSR file)
 sudoers_remove_old_entries_{{ sap_instance }}_srHook:
