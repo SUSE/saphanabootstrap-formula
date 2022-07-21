@@ -1,0 +1,24 @@
+{%- from "hana/map.jinja" import hana with context -%}
+{%- if hana.scale_out -%}
+# SAPHanaSR-ScaleOut needs for {{ sr_hook_multi_target }}
+Cmnd_Alias GSH_QUERY      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_gsh -G
+Cmnd_Alias GSH_UPDATE     = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_gsh -v {{ sr_hook_string.split('"')[1]|default("1.0") }} -l reboot
+# be compatible with non-multi-target mode
+Cmnd_Alias SOK_GLOB       = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_srHook -v SOK -t crm_config -s SAPHanaSR
+Cmnd_Alias SFAIL_GLOB     = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_srHook -v SFAIL -t crm_config -s SAPHanaSR
+# be compatible with multi-target mode
+Cmnd_Alias SOK_GLOB_MTS   = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_mts -v SOK -t crm_config -s SAPHanaSR
+Cmnd_Alias SFAIL_GLOB_MTS = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_glob_mts -v SFAIL -t crm_config -s SAPHanaSR
+Cmnd_Alias SOK_SITEA      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SOK   -t crm_config -s SAPHanaSR
+Cmnd_Alias SFAIL_SITEA    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SFAIL -t crm_config -s SAPHanaSR
+Cmnd_Alias SOK_SITEB      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SOK   -t crm_config -s SAPHanaSR
+Cmnd_Alias SFAIL_SITEB    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SFAIL -t crm_config -s SAPHanaSR
+{{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: GSH_QUERY, GSH_UPDATE, SOK_GLOB, SFAIL_GLOB, SOK_GLOB_MTS, SFAIL_GLOB_MTS, SOK_SITEA, SFAIL_SITEA, SOK_SITEB, SFAIL_SITEB
+{%- else %}
+# SAPHanaSR needs for {{ sr_hook }}
+Cmnd_Alias SOK_SITEA      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SOK   -t crm_config -s SAPHanaSR
+Cmnd_Alias SFAIL_SITEA    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['a'] }} -v SFAIL -t crm_config -s SAPHanaSR
+Cmnd_Alias SOK_SITEB      = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SOK   -t crm_config -s SAPHanaSR
+Cmnd_Alias SFAIL_SITEB    = /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_{{ sites['b'] }} -v SFAIL -t crm_config -s SAPHanaSR
+{{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: SOK_SITEA, SFAIL_SITEA, SOK_SITEB, SFAIL_SITEB
+{%- endif %}
