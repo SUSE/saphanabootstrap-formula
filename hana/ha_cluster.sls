@@ -5,6 +5,7 @@
 {% set sr_hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
 {% set sr_hook_multi_target = sr_hook_path + '/SAPHanaSrMultiTarget.py' %}
 {% set sr_hook = sr_hook_path + '/SAPHanaSR.py' %}
+
 remove_SAPHanaSR:
   pkg.removed:
     - pkgs:
@@ -21,6 +22,7 @@ install_SAPHanaSR:
 {% set sr_hook_path = '/usr/share/SAPHanaSR' %}
 {% set sr_hook_multi_target = sr_hook_path + '/SAPHanaSrMultiTarget.py' %}
 {% set sr_hook = sr_hook_path + '/SAPHanaSR.py' %}
+
 remove_SAPHanaSR:
   pkg.removed:
     - pkgs:
@@ -34,43 +36,41 @@ install_SAPHanaSR:
       - SAPHanaSR-doc
 {% endif %}
 
+# get HANA sites
+{% set sites = {} %}
+{% for node in hana.nodes %}
+{% if node.primary is defined %}
+{% do sites.update({'a': node.primary.name}) %}
+{% elif node.secondary is defined %}
+{% do sites.update({'b': node.secondary.name}) %}
+{% endif %}
+{% endfor %}
+
 {% for node in hana.nodes if node.host == host %}
 
 {% set instance = '{:0>2}'.format(node.instance) %}
 {% set sap_instance = '{}_{}'.format(node.sid, instance) %}
 
 # Update sudoers to allow crm operations to the sidadm
-{% set tmp_sudoers = '/tmp/sudoers' %}
 {% set sudoers = '/etc/sudoers.d/SAPHanaSR' %}
 
 sudoers_create_{{ sap_instance }}:
   file.managed:
-    - name: {{ tmp_sudoers }}
-    - contents: |
-        {%- if hana.scale_out %}
-        # SAPHanaSR-ScaleOut needs for {{ sr_hook_multi_target }}
-        {%- else %}
-        # SAPHanaSR needs for {{ sr_hook }}
-        {%- endif %}
-        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_site_srHook_*
-        # be compatible with non-multi-target mode
-        {{ node.sid.lower() }}adm ALL=(ALL) NOPASSWD: /usr/sbin/crm_attribute -n hana_{{ node.sid.lower() }}_*
+    - source: salt://hana/templates/ha_cluster_sudoers.j2
+    - name: {{ sudoers }}
+    - template: jinja
+    - user: root
+    - group: root
+    - mode: 0440
+    - check_cmd: /usr/sbin/visudo -c -f
     - require:
       - pkg: install_SAPHanaSR
-
-sudoers_check_{{ sap_instance }}:
-  cmd.run:
-    - name: /usr/sbin/visudo -c -f {{ tmp_sudoers }}
-    - require:
-      - file: {{ tmp_sudoers }}
-
-sudoers_edit_{{ sap_instance }}:
-  file.copy:
-    - name: {{ sudoers }}
-    - source: {{ tmp_sudoers }}
-    - force: true
-    - require:
-      - sudoers_check_{{ sap_instance }}
+    - context:
+        node: {{ node }}
+        sites: {{ sites }}
+        sr_hook: {{ sr_hook }}
+        sr_hook_multi_target: {{ sr_hook_multi_target }}
+        sr_hook_string: __slot__:salt:file.grep({{ sr_hook }}, "^srHookGen = ").stdout
 
 # remove old entries from /etc/sudoers (migration to new /etc/sudoers.d/SAPHanaSR file)
 sudoers_remove_old_entries_{{ sap_instance }}_srHook:
