@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 28 10:03:12 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.12.0
+  * add SAPHanaSR takeover blocker
+
+-------------------------------------------------------------------
 Thu Jul 19 11:47:52 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.11.0
