@@ -2,9 +2,10 @@
 {% set host = grains['host'] %}
 
 {% if hana.scale_out %}
-{% set sr_hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
-{% set sr_hook_multi_target = sr_hook_path + '/SAPHanaSrMultiTarget.py' %}
-{% set sr_hook = sr_hook_path + '/SAPHanaSR.py' %}
+{% set hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
+{% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
+{% set sr_hook = hook_path + '/SAPHanaSR.py' %}
+{% set sustkover_hook = hook_path + '/susTkOver.py' %}
 
 remove_SAPHanaSR:
   pkg.removed:
@@ -19,9 +20,10 @@ install_SAPHanaSR:
       - SAPHanaSR-ScaleOut-doc
 
 {% else %}
-{% set sr_hook_path = '/usr/share/SAPHanaSR' %}
-{% set sr_hook_multi_target = sr_hook_path + '/SAPHanaSrMultiTarget.py' %}
-{% set sr_hook = sr_hook_path + '/SAPHanaSR.py' %}
+{% set hook_path = '/usr/share/SAPHanaSR' %}
+{% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
+{% set sr_hook = hook_path + '/SAPHanaSR.py' %}
+{% set sustkover_hook = hook_path + '/susTkOver.py' %}
 
 remove_SAPHanaSR:
   pkg.removed:
@@ -71,6 +73,7 @@ sudoers_create_{{ sap_instance }}:
         sr_hook: {{ sr_hook }}
         sr_hook_multi_target: {{ sr_hook_multi_target }}
         sr_hook_string: __slot__:salt:file.grep({{ sr_hook }}, "^srHookGen = ").stdout
+        sustkover_hook: {{ sustkover_hook }}
 
 # remove old entries from /etc/sudoers (migration to new /etc/sudoers.d/SAPHanaSR file)
 sudoers_remove_old_entries_{{ sap_instance }}_srHook:
@@ -91,7 +94,7 @@ configure_ha_hook_{{ sap_instance }}_multi_target:
     - sections:
         ha_dr_provider_SAPHanaSrMultiTarget:
           provider: 'SAPHanaSrMultiTarget'
-          path: '{{ sr_hook_path }}'
+          path: '{{ hook_path }}'
           execution_order: '1'
         trace:
           ha_dr_saphanasrmultitarget: 'info'
@@ -108,7 +111,7 @@ configure_ha_hook_{{ sap_instance }}:
     - sections:
         ha_dr_provider_SAPHanaSR:
           provider: 'SAPHanaSR'
-          path: '{{ sr_hook_path }}'
+          path: '{{ hook_path }}'
           execution_order: '1'
         trace:
           ha_dr_saphanasr: 'info'
@@ -162,6 +165,23 @@ remove_wrong_ha_hook_{{ sap_instance }}_options:
       - pkg: install_SAPHanaSR
     - unless:
       - test -f {{ sr_hook_multi_target }}
+
+configure_susTkOver_hook_{{ sap_instance }}:
+  ini.options_present:
+    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        ha_dr_provider_sustkover:
+          provider: 'susTkOver'
+          path: '{{ hook_path }}'
+          execution_order: '2'
+        trace:
+          ha_dr_sustkover: 'info'
+    - require:
+      - pkg: install_SAPHanaSR
+    - onlyif:
+      - test -f {{ sustkover_hook }}
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
