@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 11 09:19:38 UTC 2022 - Christian Schneemann <schneemann@b1-systems.de>
+
+- Version bump 0.12.1
+  * moved templates dir into hana dir in repository to be gitfs compatible
+
+-------------------------------------------------------------------
 Thu Jul 28 10:03:12 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
 
 - Version bump 0.12.0
