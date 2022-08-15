@@ -67,11 +67,12 @@ op_defaults \
     property $id="cib-bootstrap-options" \
       stonith-enabled="true" \
       stonith-timeout="150s"
-    
-    # This stonith resource will be duplicated for each node in the cluster
+
+    # This stonith resource and location will be duplicated for each node in the cluster
     primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
       params plug={{ grains['gcp_instance_name'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_name'] }}" \
       meta target-role=Started
+    location loc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} -inf: {{ grains['host'] }}
 
   {%- elif cloud_provider == "microsoft-azure" %}
     property $id="cib-bootstrap-options" \
