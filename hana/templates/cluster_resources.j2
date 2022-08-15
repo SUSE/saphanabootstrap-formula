@@ -54,20 +54,20 @@ op_defaults \
       stonith-enabled="true" \
       stonith-action="off" \
       stonith-timeout="150s"
-    
+
     primitive rsc_aws_stonith_{{ sid }}_HDB{{ instance }} stonith:external/ec2 \
       params tag={{ data.instance_tag }} profile={{ data.cluster_profile }} \
       op start interval=0 timeout=180 \
       op stop interval=0 timeout=180 \
       op monitor interval=120 timeout=60 \
       meta target-role=Started
-  
+
   {%- elif cloud_provider == "google-cloud-platform" %}
-  
+
     property $id="cib-bootstrap-options" \
       stonith-enabled="true" \
       stonith-timeout="150s"
-    
+
     # This stonith resource will be duplicated for each node in the cluster
     primitive rsc_gcp_stonith_{{ sid }}_HDB{{ instance }}_{{ grains['host'] }} stonith:fence_gce \
       params plug={{ grains['gcp_instance_name'] }} pcmk_host_map="{{ grains['host'] }}:{{ grains['gcp_instance_name'] }}" \
@@ -77,12 +77,12 @@ op_defaults \
     property $id="cib-bootstrap-options" \
       stonith-enabled="true" \
       concurrent-fencing=true
-    
+
     primitive rsc_azure_stonith_{{ sid }}_HDB{{ instance }} stonith:fence_azure_arm \
       params subscriptionId={{ data.azure_subscription_id }} resourceGroup={{ data.azure_resource_group_name }} tenantId={{ data.azure_tenant_id }} login={{ data.azure_fence_agent_app_id }} passwd="{{ data.azure_fence_agent_client_secret }}" pcmk_monitor_retries=4 pcmk_action_limit=3 power_timeout=240 pcmk_reboot_timeout=900 \
       op monitor interval=3600 timeout=120 \
       meta target-role=Started
-  
+
   {%- endif %}
 {%- endif %}
 
@@ -126,7 +126,7 @@ op_defaults \
         op monitor timeout=20s interval=10 \
         op_params depth=0
     {%- endif %}
-    
+
   {%- elif vip_mechanism == "route" %}
     primitive rsc_ip_{{ sid }}_HDB{{ instance }} ocf:heartbeat:gcp-vpc-move-route \
       params ip={{ data.virtual_ip }} vpc_network={{ data.vpc_network_name }} route_name={{ data.route_name }} \
