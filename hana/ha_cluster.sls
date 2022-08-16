@@ -68,7 +68,7 @@ sudoers_create_{{ sap_instance }}:
     - require:
       - pkg: install_SAPHanaSR
     - context:
-        node: {{ node }}
+        sid: {{ node.sid }}
         sites: {{ sites }}
         sr_hook: {{ sr_hook }}
         sr_hook_multi_target: {{ sr_hook_multi_target }}
