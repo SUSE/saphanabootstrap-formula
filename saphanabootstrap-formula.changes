@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Aug 15 08:29:52 UTC 2022 - Eike Waldt <waldt@b1-systems.de>
+
+- Version bump 0.13.0
+  * pass sid to sudoers in a SLES12 compatible way
+  * add location constraint to gcp_stonith
+
+-------------------------------------------------------------------
 Thu Aug 11 09:19:38 UTC 2022 - Christian Schneemann <schneemann@b1-systems.de>
 
 - Version bump 0.12.1
