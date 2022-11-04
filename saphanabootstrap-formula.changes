@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Friday Dec 04 11:27:52 UTC 2022 - Steve Stringer <steven.stringer@suse.com>
+Friday Nov 04 14:25:52 UTC 2022 - Steve Stringer <steven.stringer@suse.com>
 
 - Version bump 0.13.1
   * revert changes to spec file to re-enable SLES RPM builds
