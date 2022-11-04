@@ -180,7 +180,7 @@ jobs:
   submit:
     needs: [tab, codespell, shellcheck, yamllint, jsonlint, mlc, salt, delivery]
     runs-on: ubuntu-20.04
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
     container:
       image: shap/continuous_deliver
       env:
