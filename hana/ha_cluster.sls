@@ -6,6 +6,7 @@
 {% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
 {% set sr_hook = hook_path + '/SAPHanaSR.py' %}
 {% set sustkover_hook = hook_path + '/susTkOver.py' %}
+{% set suschksrv_hook = hook_path + '/susChkSrv.py' %}
 
 remove_SAPHanaSR:
   pkg.removed:
@@ -24,6 +25,7 @@ install_SAPHanaSR:
 {% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
 {% set sr_hook = hook_path + '/SAPHanaSR.py' %}
 {% set sustkover_hook = hook_path + '/susTkOver.py' %}
+{% set suschksrv_hook = hook_path + '/susChkSrv.py' %}
 
 remove_SAPHanaSR:
   pkg.removed:
@@ -74,6 +76,7 @@ sudoers_create_{{ sap_instance }}:
         sr_hook_multi_target: {{ sr_hook_multi_target }}
         sr_hook_string: __slot__:salt:file.grep({{ sr_hook }}, "^srHookGen = ").stdout
         sustkover_hook: {{ sustkover_hook }}
+        suschksrv_hook: {{ suschksrv_hook }}
 
 # remove old entries from /etc/sudoers (migration to new /etc/sudoers.d/SAPHanaSR file)
 sudoers_remove_old_entries_{{ sap_instance }}_srHook:
@@ -182,6 +185,24 @@ configure_susTkOver_hook_{{ sap_instance }}:
       - pkg: install_SAPHanaSR
     - onlyif:
       - test -f {{ sustkover_hook }}
+
+configure_susChkSrv_hook_{{ sap_instance }}:
+  ini.options_present:
+    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        ha_dr_provider_suschksrv:
+          provider: 'susChkSrv'
+          path: '{{ hook_path }}'
+          execution_order: '3'
+          action_on_loss: 'stop'
+        trace:
+          ha_dr_suschksrv: 'info'
+    - require:
+      - pkg: install_SAPHanaSR
+    - onlyif:
+      - test -f {{ suschksrv_hook }}
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
