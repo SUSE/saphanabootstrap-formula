@@ -40,3 +40,15 @@ python3-shaptools:
         attempts: 3
         interval: 15
     - resolve_capabilities: true
+
+{# If venv-salt-minion is installed, then we make shaptools available on this environment #}
+{% if salt['pkg.version']('venv-salt-minion') %}
+shaptools_available_in_salt_bundle:
+  file.symlink:
+    - name: /usr/lib/venv-salt-minion/lib/python3.10/site-packages/shaptools
+    - target: /usr/lib/python3.6/site-packages/shaptools/
+    - onlyif:
+      - test -d /usr/lib/python3.6/site-packages/shaptools/
+      - test -d /usr/lib/venv-salt-minion/lib/python3.10/site-packages/
+      - test ! -e /usr/lib/venv-salt-minion/lib/python3.10/site-packages/shaptools/
+{% endif %}
