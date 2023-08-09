@@ -42,13 +42,11 @@ python3-shaptools:
     - resolve_capabilities: true
 
 {# If venv-salt-minion is installed, then we make shaptools available on this environment #}
-{% if salt['pkg.version']('venv-salt-minion') %}
+{% if salt['pkg.version']('venv-salt-minion') and salt['file.file_exists']("/usr/bin/python3") %}
+{% set python_site_packages_path = salt["cmd.run"]("/usr/bin/python3 -c \"import sysconfig as s; print(s.get_paths().get('purelib'))\"") %}
+{% set salt_bundle_site_packages_path = salt["cmd.run"]("/usr/lib/venv-salt-minion/bin/python -c \"import sysconfig as s; print(s.get_paths().get('purelib'))\"") %}
 shaptools_available_in_salt_bundle:
   file.symlink:
-    - name: /usr/lib/venv-salt-minion/lib/python3.10/site-packages/shaptools
-    - target: /usr/lib/python3.6/site-packages/shaptools/
-    - onlyif:
-      - test -d /usr/lib/python3.6/site-packages/shaptools/
-      - test -d /usr/lib/venv-salt-minion/lib/python3.10/site-packages/
-      - test ! -e /usr/lib/venv-salt-minion/lib/python3.10/site-packages/shaptools/
+    - name: {{ salt_bundle_site_packages_path }}/shaptools
+    - target: {{ python_site_packages_path }}/shaptools/
 {% endif %}
