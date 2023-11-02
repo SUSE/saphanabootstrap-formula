@@ -57,6 +57,21 @@ hana:
     $type: boolean
     $default: false
     $help: Enable the node monitoring via exporters which will be installed and configured in all the nodes. Customize the exporter configuration in each node's dedicated sections.
+  ha_dr_sustkover_enabled:
+    $name: Enable HANA HA/DR provdider hook susTkOver
+    $type: boolean
+    $default: false
+    $help: See https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#cha.s4s.hana-hook for details.
+  ha_dr_suschksrv_enabled:
+    $name: Enable HANA HA/DR provdider hook susChkSrv
+    $type: boolean
+    $default: false
+    $help: See https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#cha.s4s.hana-hook for details.
+  ha_dr_suschksrv_action_on_lost:
+    $name: Configure "Action on lost" for HANA HA/DR provider hook susChkSrv
+    $type: select
+    $values: [stop, fence]
+    $help: See `man 7 susChkSrv.py` and https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#cha.s4s.hana-hook for details.
   nodes:
     $name: Nodes
     $type: edit-group

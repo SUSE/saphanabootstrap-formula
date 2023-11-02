@@ -43,6 +43,16 @@ hana:
   # you can customize the exporter configuration in each node in the dedicated sections below
   monitoring_enabled: true
 
+  # HANA HA/DR provider configuration
+  # See https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#cha.s4s.hana-hook for details.
+  # The SAPHanaSR hook is always enabled.
+  # enable susTkOver hook (disabled by default)
+  #ha_dr_sustkover_enabled: true
+  # enable susChkSrv hook (disabled by default)
+  #ha_dr_suschksrv_enabled: true
+  # susChkSrv action on lost, see `man 7 susChkSrv.py` (Options: stop [default], fence)
+  #ha_dr_suschksrv_action_on_lost: 'fence'
+
   nodes:
     - host: 'hana01'
       sid: 'prd'
