@@ -3,9 +3,6 @@
 
 {% if hana.scale_out %}
 {% set hook_path = '/usr/share/SAPHanaSR-ScaleOut' %}
-{% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
-{% set sr_hook = hook_path + '/SAPHanaSR.py' %}
-{% set sustkover_hook = hook_path + '/susTkOver.py' %}
 
 remove_SAPHanaSR:
   pkg.removed:
@@ -21,9 +18,6 @@ install_SAPHanaSR:
 
 {% else %}
 {% set hook_path = '/usr/share/SAPHanaSR' %}
-{% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
-{% set sr_hook = hook_path + '/SAPHanaSR.py' %}
-{% set sustkover_hook = hook_path + '/susTkOver.py' %}
 
 remove_SAPHanaSR:
   pkg.removed:
@@ -37,6 +31,15 @@ install_SAPHanaSR:
       - SAPHanaSR
       - SAPHanaSR-doc
 {% endif %}
+
+{% set sr_hook_multi_target = hook_path + '/SAPHanaSrMultiTarget.py' %}
+{% set sr_hook = hook_path + '/SAPHanaSR.py' %}
+{% set sustkover_hook = hook_path + '/susTkOver.py' %}
+{% set suschksrv_hook = hook_path + '/susChkSrv.py' %}
+
+{% set sustkover_hook_enabled = hana.ha_dr_sustkover_enabled|default(False) %}
+{% set suschksrv_hook_enabled = hana.ha_dr_suschksrv_enabled|default(False) %}
+{% set suschksrv_hook_action_on_lost = hana.ha_dr_suschksrv_action_on_lost|default('stop') %}
 
 # get HANA sites
 {% set sites = {} %}
@@ -182,6 +185,26 @@ configure_susTkOver_hook_{{ sap_instance }}:
       - pkg: install_SAPHanaSR
     - onlyif:
       - test -f {{ sustkover_hook }}
+      - test "True" == "{{ sustkover_hook_enabled }}"
+
+configure_susChkSrv_hook_{{ sap_instance }}:
+  ini.options_present:
+    - name:  /hana/shared/{{ node.sid.upper() }}/global/hdb/custom/config/global.ini
+    - separator: '='
+    - strict: False # do not touch rest of file
+    - sections:
+        ha_dr_provider_suschksrv:
+          provider: 'susChkSrv'
+          path: '{{ hook_path }}'
+          execution_order: '3'
+          action_on_lost: '{{ suschksrv_hook_action_on_lost }}'
+        trace:
+          ha_dr_suschksrv: 'info'
+    - require:
+      - pkg: install_SAPHanaSR
+    - onlyif:
+      - test -f {{ suschksrv_hook }}
+      - test "True" == "{{ suschksrv_hook_enabled }}"
 
 # Configure system replication operation mode in the primary site
 {% for secondary_node in hana.nodes if node.primary is defined and secondary_node.secondary is defined and secondary_node.secondary.remote_host == host %}
